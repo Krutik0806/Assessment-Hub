@@ -11,7 +11,7 @@ def parse_js_questions(js_text, test_num):
     """Very simple regex-based extractor for the questions.js format."""
     # Find the block for this test number
     pattern = rf"{test_num}:\s*\{{\s*name:[^,]+,\s*total:\s*\d+,\s*questions:\s*\["
-    start_match = re.search(pattern, js_text)
+    start_match = re.search(pattern, js_text, re.DOTALL)
     if not start_match:
         return []
 

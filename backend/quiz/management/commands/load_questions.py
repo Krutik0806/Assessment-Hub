@@ -86,12 +86,24 @@ class Command(BaseCommand):
     help = "Seeds all practice test questions into the SQLite database."
 
     def handle(self, *args, **kwargs):
+        from quiz.models import Package
+        
         self.stdout.write("Loading questions into database...")
 
+        # Create package
+        pkg, _ = Package.objects.get_or_create(
+            name='PU SN', 
+            defaults={'description': 'ServiceNow Practice Tests', 'is_active': True}
+        )
+
         for slug, data in TESTS_DATA.items():
-            test, created = Test.objects.get_or_create(slug=slug, defaults={"name": data["name"]})
+            test, created = Test.objects.get_or_create(
+                slug=slug, 
+                defaults={"name": data["name"], "package": pkg}
+            )
             if not created:
                 test.name = data["name"]
+                test.package = pkg
                 test.save()
 
             # Clear existing questions to allow re-seeding
