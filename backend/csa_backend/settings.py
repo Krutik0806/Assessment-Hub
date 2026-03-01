@@ -4,6 +4,7 @@ Django settings for csa_backend project.
 import os
 from pathlib import Path
 from datetime import timedelta
+import dj_database_url
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -59,12 +60,29 @@ TEMPLATES = [
 WSGI_APPLICATION = "csa_backend.wsgi.application"
 
 # ── Database ───────────────────────────────────────────────────────────────────
-DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db.sqlite3",
+# Use Supabase PostgreSQL in production, SQLite for local development
+DATABASE_URL = os.environ.get('DATABASE_URL')
+
+if DATABASE_URL:
+    # Production: Use Supabase PostgreSQL
+    DATABASES = {
+        'default': dj_database_url.parse(
+            DATABASE_URL,
+            conn_max_age=0,  # Important for PgBouncer/transaction pooling
+            conn_health_checks=True,
+            ssl_require=True,
+        )
     }
-}
+    # Required for PgBouncer (Supabase transaction mode)
+    DATABASES['default']['DISABLE_SERVER_SIDE_CURSORS'] = True
+else:
+    # Local development: Use SQLite
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.sqlite3",
+            "NAME": BASE_DIR / "db.sqlite3",
+        }
+    }
 
 # ── Auth password validators ───────────────────────────────────────────────────
 AUTH_PASSWORD_VALIDATORS = [
