@@ -42,13 +42,17 @@ def start_django():
     ping_thread = threading.Thread(target=ping_server, daemon=True)
     ping_thread.start()
     
-    # Start Gunicorn
+    # Start Gunicorn with optimized settings for concurrent users
     cmd = [
         "gunicorn",
         "csa_backend.wsgi:application",
         "--bind", f"0.0.0.0:{PORT}",
-        "--workers", "2",
+        "--workers", "4",  # Increased from 2 to 4
+        "--worker-class", "gevent",  # Async workers for better concurrency
+        "--worker-connections", "1000",  # Each worker handles 1000 connections
         "--timeout", "120",
+        "--max-requests", "1000",  # Restart workers after 1000 requests (prevents memory leaks)
+        "--max-requests-jitter", "50",
         "--log-level", "info"
     ]
     
