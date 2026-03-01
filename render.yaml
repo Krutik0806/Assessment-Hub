@@ -4,7 +4,7 @@ services:
     name: assessment-hub-backend
     runtime: python
     rootDir: backend
-    buildCommand: pip install -r requirements.txt && python manage.py migrate && python manage.py seed_all_tests
+    buildCommand: pip install -r requirements.txt && python manage.py migrate && python manage.py seed_all_tests && python manage.py setup_admin
     startCommand: python start_server.py
     envVars:
       - key: SECRET_KEY
