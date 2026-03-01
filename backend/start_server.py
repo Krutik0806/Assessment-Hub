@@ -47,9 +47,8 @@ def start_django():
         "gunicorn",
         "csa_backend.wsgi:application",
         "--bind", f"0.0.0.0:{PORT}",
-        "--workers", "4",  # Increased from 2 to 4
-        "--worker-class", "gevent",  # Async workers for better concurrency
-        "--worker-connections", "1000",  # Each worker handles 1000 connections
+        "--workers", "4",  # 4 sync workers
+        "--threads", "4",  # 4 threads per worker = 16 concurrent requests
         "--timeout", "120",
         "--max-requests", "1000",  # Restart workers after 1000 requests (prevents memory leaks)
         "--max-requests-jitter", "50",
