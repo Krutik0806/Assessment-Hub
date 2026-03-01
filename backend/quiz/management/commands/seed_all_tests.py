@@ -10,13 +10,21 @@ from quiz.models import Package, Test, Question
 def parse_js_questions(js_text, test_num):
     """Very simple regex-based extractor for the questions.js format."""
     # Find the block for this test number
-    pattern = rf"{test_num}:\s*\{{\s*name:[^,]+,\s*total:\s*\d+,\s*questions:\s*\["
-    start_match = re.search(pattern, js_text, re.DOTALL)
+    pattern = rf"\b{test_num}:\s*\{{\s*name:"
+    start_match = re.search(pattern, js_text)
     if not start_match:
         return []
 
-    # Find the questions array start
-    arr_start = js_text.index('[', start_match.end() - 1)
+    # Find "questions: [" after the test number
+    questions_start = js_text.find('questions:', start_match.end())
+    if questions_start == -1:
+        return []
+    
+    # Find the opening bracket of questions array
+    arr_start = js_text.find('[', questions_start)
+    if arr_start == -1:
+        return []
+    
     depth = 0
     i = arr_start
     while i < len(js_text):
@@ -28,21 +36,26 @@ def parse_js_questions(js_text, test_num):
                 arr_end = i + 1
                 break
         i += 1
+    else:
+        return []
 
     raw = js_text[arr_start:arr_end]
 
-    # Replace JS booleans with JSON booleans
-    raw = re.sub(r'\btrue\b', 'true', raw)
-    raw = re.sub(r'\bfalse\b', 'false', raw)
+    # Replace JS booleans with JSON booleans  
+    raw = raw.replace('false', 'false').replace('true', 'true').replace('False', 'false').replace('True', 'true')
 
-    # Remove JS comments (// ...) 
+    # Remove JS comments
     raw = re.sub(r'//[^\n]*', '', raw)
 
     # Remove trailing commas before } or ]
     raw = re.sub(r',(\s*[}\]])', r'\1', raw)
+    
+    # Quote unquoted keys (id, question, options, answer, explanation, multi, image)
+    raw = re.sub(r'\b(id|question|options|answer|explanation|multi|image):', r'"\1":', raw)
 
     try:
-        return json.loads(raw)
+        questions = json.loads(raw)
+        return questions
     except Exception as e:
         return []
 
@@ -54,9 +67,10 @@ class Command(BaseCommand):
         import os
         # Look for questions.js relative to base dir
         base = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(__file__)))))
-        js_path = os.path.join(base, 'old_version', 'questions.js')
+        # Try src/data first (current version), then fall back to old_version
+        js_path = os.path.join(base, 'src', 'data', 'questions.js')
         if not os.path.exists(js_path):
-            js_path = os.path.join(base, 'src', 'data', 'questions.js')
+            js_path = os.path.join(base, 'old_version', 'questions.js')
         if not os.path.exists(js_path):
             self.stdout.write(self.style.ERROR(f'questions.js not found, tried {js_path}'))
             return
