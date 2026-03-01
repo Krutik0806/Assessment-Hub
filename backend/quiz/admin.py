@@ -8,7 +8,7 @@ from .models import Package, Test, Question, TestAttempt, UserAnswer, ExamViolat
 class QuestionInline(admin.TabularInline):
     model = Question
     extra = 1
-    fields = ('question_text', 'options', 'correct_answer', 'is_multi_answer', 'explanation', 'image')
+    fields = ('number', 'question', 'options', 'answer', 'multi', 'explanation', 'image')
     show_change_link = True
 
 
@@ -16,54 +16,43 @@ class QuestionInline(admin.TabularInline):
 class UserAnswerInline(admin.TabularInline):
     model = UserAnswer
     extra = 0
-    readonly_fields = ('question', 'selected_answer', 'is_correct')
-    can_delete = False
-
-
-# Inline admin for ExamViolations inside TestAttempt
-class ExamViolationInline(admin.TabularInline):
-    model = ExamViolation
-    extra = 0
-    readonly_fields = ('violation_type', 'timestamp', 'details')
+    readonly_fields = ('question', 'selected', 'is_correct')
     can_delete = False
 
 
 @admin.register(Package)
 class PackageAdmin(admin.ModelAdmin):
-    list_display = ('name', 'code', 'description', 'test_count')
-    search_fields = ('name', 'code', 'description')
+    list_display = ('name', 'description', 'is_active', 'test_count', 'created_at')
+    list_filter = ('is_active', 'created_at')
+    search_fields = ('name', 'description')
+    list_editable = ('is_active',)
     ordering = ('name',)
+    readonly_fields = ('created_at',)
     
     def test_count(self, obj):
-        return obj.test_set.count()
+        return obj.tests.count()
     test_count.short_description = 'Number of Tests'
 
 
 @admin.register(Test)
 class TestAdmin(admin.ModelAdmin):
-    list_display = ('name', 'package', 'is_active', 'is_exam', 'duration_minutes', 'question_count', 'created_at')
-    list_filter = ('package', 'is_active', 'is_exam', 'created_at')
-    search_fields = ('name', 'description')
-    date_hierarchy = 'created_at'
+    list_display = ('name', 'package', 'is_active', 'is_exam_test', 'duration_minutes', 'question_count', 'order')
+    list_filter = ('package', 'is_active', 'is_exam_test')
+    search_fields = ('name', 'slug')
     inlines = [QuestionInline]
-    list_editable = ('is_active', 'is_exam', 'duration_minutes')
+    list_editable = ('is_active', 'is_exam_test', 'duration_minutes', 'order')
     actions = ['activate_tests', 'deactivate_tests', 'mark_as_exam', 'mark_as_practice']
     fieldsets = (
         ('Basic Information', {
-            'fields': ('package', 'name', 'description')
+            'fields': ('package', 'name', 'slug', 'order')
         }),
         ('Test Configuration', {
-            'fields': ('is_active', 'is_exam', 'duration_minutes', 'scheduled_start_time')
-        }),
-        ('Metadata', {
-            'fields': ('created_at',),
-            'classes': ('collapse',)
+            'fields': ('is_active', 'is_locked', 'is_exam_test', 'duration_minutes', 'scheduled_start_time')
         }),
     )
-    readonly_fields = ('created_at',)
     
     def question_count(self, obj):
-        return obj.question_set.count()
+        return obj.questions.count()
     question_count.short_description = 'Questions'
     
     def activate_tests(self, request, queryset):
@@ -77,43 +66,38 @@ class TestAdmin(admin.ModelAdmin):
     deactivate_tests.short_description = 'Deactivate selected tests'
     
     def mark_as_exam(self, request, queryset):
-        queryset.update(is_exam=True)
+        queryset.update(is_exam_test=True)
         self.message_user(request, f'{queryset.count()} tests marked as exam.')
     mark_as_exam.short_description = 'Mark as exam'
     
     def mark_as_practice(self, request, queryset):
-        queryset.update(is_exam=False)
+        queryset.update(is_exam_test=False)
         self.message_user(request, f'{queryset.count()} tests marked as practice.')
     mark_as_practice.short_description = 'Mark as practice'
 
 
 @admin.register(Question)
 class QuestionAdmin(admin.ModelAdmin):
-    list_display = ('id', 'test', 'question_preview', 'is_multi_answer', 'has_image', 'created_at')
-    list_filter = ('test__package', 'test', 'is_multi_answer', 'created_at')
-    search_fields = ('question_text', 'explanation', 'id')
-    date_hierarchy = 'created_at'
-    readonly_fields = ('created_at',)
+    list_display = ('id', 'test', 'number', 'question_preview', 'multi', 'has_image')
+    list_filter = ('test__package', 'test', 'multi')
+    search_fields = ('question', 'explanation', 'id')
     list_per_page = 50
+    ordering = ('test', 'number')
     fieldsets = (
         ('Question Information', {
-            'fields': ('test', 'question_text', 'image')
+            'fields': ('test', 'number', 'question', 'image')
         }),
         ('Answer Options', {
-            'fields': ('options', 'correct_answer', 'is_multi_answer')
+            'fields': ('options', 'answer', 'multi')
         }),
         ('Explanation', {
             'fields': ('explanation',),
             'classes': ('collapse',)
         }),
-        ('Metadata', {
-            'fields': ('created_at',),
-            'classes': ('collapse',)
-        }),
     )
     
     def question_preview(self, obj):
-        return obj.question_text[:80] + '...' if len(obj.question_text) > 80 else obj.question_text
+        return obj.question[:80] + '...' if len(obj.question) > 80 else obj.question
     question_preview.short_description = 'Question'
     
     def has_image(self, obj):
@@ -124,32 +108,33 @@ class QuestionAdmin(admin.ModelAdmin):
 
 @admin.register(TestAttempt)
 class TestAttemptAdmin(admin.ModelAdmin):
-    list_display = ('id', 'user_email', 'candidate_name', 'test', 'score_display', 'time_taken', 'violations_count', 'completed_at')
-    list_filter = ('test__package', 'test', 'completed_at')
-    search_fields = ('user_email', 'candidate_name', 'candidate_email')
+    list_display = ('id', 'user', 'candidate_name', 'test', 'score_display', 'mode', 'time_taken_display', 'completed_at')
+    list_filter = ('test__package', 'test', 'mode', 'completed_at')
+    search_fields = ('user__username', 'user__email', 'candidate_name', 'candidate_email', 'enrollment_number')
     date_hierarchy = 'completed_at'
-    readonly_fields = ('user_email', 'score', 'completed_at', 'time_taken')
-    inlines = [UserAnswerInline, ExamViolationInline]
+    readonly_fields = ('user', 'test', 'score', 'total', 'completed_at', 'time_taken')
+    inlines = [UserAnswerInline]
     list_per_page = 50
     actions = ['delete_selected_attempts']
     fieldsets = (
         ('User Information', {
-            'fields': ('user_email', 'candidate_name', 'candidate_email')
+            'fields': ('user', 'candidate_name', 'candidate_email', 'enrollment_number', 'roll_no')
         }),
         ('Test Information', {
-            'fields': ('test', 'score', 'time_taken', 'completed_at')
+            'fields': ('test', 'mode', 'score', 'total', 'time_taken', 'completed_at')
         }),
     )
     
     def score_display(self, obj):
-        return f'{obj.score}%'
+        return f'{obj.percentage}%'
     score_display.short_description = 'Score'
     score_display.admin_order_field = 'score'
     
-    def violations_count(self, obj):
-        count = obj.examviolation_set.count()
-        return count if count > 0 else '-'
-    violations_count.short_description = 'Violations'
+    def time_taken_display(self, obj):
+        mins = obj.time_taken // 60
+        secs = obj.time_taken % 60
+        return f'{mins}m {secs}s'
+    time_taken_display.short_description = 'Time Taken'
     
     def delete_selected_attempts(self, request, queryset):
         count = queryset.count()
@@ -160,44 +145,45 @@ class TestAttemptAdmin(admin.ModelAdmin):
 
 @admin.register(UserAnswer)
 class UserAnswerAdmin(admin.ModelAdmin):
-    list_display = ('attempt_id', 'user_email', 'question_preview', 'selected_answer_preview', 'is_correct')
+    list_display = ('attempt_id', 'username', 'question_preview', 'selected_preview', 'is_correct')
     list_filter = ('is_correct', 'question__test')
-    search_fields = ('attempt__user_email', 'question__question_text')
-    readonly_fields = ('attempt', 'question', 'selected_answer', 'is_correct')
+    search_fields = ('attempt__user__username', 'attempt__user__email', 'question__question')
+    readonly_fields = ('attempt', 'question', 'selected', 'is_correct')
     list_per_page = 100
     
     def attempt_id(self, obj):
         return obj.attempt.id
     attempt_id.short_description = 'Attempt ID'
     
-    def user_email(self, obj):
-        return obj.attempt.user_email
-    user_email.short_description = 'User'
+    def username(self, obj):
+        return obj.attempt.user.username
+    username.short_description = 'User'
     
     def question_preview(self, obj):
-        return obj.question.question_text[:50] + '...' if len(obj.question.question_text) > 50 else obj.question.question_text
+        return obj.question.question[:50] + '...' if len(obj.question.question) > 50 else obj.question.question
     question_preview.short_description = 'Question'
     
-    def selected_answer_preview(self, obj):
-        return str(obj.selected_answer)[:50]
-    selected_answer_preview.short_description = 'Answer'
+    def selected_preview(self, obj):
+        return str(obj.selected)[:50]
+    selected_preview.short_description = 'Answer'
 
 
 @admin.register(ExamViolation)
 class ExamViolationAdmin(admin.ModelAdmin):
-    list_display = ('attempt_id', 'user_email', 'violation_type', 'timestamp')
-    list_filter = ('violation_type', 'timestamp')
-    date_hierarchy = 'timestamp'
-    readonly_fields = ('attempt', 'violation_type', 'timestamp', 'details')
-    search_fields = ('attempt__user_email', 'violation_type', 'details')
-    
-    def attempt_id(self, obj):
-        return obj.attempt.id
-    attempt_id.short_description = 'Attempt ID'
-    
-    def user_email(self, obj):
-        return obj.attempt.user_email
-    user_email.short_description = 'User'
+    list_display = ('user', 'test', 'warnings', 'is_banned', 'banned_at', 'created_at')
+    list_filter = ('is_banned', 'test', 'created_at')
+    date_hierarchy = 'created_at'
+    readonly_fields = ('created_at', 'updated_at')
+    search_fields = ('user__username', 'user__email', 'test__name')
+    fieldsets = (
+        ('Violation Information', {
+            'fields': ('user', 'test', 'warnings', 'is_banned', 'banned_at')
+        }),
+        ('Timestamps', {
+            'fields': ('created_at', 'updated_at'),
+            'classes': ('collapse',)
+        }),
+    )
 
 
 # Extend User admin to manage admin permissions
