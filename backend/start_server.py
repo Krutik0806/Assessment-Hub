@@ -11,7 +11,7 @@ import requests
 from subprocess import Popen
 
 # Configuration
-RENDER_URL = os.environ.get("RENDER_EXTERNAL_URL", "https://csa-backend.onrender.com")
+RENDER_URL = os.environ.get("RENDER_EXTERNAL_URL", "https://assessment-hub-backend.onrender.com")
 PORT = os.environ.get("PORT", "8080")
 
 
