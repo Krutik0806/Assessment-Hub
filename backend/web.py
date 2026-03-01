@@ -9,7 +9,7 @@ import aiohttp
 from aiohttp import web
 
 # Update this URL after deploying to Render
-RENDER_URL = "https://csa-backend.onrender.com"  # Replace with your actual Render URL
+RENDER_URL = "https://assessment-hub-backend.onrender.com"  # Replace with your actual Render URL
 PORT = int(os.environ.get("PORT", 8080))
 
 
