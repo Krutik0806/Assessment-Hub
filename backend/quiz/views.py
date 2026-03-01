@@ -1,0 +1,561 @@
+from rest_framework import status
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import IsAuthenticated, AllowAny
+from rest_framework.response import Response
+from rest_framework_simplejwt.tokens import RefreshToken
+from django.contrib.auth.models import User
+from django.db.models import Avg
+from django.utils import timezone
+import csv
+from google.oauth2 import id_token as google_id_token
+from google.auth.transport import requests as google_requests
+from .models import Package, Test, Question, TestAttempt, UserAnswer, ExamViolation
+from .serializers import (
+    RegisterSerializer, UserSerializer,
+    PackageSerializer, TestSerializer, QuestionSerializer,
+    AttemptCreateSerializer, TestAttemptSerializer, LeaderboardEntrySerializer,
+    AdminUserSerializer,
+)
+
+GOOGLE_CLIENT_ID = '695327652700-2222uagliv0imrptrtv9gks7pb7fecoj.apps.googleusercontent.com'
+ADMIN_EMAIL = 'chamthakrutik4@gmail.com'
+
+
+def is_admin_user(user):
+    return user.is_authenticated and (user.is_staff or user.email == ADMIN_EMAIL)
+
+
+# ── Auth ──────────────────────────────────────────────────────────────────────
+
+@api_view(['POST'])
+@permission_classes([AllowAny])
+def register(request):
+    serializer = RegisterSerializer(data=request.data)
+    if serializer.is_valid():
+        user = serializer.save()
+        refresh = RefreshToken.for_user(user)
+        return Response({'user': UserSerializer(user).data, 'access': str(refresh.access_token), 'refresh': str(refresh)}, status=201)
+    return Response(serializer.errors, status=400)
+
+
+@api_view(['POST'])
+@permission_classes([AllowAny])
+def google_login(request):
+    credential = request.data.get('credential')
+    email = request.data.get('email')
+    google_sub = request.data.get('google_sub')
+    name = request.data.get('name', '')
+
+    if credential:
+        try:
+            idinfo = google_id_token.verify_oauth2_token(credential, google_requests.Request(), GOOGLE_CLIENT_ID)
+            email = idinfo.get('email')
+            name = idinfo.get('given_name', idinfo.get('name', ''))
+        except ValueError as e:
+            return Response({'error': f'Invalid Google token: {e}'}, status=400)
+    elif not (email and google_sub):
+        return Response({'error': 'Provide credential or email+google_sub.'}, status=400)
+
+    if not email:
+        return Response({'error': 'Could not retrieve email.'}, status=400)
+
+    user, created = User.objects.get_or_create(email=email, defaults={'username': email.split('@')[0], 'first_name': name.split()[0] if name else ''})
+    if created and User.objects.filter(username=user.username).exclude(pk=user.pk).exists():
+        user.username = f"{email.split('@')[0]}_{user.pk}"
+    if email == ADMIN_EMAIL and not user.is_staff:
+        user.is_staff = True
+        user.is_superuser = True
+    user.save()
+
+    refresh = RefreshToken.for_user(user)
+    return Response({'user': UserSerializer(user).data, 'access': str(refresh.access_token), 'refresh': str(refresh), 'is_new_user': created})
+
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def me(request):
+    return Response(UserSerializer(request.user).data)
+
+
+# ── Package & Test ─────────────────────────────────────────────────────────────
+
+@api_view(['GET'])
+@permission_classes([AllowAny])
+def package_list(request):
+    packages = Package.objects.filter(is_active=True)
+    return Response(PackageSerializer(packages, many=True, context={'request': request}).data)
+
+
+@api_view(['GET'])
+@permission_classes([AllowAny])
+def test_list(request):
+    tests = Test.objects.filter(is_active=True).order_by('order', 'id')
+    return Response(TestSerializer(tests, many=True, context={'request': request}).data)
+
+
+@api_view(['GET'])
+@permission_classes([AllowAny])
+def exam_test_list(request):
+    """Returns only tests marked as exam tests (for the Exam Tests section)."""
+    tests = Test.objects.filter(is_active=True, is_exam_test=True).order_by('order', 'id')
+    return Response(TestSerializer(tests, many=True, context={'request': request}).data)
+
+
+@api_view(['GET'])
+@permission_classes([AllowAny])
+def test_questions(request, slug):
+    try:
+        test = Test.objects.get(slug=slug, is_active=True)
+    except Test.DoesNotExist:
+        return Response({'error': 'Test not found'}, status=404)
+
+    if test.is_locked and not is_admin_user(request.user):
+        return Response({'error': 'This test is currently locked by an administrator.'}, status=403)
+
+    # Check if user is banned from this exam
+    if test.is_exam_test and request.user.is_authenticated:
+        ban = ExamViolation.objects.filter(user=request.user, test=test, is_banned=True).first()
+        if ban:
+            return Response({'error': 'You are banned from this exam due to violations. Please contact an administrator.', 'banned': True}, status=403)
+
+    questions = test.questions.all()
+    return Response(QuestionSerializer(questions, many=True).data)
+
+
+# ── Attempts ──────────────────────────────────────────────────────────────────
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def submit_attempt(request):
+    serializer = AttemptCreateSerializer(data=request.data)
+    if not serializer.is_valid():
+        return Response(serializer.errors, status=400)
+
+    data = serializer.validated_data
+    try:
+        test = Test.objects.get(id=data['test_id'])
+    except Test.DoesNotExist:
+        return Response({'error': 'Test not found'}, status=404)
+
+    if test.is_locked and not is_admin_user(request.user):
+        return Response({'error': 'This test is locked.'}, status=403)
+
+    attempt = TestAttempt.objects.create(
+        user=request.user, 
+        test=test, 
+        mode=data['mode'],
+        total=len(data['answers']), 
+        time_taken=data.get('time_taken', 0),
+        candidate_name=data.get('candidate_name', ''),
+        enrollment_number=data.get('enrollment_number', ''),
+        roll_no=data.get('roll_no', ''),
+        candidate_email=data.get('candidate_email', '')
+    )
+    correct_count = 0
+    for ans in data['answers']:
+        try:
+            question = Question.objects.get(id=ans['question_id'])
+        except Question.DoesNotExist:
+            continue
+        selected = sorted(ans['selected'])
+        correct = sorted(question.answer)
+        is_correct = selected == correct
+        if is_correct:
+            correct_count += 1
+        UserAnswer.objects.create(attempt=attempt, question=question, selected=ans['selected'], is_correct=is_correct)
+
+    attempt.score = correct_count
+    attempt.save()
+    return Response(TestAttemptSerializer(attempt).data, status=201)
+
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def my_attempts(request):
+    attempts = TestAttempt.objects.filter(user=request.user).order_by('-completed_at')
+    return Response(TestAttemptSerializer(attempts, many=True).data)
+
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def attempt_detail(request, pk):
+    try:
+        attempt = TestAttempt.objects.get(pk=pk, user=request.user)
+    except TestAttempt.DoesNotExist:
+        return Response({'error': 'Not found'}, status=404)
+    return Response(TestAttemptSerializer(attempt).data)
+
+
+# ── Exam Proctoring ────────────────────────────────────────────────────────────
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def exam_warn(request):
+    """
+    Called when a student switches tabs/windows during a proctored exam.
+    - 1st call: sets warnings=1, returns {warnings: 1, banned: false}
+    - 2nd call: sets warnings=2, is_banned=True, returns {warnings: 2, banned: true}
+    """
+    test_id = request.data.get('test_id')
+    if not test_id:
+        return Response({'error': 'test_id required'}, status=400)
+
+    try:
+        test = Test.objects.get(id=test_id, is_exam_test=True)
+    except Test.DoesNotExist:
+        return Response({'error': 'Exam test not found'}, status=404)
+
+    violation, _ = ExamViolation.objects.get_or_create(user=request.user, test=test)
+
+    if violation.is_banned:
+        return Response({'warnings': violation.warnings, 'banned': True})
+
+    violation.warnings += 1
+    if violation.warnings >= 2:
+        violation.is_banned = True
+        violation.banned_at = timezone.now()
+
+    violation.save()
+    return Response({'warnings': violation.warnings, 'banned': violation.is_banned})
+
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def exam_status(request, test_id):
+    """Check if user is banned from an exam test before starting."""
+    try:
+        test = Test.objects.get(id=test_id, is_exam_test=True)
+    except Test.DoesNotExist:
+        return Response({'error': 'Not found'}, status=404)
+
+    violation = ExamViolation.objects.filter(user=request.user, test=test).first()
+    return Response({
+        'warnings': violation.warnings if violation else 0,
+        'banned': violation.is_banned if violation else False,
+    })
+
+
+# ── Leaderboard ────────────────────────────────────────────────────────────────
+
+@api_view(['GET'])
+@permission_classes([AllowAny])
+def leaderboard(request, slug):
+    """Returns top 50 exam attempts for a test, sorted by score desc then time asc."""
+    try:
+        test = Test.objects.get(slug=slug)
+    except Test.DoesNotExist:
+        return Response({'error': 'Test not found'}, status=404)
+
+    # Best attempt per user (highest score, fastest time)
+    from django.db.models import Min
+    attempts = (
+        TestAttempt.objects
+        .filter(test=test, mode='exam')
+        .order_by('-score', 'time_taken', 'completed_at')[:50]
+    )
+    return Response({
+        'test_name': test.name,
+        'entries': LeaderboardEntrySerializer(attempts, many=True).data,
+    })
+
+
+# ── Admin API ──────────────────────────────────────────────────────────────────
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def admin_dashboard(request):
+    if not is_admin_user(request.user):
+        return Response({'error': 'Admin access required.'}, status=403)
+
+    total_users = User.objects.count()
+    total_attempts = TestAttempt.objects.count()
+    avg_score = TestAttempt.objects.aggregate(avg=Avg('score'))['avg'] or 0
+    tests = Test.objects.all()
+
+    test_stats = []
+    for t in tests:
+        avg = t.attempts.aggregate(avg=Avg('score'))['avg'] or 0
+        test_stats.append({
+            'id': t.id, 'name': t.name, 'slug': t.slug,
+            'is_locked': t.is_locked, 'is_active': t.is_active,
+            'is_exam_test': t.is_exam_test,
+            'total_questions': t.total,
+            'attempt_count': t.attempts.count(),
+            'avg_score': round((avg / t.total * 100) if t.total else 0, 1),
+        })
+
+    banned_users = ExamViolation.objects.filter(is_banned=True).count()
+    return Response({
+        'total_users': total_users, 'total_attempts': total_attempts,
+        'avg_score': round(avg_score, 1), 'banned_users': banned_users, 'tests': test_stats,
+    })
+
+
+@api_view(['PATCH'])
+@permission_classes([IsAuthenticated])
+def admin_toggle_lock(request, test_id):
+    if not is_admin_user(request.user):
+        return Response({'error': 'Admin access required.'}, status=403)
+    try:
+        test = Test.objects.get(id=test_id)
+    except Test.DoesNotExist:
+        return Response({'error': 'Not found'}, status=404)
+    test.is_locked = not test.is_locked
+    test.save()
+    return Response({'id': test.id, 'name': test.name, 'is_locked': test.is_locked})
+
+
+@api_view(['PATCH'])
+@permission_classes([IsAuthenticated])
+def admin_toggle_active(request, test_id):
+    if not is_admin_user(request.user):
+        return Response({'error': 'Admin access required.'}, status=403)
+    try:
+        test = Test.objects.get(id=test_id)
+    except Test.DoesNotExist:
+        return Response({'error': 'Not found'}, status=404)
+    test.is_active = not test.is_active
+    test.save()
+    return Response({'id': test.id, 'name': test.name, 'is_active': test.is_active})
+
+
+@api_view(['PATCH'])
+@permission_classes([IsAuthenticated])
+def admin_toggle_exam(request, test_id):
+    """Toggle whether a test is a proctored exam test."""
+    if not is_admin_user(request.user):
+        return Response({'error': 'Admin access required.'}, status=403)
+    try:
+        test = Test.objects.get(id=test_id)
+    except Test.DoesNotExist:
+        return Response({'error': 'Not found'}, status=404)
+    test.is_exam_test = not test.is_exam_test
+    test.save()
+    return Response({'id': test.id, 'name': test.name, 'is_exam_test': test.is_exam_test})
+
+
+@api_view(['PATCH'])
+@permission_classes([IsAuthenticated])
+def admin_update_test_timing(request, test_id):
+    """Update duration and scheduled start time for a test."""
+    if not is_admin_user(request.user):
+        return Response({'error': 'Admin access required.'}, status=403)
+    try:
+        test = Test.objects.get(id=test_id)
+    except Test.DoesNotExist:
+        return Response({'error': 'Not found'}, status=404)
+        
+    duration = request.data.get('duration_minutes')
+    start_time = request.data.get('scheduled_start_time')
+    
+    if duration is not None:
+        try:
+            test.duration_minutes = max(1, int(duration))
+        except ValueError:
+            return Response({'error': 'Invalid duration format'}, status=400)
+            
+    if 'scheduled_start_time' in request.data: # Allow nulling out
+        if not start_time:
+            test.scheduled_start_time = None
+        else:
+            from django.utils.dateparse import parse_datetime
+            parsed = parse_datetime(start_time)
+            if parsed:
+                test.scheduled_start_time = parsed
+            else:
+                return Response({'error': 'Invalid datetime format. Use ISO format.'}, status=400)
+                
+    test.save()
+    return Response({
+        'id': test.id, 
+        'name': test.name, 
+        'duration_minutes': test.duration_minutes,
+        'scheduled_start_time': test.scheduled_start_time
+    })
+
+
+@api_view(['DELETE'])
+@permission_classes([IsAuthenticated])
+def admin_delete_test(request, test_id):
+    """Permanently delete a test and all its questions / attempts."""
+    if not is_admin_user(request.user):
+        return Response({'error': 'Admin access required.'}, status=403)
+    try:
+        test = Test.objects.get(id=test_id)
+        test.delete()
+        return Response({'success': True, 'id': test_id})
+    except Test.DoesNotExist:
+        return Response({'error': 'Not found'}, status=404)
+
+
+from django.http import HttpResponse
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def admin_export_test_results(request, test_id):
+    """Export all exam attempts for a test as a CSV file."""
+    if not is_admin_user(request.user):
+        return Response({'error': 'Admin access required.'}, status=403)
+    try:
+        test = Test.objects.get(id=test_id)
+    except Test.DoesNotExist:
+        return Response({'error': 'Not found'}, status=404)
+
+    attempts = TestAttempt.objects.filter(test=test, mode='exam').order_by('-score', 'time_taken')
+
+    response = HttpResponse(content_type='text/csv')
+    response['Content-Disposition'] = f'attachment; filename="exam_results_{test.slug}.csv"'
+
+    writer = csv.writer(response)
+    writer.writerow(['Username', 'Candidate Name', 'Enrollment Number', 'Roll Number', 'Email', 'Score', 'Total Questions', 'Percentage', 'Time Taken (s)', 'Completed At'])
+
+    for attempt in attempts:
+        writer.writerow([
+            attempt.user.username,
+            attempt.candidate_name or '',
+            attempt.enrollment_number or '',
+            attempt.roll_no or '',
+            attempt.candidate_email or '',
+            attempt.score,
+            attempt.total,
+            f"{attempt.percentage:.1f}%",
+            attempt.time_taken,
+            attempt.completed_at.strftime('%Y-%m-%d %H:%M:%S')
+        ])
+
+    return response
+
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def admin_users(request):
+    if not is_admin_user(request.user):
+        return Response({'error': 'Admin access required.'}, status=403)
+    users = User.objects.all().order_by('-date_joined')
+    return Response(AdminUserSerializer(users, many=True).data)
+
+
+@api_view(['PATCH'])
+@permission_classes([IsAuthenticated])
+def admin_toggle_user(request, user_id):
+    if not is_admin_user(request.user):
+        return Response({'error': 'Admin access required.'}, status=403)
+    try:
+        user = User.objects.get(id=user_id)
+    except User.DoesNotExist:
+        return Response({'error': 'Not found'}, status=404)
+    if user.email == ADMIN_EMAIL:
+        return Response({'error': 'Cannot deactivate the primary admin.'}, status=400)
+    user.is_active = not user.is_active
+    user.save()
+    return Response({'id': user.id, 'username': user.username, 'is_active': user.is_active})
+
+
+@api_view(['PATCH'])
+@permission_classes([IsAuthenticated])
+def admin_unban_user(request, user_id):
+    """Unban a user from all exam tests they were banned from."""
+    if not is_admin_user(request.user):
+        return Response({'error': 'Admin access required.'}, status=403)
+    try:
+        user = User.objects.get(id=user_id)
+    except User.DoesNotExist:
+        return Response({'error': 'Not found'}, status=404)
+
+    test_id = request.data.get('test_id')
+    if test_id:
+        ExamViolation.objects.filter(user=user, test_id=test_id).update(is_banned=False, warnings=0)
+    else:
+        ExamViolation.objects.filter(user=user, is_banned=True).update(is_banned=False, warnings=0)
+
+    return Response({'success': True, 'message': f'{user.username} has been unbanned.'})
+
+
+# ── PDF → Test (Gemini) ────────────────────────────────────────────────────────
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def admin_create_test_from_pdf(request):
+    """
+    Admin uploads a PDF. Gemini extracts questions → creates a Test.
+    Form fields:  pdf (file)   test_name (str)   package_id (int, optional)
+    """
+    if not is_admin_user(request.user):
+        return Response({'error': 'Admin access required.'}, status=403)
+
+    pdf_file = request.FILES.get('pdf')
+    test_name = request.POST.get('test_name', '').strip()
+
+    if not pdf_file:
+        return Response({'error': 'No PDF file uploaded.'}, status=400)
+    if not test_name:
+        return Response({'error': 'test_name is required.'}, status=400)
+    if not pdf_file.name.lower().endswith('.pdf'):
+        return Response({'error': 'Only PDF files are accepted.'}, status=400)
+
+    pdf_bytes = pdf_file.read()
+
+    try:
+        from .pdf_extractor import extract_questions_with_gemini
+        questions = extract_questions_with_gemini(pdf_bytes, test_name)
+    except Exception as e:
+        return Response({'error': f'Gemini extraction failed: {str(e)}'}, status=500)
+
+    if not questions:
+        return Response({'error': 'No questions could be extracted from the PDF.'}, status=400)
+
+    # Create the test
+    package_id = request.POST.get('package_id')
+    package = None
+    if package_id:
+        try:
+            package = Package.objects.get(id=package_id)
+        except Package.DoesNotExist:
+            pass
+
+    # Auto-generate a slug
+    import re as _re
+    base_slug = _re.sub(r'[^a-z0-9]+', '-', test_name.lower()).strip('-')[:20]
+    slug = base_slug
+    counter = 1
+    while Test.objects.filter(slug=slug).exists():
+        slug = f"{base_slug[:16]}-{counter}"
+        counter += 1
+
+    # Get next order
+    max_order = Test.objects.aggregate(m=__import__('django.db.models', fromlist=['Max']).Max('order'))['m'] or 0
+
+    test = Test.objects.create(
+        name=test_name, slug=slug,
+        package=package, order=max_order + 1,
+        is_active=True, is_locked=False,
+    )
+
+    created_questions = []
+    for i, q in enumerate(questions, 1):
+        qq = Question.objects.create(
+            test=test, number=i,
+            question=q['question'], options=q['options'],
+            answer=q['answer'], explanation=q['explanation'],
+            multi=q['multi'],
+        )
+        created_questions.append({
+            'number': i, 'question': qq.question[:80] + ('…' if len(qq.question) > 80 else ''),
+            'options': len(qq.options), 'answer': qq.answer,
+        })
+
+    return Response({
+        'success': True,
+        'test': {'id': test.id, 'name': test.name, 'slug': test.slug, 'total': len(created_questions)},
+        'questions_preview': created_questions[:5],
+    }, status=201)
+
+
+# ── Health Check (for Render.com keep-alive) ──────────────────────────────────
+
+@api_view(['GET'])
+@permission_classes([AllowAny])
+def health_check(request):
+    """Simple health check endpoint for keep-alive pings."""
+    return Response({'status': 'healthy', 'message': 'Server is alive! ✅'}, status=200)
+
