@@ -193,8 +193,13 @@ def attempt_detail(request, pk):
 def exam_warn(request):
     """
     Called when a student switches tabs/windows during a proctored exam.
-    - 1st call: sets warnings=1, returns {warnings: 1, banned: false}
-    - 2nd call: sets warnings=2, is_banned=True, returns {warnings: 2, banned: true}
+    
+    If test.enable_auto_ban is True:
+        - Ban on 3rd violation
+    If test.enable_auto_ban is False:
+        - Just count violations, no ban (keep warning)
+    
+    Always tracks violation count for reporting.
     """
     test_id = request.data.get('test_id')
     if not test_id:
@@ -208,15 +213,41 @@ def exam_warn(request):
     violation, _ = ExamViolation.objects.get_or_create(user=request.user, test=test)
 
     if violation.is_banned:
-        return Response({'warnings': violation.warnings, 'banned': True})
+        return Response({
+            'warnings': violation.warnings, 
+            'banned': True,
+            'message': 'You are banned from this exam due to multiple violations.'
+        })
 
+    # Increment violation count
     violation.warnings += 1
-    if violation.warnings >= 2:
+    
+    # Check if auto-ban is enabled and threshold reached
+    if test.enable_auto_ban and violation.warnings >= 3:
         violation.is_banned = True
         violation.banned_at = timezone.now()
-
+        violation.save()
+        return Response({
+            'warnings': violation.warnings, 
+            'banned': True,
+            'message': 'You have been banned from this exam due to 3 tab-switch violations.'
+        })
+    
     violation.save()
-    return Response({'warnings': violation.warnings, 'banned': violation.is_banned})
+    
+    # Return warning message
+    if test.enable_auto_ban:
+        remaining = 3 - violation.warnings
+        message = f'Warning {violation.warnings}/3: Do not switch tabs! {remaining} more violation(s) will result in a ban.'
+    else:
+        message = f'Warning {violation.warnings}: Tab switching detected. Please stay focused on the exam.'
+    
+    return Response({
+        'warnings': violation.warnings, 
+        'banned': False,
+        'message': message,
+        'auto_ban_enabled': test.enable_auto_ban
+    })
 
 
 @api_view(['GET'])
@@ -336,6 +367,26 @@ def admin_toggle_exam(request, test_id):
 
 @api_view(['PATCH'])
 @permission_classes([IsAuthenticated])
+def admin_toggle_auto_ban(request, test_id):
+    """Toggle auto-ban setting for a proctored exam test."""
+    if not is_admin_user(request.user):
+        return Response({'error': 'Admin access required.'}, status=403)
+    try:
+        test = Test.objects.get(id=test_id)
+    except Test.DoesNotExist:
+        return Response({'error': 'Not found'}, status=404)
+    test.enable_auto_ban = not test.enable_auto_ban
+    test.save()
+    return Response({
+        'id': test.id, 
+        'name': test.name, 
+        'enable_auto_ban': test.enable_auto_ban,
+        'message': f"Auto-ban {'enabled' if test.enable_auto_ban else 'disabled'} - Users will {'be banned after 3 violations' if test.enable_auto_ban else 'only receive warnings'}"
+    })
+
+
+@api_view(['PATCH'])
+@permission_classes([IsAuthenticated])
 def admin_update_test_timing(request, test_id):
     """Update duration and scheduled start time for a test."""
     if not is_admin_user(request.user):
@@ -407,9 +458,14 @@ def admin_export_test_results(request, test_id):
     response['Content-Disposition'] = f'attachment; filename="exam_results_{test.slug}.csv"'
 
     writer = csv.writer(response)
-    writer.writerow(['Username', 'Candidate Name', 'Enrollment Number', 'Roll Number', 'Email', 'Score', 'Total Questions', 'Percentage', 'Time Taken (s)', 'Completed At'])
+    writer.writerow(['Username', 'Candidate Name', 'Enrollment Number', 'Roll Number', 'Email', 'Score', 'Total Questions', 'Percentage', 'Time Taken (s)', 'Violations', 'Banned', 'Completed At'])
 
     for attempt in attempts:
+        # Get violation count for this user and test
+        violation = ExamViolation.objects.filter(user=attempt.user, test=test).first()
+        violation_count = violation.warnings if violation else 0
+        is_banned = 'Yes' if (violation and violation.is_banned) else 'No'
+        
         writer.writerow([
             attempt.user.username,
             attempt.candidate_name or '',
@@ -420,6 +476,8 @@ def admin_export_test_results(request, test_id):
             attempt.total,
             f"{attempt.percentage:.1f}%",
             attempt.time_taken,
+            violation_count,
+            is_banned,
             attempt.completed_at.strftime('%Y-%m-%d %H:%M:%S')
         ])
 

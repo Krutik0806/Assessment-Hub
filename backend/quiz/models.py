@@ -22,6 +22,9 @@ class Test(models.Model):
     # Exam mode: admin marks this test as a proctored exam
     is_exam_test = models.BooleanField(default=False)
     
+    # Proctoring settings
+    enable_auto_ban = models.BooleanField(default=True, help_text="Auto-ban users after 3 violations. If disabled, only warnings are given.")
+    
     # Timing and Scheduling configurations
     duration_minutes = models.PositiveIntegerField(default=60)
     scheduled_start_time = models.DateTimeField(null=True, blank=True)

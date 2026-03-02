@@ -31,6 +31,7 @@ urlpatterns = [
     path('admin-panel/tests/<int:test_id>/lock/', views.admin_toggle_lock),
     path('admin-panel/tests/<int:test_id>/active/', views.admin_toggle_active),
     path('admin-panel/tests/<int:test_id>/exam/', views.admin_toggle_exam),
+    path('admin-panel/tests/<int:test_id>/auto-ban/', views.admin_toggle_auto_ban),
     path('admin-panel/tests/<int:test_id>/timing/', views.admin_update_test_timing),
     path('admin-panel/tests/<int:test_id>/export/', views.admin_export_test_results),
     path('admin-panel/tests/<int:test_id>/delete/', views.admin_delete_test),
