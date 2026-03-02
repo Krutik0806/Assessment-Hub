@@ -56,6 +56,7 @@ export default function AdminPage({ user, onBack }) {
     const togLock = (id) => act(`lock-${id}`, `/admin-panel/tests/${id}/lock/`);
     const togActive = (id) => act(`act-${id}`, `/admin-panel/tests/${id}/active/`);
     const togExam = (id) => act(`exam-${id}`, `/admin-panel/tests/${id}/exam/`);
+    const togAutoBan = (id) => act(`autoban-${id}`, `/admin-panel/tests/${id}/auto-ban/`);
 
     const exportTest = async (id, name) => {
         setBusy(`exp-${id}`);
@@ -369,9 +370,14 @@ export default function AdminPage({ user, onBack }) {
                                                 <Shield size={12} /> {t.is_exam_test ? 'Remove Exam' : 'Set as Exam'}
                                             </Btn>
                                             {t.is_exam_test && (
-                                                <Btn onClick={() => exportTest(t.id, t.name)} disabled={busy === `exp-${t.id}`} color="#fbbf24" bg="rgba(251,191,36,0.1)">
-                                                    <Download size={12} /> Export CSV
-                                                </Btn>
+                                                <>
+                                                    <Btn onClick={() => togAutoBan(t.id)} disabled={busy === `autoban-${t.id}`} color={t.enable_auto_ban ? '#fbbf24' : '#9ca3af'} bg={t.enable_auto_ban ? 'rgba(251,191,36,0.1)' : 'rgba(156,163,175,0.1)'}>
+                                                        <ShieldCheck size={12} /> {t.enable_auto_ban ? 'Auto-Ban ON' : 'Auto-Ban OFF'}
+                                                    </Btn>
+                                                    <Btn onClick={() => exportTest(t.id, t.name)} disabled={busy === `exp-${t.id}`} color="#10b981" bg="rgba(16,185,129,0.1)">
+                                                        <Download size={12} /> Export CSV
+                                                    </Btn>
+                                                </>
                                             )}
                                             <Btn onClick={() => delTest(t.id, t.name)} disabled={busy === `del-${t.id}`} color="#f43f5e" bg="rgba(244,63,94,0.1)">
                                                 <Trash2 size={12} /> Delete
