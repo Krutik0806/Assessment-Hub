@@ -17,7 +17,7 @@ function formatTime(seconds) {
     return m > 0 ? `${m}m ${s}s` : `${s}s`;
 }
 
-export default function Leaderboard({ slug, testName, userResult, onHome, onReview }) {
+export default function Leaderboard({ slug, testName, userResult, onHome, onReview, user }) {
     const [data, setData] = useState(null);
     const [loading, setLoading] = useState(true);
     const intervalRef = useRef(null);
@@ -39,8 +39,38 @@ export default function Leaderboard({ slug, testName, userResult, onHome, onRevi
 
     const entries = data?.entries || [];
     // Find user's actual result from leaderboard entries (backend data)
-    const userEntry = userResult ? entries.find(e => e.username === userResult.username) : null;
-    const userRank = userEntry ? entries.findIndex(e => e.username === userResult.username) + 1 : null;
+    const username = userResult?.username || user?.username;
+    const userEntry = username ? entries.find(e => e.username === username) : null;
+    const userRank = userEntry ? entries.findIndex(e => e.username === username) + 1 : null;
+    
+    // Debug logging
+    useEffect(() => {
+        if (data) {
+            console.log('Leaderboard Debug:', {
+                username,
+                hasUserEntry: !!userEntry,
+                userRank,
+                isEnded: data?.is_ended,
+                entriesCount: entries.length,
+                userResultUsername: userResult?.username,
+                userUsername: user?.username,
+                firstEntry: entries[0]?.username
+            });
+        }
+    }, [data, userEntry, username]);
+    
+    // Debug logging
+    useEffect(() => {
+        console.log('Leaderboard Debug:', {
+            username,
+            hasUserEntry: !!userEntry,
+            userRank,
+            isEnded: data?.is_ended,
+            entriesCount: entries.length,
+            userResultUsername: userResult?.username,
+            userUsername: user?.username
+        });
+    }, [data, userEntry, username]);
 
     return (
         <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '40px 24px' }}>
