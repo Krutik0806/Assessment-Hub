@@ -20,7 +20,6 @@ function formatTime(seconds) {
 export default function Leaderboard({ slug, testName, userResult, onHome, onReview }) {
     const [data, setData] = useState(null);
     const [loading, setLoading] = useState(true);
-    const [lastUpdated, setLastUpdated] = useState(null);
     const intervalRef = useRef(null);
 
     const fetchBoard = async () => {
@@ -28,14 +27,13 @@ export default function Leaderboard({ slug, testName, userResult, onHome, onRevi
             const res = await fetch(`${API_BASE}/tests/${slug}/leaderboard/`);
             const d = await res.json();
             setData(d);
-            setLastUpdated(new Date());
         } catch { }
         setLoading(false);
     };
 
     useEffect(() => {
         fetchBoard();
-        intervalRef.current = setInterval(fetchBoard, 10000); // refresh every 10s
+        intervalRef.current = setInterval(fetchBoard, 30000); // refresh every 30s
         return () => clearInterval(intervalRef.current);
     }, [slug]);
 
@@ -49,11 +47,9 @@ export default function Leaderboard({ slug, testName, userResult, onHome, onRevi
                 <Trophy size={56} color="#f59e0b" style={{ margin: '0 auto 16px', display: 'block' }} />
                 <h1 style={{ fontSize: '2.2rem', fontWeight: '900', marginBottom: '6px' }}>Leaderboard</h1>
                 <div style={{ fontWeight: '700', color: '#8b5cf6', fontSize: '1.1rem', marginBottom: '8px' }}>{testName}</div>
-                {lastUpdated && (
-                    <div style={{ color: 'var(--text-secondary)', fontSize: '0.8rem', display: 'flex', alignItems: 'center', gap: '6px', justifyContent: 'center' }}>
-                        <RefreshCw size={12} /> Live · updates every 10s · last {lastUpdated.toLocaleTimeString()}
-                    </div>
-                )}
+                <div style={{ color: 'var(--text-secondary)', fontSize: '0.85rem', marginTop: '8px' }}>
+                    {entries.length} {entries.length === 1 ? 'participant' : 'participants'}
+                </div>
             </motion.div>
 
             {/* User's own result callout */}
@@ -120,17 +116,8 @@ export default function Leaderboard({ slug, testName, userResult, onHome, onRevi
                                             {style.emoji}
                                         </div>
 
-                                        <div style={{ fontWeight: '800', textAlign: 'center', fontSize: '15px', color: isCurrentUser ? '#a78bfa' : 'white', wordBreak: 'break-all', lineHeight: '1.2' }}>
-                                            {entry.username}
-                                        </div>
-
-                                        <div style={{ marginTop: 'auto', textAlign: 'center', width: '100%' }}>
-                                            <div style={{ fontWeight: '900', fontSize: '1.4rem', color: entry.percentage >= 80 ? '#10b981' : entry.percentage >= 60 ? '#f59e0b' : '#f87171' }}>
-                                                {entry.percentage}%
-                                            </div>
-                                            <div style={{ fontSize: '11px', color: 'rgba(255,255,255,0.5)', background: 'rgba(0,0,0,0.2)', padding: '2px 0', borderRadius: '4px', marginTop: '4px' }}>
-                                                ⏱ {formatTime(entry.time_taken)}
-                                            </div>
+                                                        <div style={{ fontWeight: '800', textAlign: 'center', fontSize: '14px', color: isCurrentUser ? '#a78bfa' : 'white', wordBreak: 'break-word', lineHeight: '1.3', marginTop: 'auto' }}>
+                                            {entry.display_name || entry.username}
                                         </div>
                                     </motion.div>
                                 );
@@ -138,39 +125,69 @@ export default function Leaderboard({ slug, testName, userResult, onHome, onRevi
                         </div>
                     )}
 
-                    {/* Remaining List */}
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                        {entries.slice(3).map((entry, idx) => {
-                            const i = idx + 3;
-                            const rank = i + 1;
-                            const isCurrentUser = userResult && entry.username === userResult.username;
-                            return (
-                                <motion.div key={`${entry.username}-${i}`}
-                                    initial={{ opacity: 0, x: -12 }} animate={{ opacity: 1, x: 0 }}
-                                    transition={{ delay: Math.min(i * 0.04, 0.5) }}
-                                    style={{ display: 'flex', alignItems: 'center', gap: '18px', padding: '16px 20px', borderRadius: '16px', background: isCurrentUser ? 'rgba(139,92,246,0.1)' : 'rgba(255,255,255,0.03)', border: `1px solid ${isCurrentUser ? 'rgba(139,92,246,0.3)' : 'rgba(255,255,255,0.06)'}` }}>
-                                    {/* Rank badge */}
-                                    <div style={{ width: '36px', height: '36px', borderRadius: '50%', background: 'rgba(255,255,255,0.06)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: '900', fontSize: '14px', color: '#9ca3af', flexShrink: 0 }}>
-                                        {rank}
-                                    </div>
-                                    {/* Name */}
-                                    <div style={{ flex: 1, fontWeight: isCurrentUser ? '800' : '600', color: isCurrentUser ? '#a78bfa' : 'white' }}>
-                                        {entry.username}
-                                        {isCurrentUser && <span style={{ marginLeft: '8px', fontSize: '11px', background: 'rgba(139,92,246,0.2)', color: '#a78bfa', padding: '2px 8px', borderRadius: '10px' }}>You</span>}
-                                    </div>
-                                    {/* Score */}
-                                    <div style={{ textAlign: 'right', flexShrink: 0 }}>
-                                        <div style={{ fontWeight: '800', fontSize: '1.05rem', color: entry.percentage >= 80 ? '#10b981' : entry.percentage >= 60 ? '#f59e0b' : '#f87171' }}>
-                                            {entry.percentage}%
-                                        </div>
-                                        <div style={{ color: 'var(--text-secondary)', fontSize: '11px', display: 'flex', gap: '8px', justifyContent: 'flex-end' }}>
-                                            <span>{entry.score}/{entry.total}</span>
-                                            {entry.time_taken > 0 && <span>⏱ {formatTime(entry.time_taken)}</span>}
-                                        </div>
-                                    </div>
-                                </motion.div>
-                            );
-                        })}
+                    {/* Table Format */}
+                    <div className="glass-panel" style={{ padding: '0', overflow: 'hidden', marginTop: '40px' }}>
+                        <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+                            <thead>
+                                <tr style={{ background: 'rgba(139,92,246,0.1)', borderBottom: '2px solid rgba(139,92,246,0.3)' }}>
+                                    <th style={{ padding: '16px 20px', textAlign: 'left', fontWeight: '700', fontSize: '0.85rem', color: 'var(--text-secondary)', width: '80px' }}>Rank</th>
+                                    <th style={{ padding: '16px 20px', textAlign: 'left', fontWeight: '700', fontSize: '0.85rem', color: 'var(--text-secondary)' }}>Name</th>
+                                    <th style={{ padding: '16px 20px', textAlign: 'left', fontWeight: '700', fontSize: '0.85rem', color: 'var(--text-secondary)' }}>Enrollment No</th>
+                                    <th style={{ padding: '16px 20px', textAlign: 'center', fontWeight: '700', fontSize: '0.85rem', color: 'var(--text-secondary)', width: '120px' }}>Correct Ans</th>
+                                    <th style={{ padding: '16px 20px', textAlign: 'center', fontWeight: '700', fontSize: '0.85rem', color: 'var(--text-secondary)', width: '120px' }}>Time Taken</th>
+                                    <th style={{ padding: '16px 20px', textAlign: 'center', fontWeight: '700', fontSize: '0.85rem', color: 'var(--text-secondary)', width: '100px' }}>%</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {entries.map((entry, idx) => {
+                                    const rank = idx + 1;
+                                    const isCurrentUser = userResult && entry.username === userResult.username;
+                                    const isPodium = rank <= 3;
+                                    
+                                    return (
+                                        <motion.tr 
+                                            key={`${entry.username}-${idx}`}
+                                            initial={{ opacity: 0, x: -12 }} 
+                                            animate={{ opacity: 1, x: 0 }}
+                                            transition={{ delay: Math.min(idx * 0.02, 0.4) }}
+                                            style={{ 
+                                                background: isCurrentUser ? 'rgba(139,92,246,0.15)' : idx % 2 === 0 ? 'rgba(255,255,255,0.02)' : 'transparent',
+                                                borderLeft: isCurrentUser ? '4px solid #8b5cf6' : '4px solid transparent',
+                                                borderBottom: '1px solid rgba(255,255,255,0.05)'
+                                            }}
+                                        >
+                                            <td style={{ padding: '14px 20px', fontWeight: '700', fontSize: '0.95rem', color: isPodium ? '#f59e0b' : 'var(--text-secondary)' }}>
+                                                {isPodium ? (
+                                                    <span style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                                        <span style={{ fontSize: '1.2rem' }}>{rank === 1 ? '🥇' : rank === 2 ? '🥈' : '🥉'}</span>
+                                                        <span>{rank}</span>
+                                                    </span>
+                                                ) : rank}
+                                            </td>
+                                            <td style={{ padding: '14px 20px', fontWeight: isCurrentUser ? '700' : '600', color: isCurrentUser ? '#a78bfa' : 'white' }}>
+                                                {entry.display_name || entry.username}
+                                                {isCurrentUser && <span style={{ marginLeft: '10px', fontSize: '10px', background: 'rgba(139,92,246,0.3)', color: '#a78bfa', padding: '3px 8px', borderRadius: '10px', fontWeight: '700' }}>YOU</span>}
+                                            </td>
+                                            <td style={{ padding: '14px 20px', color: 'var(--text-secondary)', fontSize: '0.9rem' }}>
+                                                {entry.enrollment_number || '—'}
+                                            </td>
+                                            <td style={{ padding: '14px 20px', textAlign: 'center', fontWeight: '700', fontSize: '0.95rem' }}>
+                                                <span style={{ color: entry.percentage >= 80 ? '#10b981' : entry.percentage >= 60 ? '#f59e0b' : '#f87171' }}>
+                                                    {entry.score}
+                                                </span>
+                                                <span style={{ color: 'var(--text-secondary)', fontWeight: '400' }}>/{entry.total}</span>
+                                            </td>
+                                            <td style={{ padding: '14px 20px', textAlign: 'center', color: 'var(--text-secondary)', fontSize: '0.9rem', fontFamily: 'monospace' }}>
+                                                {formatTime(entry.time_taken)}
+                                            </td>
+                                            <td style={{ padding: '14px 20px', textAlign: 'center', fontWeight: '800', fontSize: '1rem', color: entry.percentage >= 80 ? '#10b981' : entry.percentage >= 60 ? '#f59e0b' : '#f87171' }}>
+                                                {entry.percentage}%
+                                            </td>
+                                        </motion.tr>
+                                    );
+                                })}
+                            </tbody>
+                        </table>
                     </div>
                 </>
             )}

@@ -140,6 +140,22 @@ def submit_attempt(request):
     if test.is_locked and not is_admin_user(request.user):
         return Response({'error': 'This test is locked.'}, status=403)
 
+    # Prevent duplicate submissions within 30 seconds
+    from datetime import timedelta
+    recent_cutoff = timezone.now() - timedelta(seconds=30)
+    recent_attempt = TestAttempt.objects.filter(
+        user=request.user,
+        test=test,
+        mode=data['mode'],
+        completed_at__gte=recent_cutoff
+    ).first()
+    
+    if recent_attempt:
+        return Response({
+            'error': 'Submission too soon. Please wait before submitting again.',
+            'attempt': TestAttemptSerializer(recent_attempt).data
+        }, status=429)
+
     attempt = TestAttempt.objects.create(
         user=request.user, 
         test=test, 
@@ -271,22 +287,41 @@ def exam_status(request, test_id):
 @api_view(['GET'])
 @permission_classes([AllowAny])
 def leaderboard(request, slug):
-    """Returns top 50 exam attempts for a test, sorted by score desc then time asc."""
+    """Returns top 50 exam attempts for a test, sorted by score desc then time asc.
+    Shows only the BEST attempt per user."""
     try:
         test = Test.objects.get(slug=slug)
     except Test.DoesNotExist:
         return Response({'error': 'Test not found'}, status=404)
 
-    # Best attempt per user (highest score, fastest time)
-    from django.db.models import Min
-    attempts = (
+    # Get best attempt per user (highest score, then fastest time)
+    from django.db.models import Max, Min
+    from django.db.models.functions import Coalesce
+    
+    # Subquery to get best score per user
+    user_best_scores = (
         TestAttempt.objects
         .filter(test=test, mode='exam')
-        .order_by('-score', 'time_taken', 'completed_at')[:50]
+        .values('user')
+        .annotate(best_score=Max('score'), min_time=Min('time_taken'))
     )
+    
+    # Get the actual best attempts
+    best_attempts = []
+    seen_users = set()
+    
+    # Get all attempts ordered by score desc, time asc
+    all_attempts = TestAttempt.objects.filter(test=test, mode='exam').order_by('-score', 'time_taken', 'completed_at')
+    
+    # Select only the best attempt per user
+    for attempt in all_attempts:
+        if attempt.user_id not in seen_users:
+            best_attempts.append(attempt)
+            seen_users.add(attempt.user_id)
+    
     return Response({
         'test_name': test.name,
-        'entries': LeaderboardEntrySerializer(attempts, many=True).data,
+        'entries': LeaderboardEntrySerializer(best_attempts, many=True).data,
     })
 
 

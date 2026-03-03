@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { CheckCircle2, XCircle, ArrowRight, ArrowLeft, Info, HelpCircle } from 'lucide-react';
 
-export default function Quiz({ testData, mode, onFinish, onQuit, user }) {
+export default function Quiz({ testData, mode, onFinish, onQuit, user, submitting = false }) {
     const isPractice = mode === 'practice';
     const questions = testData?.questions || [];
     const totalQ = questions.length;
@@ -224,8 +224,8 @@ export default function Quiz({ testData, mode, onFinish, onQuit, user }) {
                         <ArrowLeft size={16} /> Previous
                     </button>
 
-                    <button className="primary-btn" onClick={() => currentIndex === totalQ - 1 ? finishTest() : navigate(1)}>
-                        {currentIndex === totalQ - 1 ? 'Finish Test' : 'Next'} <ArrowRight size={16} />
+                    <button className="primary-btn" onClick={() => currentIndex === totalQ - 1 ? finishTest() : navigate(1)} disabled={submitting && currentIndex === totalQ - 1}>
+                        {currentIndex === totalQ - 1 ? (submitting ? 'Submitting...' : 'Finish Test') : 'Next'} <ArrowRight size={16} />
                     </button>
                 </div>
 

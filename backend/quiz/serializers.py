@@ -121,11 +121,16 @@ class TestAttemptSerializer(serializers.ModelSerializer):
 
 class LeaderboardEntrySerializer(serializers.ModelSerializer):
     username = serializers.CharField(source='user.username', read_only=True)
+    display_name = serializers.SerializerMethodField()
     percentage = serializers.FloatField(read_only=True)
 
     class Meta:
         model = TestAttempt
-        fields = ['username', 'score', 'total', 'percentage', 'time_taken', 'completed_at']
+        fields = ['username', 'display_name', 'candidate_name', 'enrollment_number', 'score', 'total', 'percentage', 'time_taken', 'completed_at']
+    
+    def get_display_name(self, obj):
+        """Return candidate_name if available, otherwise username"""
+        return obj.candidate_name if obj.candidate_name else obj.user.username
 
 
 # ── Admin ──────────────────────────────────────────────────────────────────────

@@ -16,6 +16,7 @@ export default function App() {
   const [candidateDetails, setCandidateDetails] = useState(null);
   const [quizResults, setQuizResults] = useState(null);
   const [user, setUser] = useState(null);
+  const [submitting, setSubmitting] = useState(false);
 
   useEffect(() => {
     const { access } = getTokens();
@@ -52,6 +53,9 @@ export default function App() {
   };
 
   const handleFinishTest = async (results) => {
+    if (submitting) return; // Prevent duplicate submissions
+    setSubmitting(true);
+    
     setQuizResults({ ...results, username: user?.username });
 
     // Build payload for backend
@@ -62,7 +66,7 @@ export default function App() {
 
     try {
       const token = localStorage.getItem('csa_access');
-      await fetch(`${import.meta.env.VITE_API_BASE_URL || 'http://127.0.0.1:8000/api'}/attempts/submit/`, {
+      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL || 'http://127.0.0.1:8000/api'}/attempts/submit/`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -76,8 +80,17 @@ export default function App() {
           ...(candidateDetails || {})
         })
       });
+      
+      if (response.status === 429) {
+        // Too many requests - duplicate submission
+        console.warn('Duplicate submission prevented by server');
+        setSubmitting(false);
+        return;
+      }
     } catch (e) {
       console.error('Failed to submit attempt:', e);
+      setSubmitting(false);
+      return;
     }
 
     if (isExamTest) {
@@ -85,6 +98,7 @@ export default function App() {
     } else {
       setView('results');
     }
+    setSubmitting(false);
   };
 
   const goHome = () => {
@@ -141,10 +155,10 @@ export default function App() {
       {view === 'quiz' && activeTest && (
         isExamTest ? (
           <ExamProctor testId={activeTest.id} slug={activeTest.slug} testName={activeTest.name} onBanned={goHome} onQuit={goHome}>
-            <Quiz testData={activeTest} mode="exam" user={user} isExamMode onFinish={handleFinishTest} onQuit={goHome} />
+            <Quiz testData={activeTest} mode="exam" user={user} isExamMode submitting={submitting} onFinish={handleFinishTest} onQuit={goHome} />
           </ExamProctor>
         ) : (
-          <Quiz testData={activeTest} mode={testMode} user={user} onFinish={handleFinishTest} onQuit={goHome} />
+          <Quiz testData={activeTest} mode={testMode} user={user} submitting={submitting} onFinish={handleFinishTest} onQuit={goHome} />
         )
       )}
 
