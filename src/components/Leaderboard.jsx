@@ -38,7 +38,9 @@ export default function Leaderboard({ slug, testName, userResult, onHome, onRevi
     }, [slug]);
 
     const entries = data?.entries || [];
-    const userRank = userResult ? entries.findIndex(e => e.username === userResult.username) + 1 : null;
+    // Find user's actual result from leaderboard entries (backend data)
+    const userEntry = userResult ? entries.find(e => e.username === userResult.username) : null;
+    const userRank = userEntry ? entries.findIndex(e => e.username === userResult.username) + 1 : null;
 
     return (
         <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '40px 24px' }}>
@@ -53,21 +55,21 @@ export default function Leaderboard({ slug, testName, userResult, onHome, onRevi
             </motion.div>
 
             {/* User's own result callout */}
-            {userResult && (
+            {userEntry && (
                 <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }}
                     className="glass-panel" style={{ padding: '20px 24px', marginBottom: '28px', borderLeft: '4px solid #8b5cf6', display: 'flex', gap: '20px', alignItems: 'center', flexWrap: 'wrap' }}>
                     <div style={{ fontSize: '2rem' }}>{userRank === 1 ? '🥇' : userRank === 2 ? '🥈' : userRank === 3 ? '🥉' : '🎯'}</div>
                     <div style={{ flex: 1 }}>
                         <div style={{ fontWeight: '800', fontSize: '1.05rem', marginBottom: '4px' }}>Your Result</div>
                         <div style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
-                            <span>🎯 {userResult.score || 0}/{userResult.total || 0}</span>
-                            <span>📊 {userResult.percentage || 0}%</span>
-                            <span>⏱ {formatTime(userResult.time_taken)}</span>
+                            <span>🎯 {userEntry.score || 0}/{userEntry.total || 0}</span>
+                            <span>📊 {userEntry.percentage || 0}%</span>
+                            <span>⏱ {formatTime(userEntry.time_taken)}</span>
                             {userRank ? <span style={{ color: '#a78bfa', fontWeight: 'bold' }}>Rank #{userRank}</span> : null}
                         </div>
                     </div>
-                    <div style={{ fontSize: '2.4rem', fontWeight: '900', color: (userResult.percentage || 0) >= 70 ? '#10b981' : '#f59e0b' }}>
-                        {userResult.percentage || 0}%
+                    <div style={{ fontSize: '2.4rem', fontWeight: '900', color: (userEntry.percentage || 0) >= 70 ? '#10b981' : '#f59e0b' }}>
+                        {userEntry.percentage || 0}%
                     </div>
                 </motion.div>
             )}
@@ -88,19 +90,19 @@ export default function Leaderboard({ slug, testName, userResult, onHome, onRevi
                     {/* Top 3 Podium */}
                     {entries.length > 0 && (
                         <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'flex-end', gap: '16px', marginBottom: '40px', marginTop: '30px', flexWrap: 'wrap' }}>
-                            {[1, 0, 2].map(posIndex => {
+                            {[1, 0, 2].map((posIndex, idx) => {
                                 const entry = entries[posIndex];
                                 if (!entry) return null;
                                 const rank = posIndex + 1;
                                 const style = RANK_STYLES[posIndex];
                                 const isCurrentUser = userResult && entry.username === userResult.username;
-                                const heights = ['220px', '260px', '200px']; // rank 2, 1, 3 heights
+                                const heights = ['220px', '260px', '200px']; // 2nd, 1st, 3rd (in display order left to right)
 
                                 return (
-                                    <motion.div key={`podium-${entry.username}`} initial={{ opacity: 0, y: 40 }} animate={{ opacity: 1, y: 0 }} transition={{ type: 'spring', damping: 15, delay: posIndex * 0.1 }}
+                                    <motion.div key={`podium-${entry.username}`} initial={{ opacity: 0, y: 40 }} animate={{ opacity: 1, y: 0 }} transition={{ type: 'spring', damping: 15, delay: idx * 0.1 }}
                                         style={{
                                             width: '140px',
-                                            height: heights[posIndex],
+                                            height: heights[idx],
                                             background: isCurrentUser ? `linear-gradient(to top, rgba(139,92,246,0.3), rgba(139,92,246,0.05))` : `linear-gradient(to top, ${style.color}20, rgba(255,255,255,0.02))`,
                                             borderRadius: '20px 20px 0 0',
                                             borderTop: `4px solid ${style.color}`,
