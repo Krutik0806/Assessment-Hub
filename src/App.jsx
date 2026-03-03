@@ -173,6 +173,25 @@ export default function App() {
           onReview={() => setView('results')}
         />
       )}
+
+      {/* Watermark Footer */}
+      {view !== 'quiz' && (
+        <div style={{ 
+          position: 'fixed', 
+          bottom: '16px', 
+          right: '20px', 
+          fontSize: '11px', 
+          color: 'rgba(255,255,255,0.3)', 
+          fontWeight: '500',
+          zIndex: 50,
+          display: 'flex',
+          alignItems: 'center',
+          gap: '6px'
+        }}>
+          <span>Made with ❤️ by</span>
+          <span style={{ fontWeight: '700', color: 'rgba(139,92,246,0.6)' }}>Krutik Chamtha</span>
+        </div>
+      )}
     </>
   );
 }

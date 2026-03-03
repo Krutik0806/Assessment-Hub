@@ -57,6 +57,7 @@ export default function AdminPage({ user, onBack }) {
     const togActive = (id) => act(`act-${id}`, `/admin-panel/tests/${id}/active/`);
     const togExam = (id) => act(`exam-${id}`, `/admin-panel/tests/${id}/exam/`);
     const togAutoBan = (id) => act(`autoban-${id}`, `/admin-panel/tests/${id}/auto-ban/`);
+    const togEndTest = (id) => act(`endtest-${id}`, `/admin-panel/tests/${id}/end/`);
 
     const exportTest = async (id, name) => {
         setBusy(`exp-${id}`);
@@ -373,6 +374,9 @@ export default function AdminPage({ user, onBack }) {
                                                 <>
                                                     <Btn onClick={() => togAutoBan(t.id)} disabled={busy === `autoban-${t.id}`} color={t.enable_auto_ban ? '#fbbf24' : '#9ca3af'} bg={t.enable_auto_ban ? 'rgba(251,191,36,0.1)' : 'rgba(156,163,175,0.1)'}>
                                                         <ShieldCheck size={12} /> {t.enable_auto_ban ? 'Auto-Ban ON' : 'Auto-Ban OFF'}
+                                                    </Btn>
+                                                    <Btn onClick={() => togEndTest(t.id)} disabled={busy === `endtest-${t.id}`} color={t.is_ended ? '#ef4444' : '#10b981'} bg={t.is_ended ? 'rgba(239,68,68,0.1)' : 'rgba(16,185,129,0.1)'}>
+                                                        <ShieldCheck size={12} /> {t.is_ended ? 'Test Ended ✓' : 'End Test'}
                                                     </Btn>
                                                     <Btn onClick={() => exportTest(t.id, t.name)} disabled={busy === `exp-${t.id}`} color="#10b981" bg="rgba(16,185,129,0.1)">
                                                         <Download size={12} /> Export CSV

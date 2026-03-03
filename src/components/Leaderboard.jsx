@@ -141,9 +141,55 @@ export default function Leaderboard({ slug, testName, userResult, onHome, onRevi
                                 </tr>
                             </thead>
                             <tbody>
+                                {/* Show user's result first if they participated */}
+                                {userEntry && (
+                                    <>
+                                        <motion.tr 
+                                            initial={{ opacity: 0, x: -12 }} 
+                                            animate={{ opacity: 1, x: 0 }}
+                                            style={{ 
+                                                background: 'rgba(139,92,246,0.2)',
+                                                borderLeft: '4px solid #8b5cf6',
+                                                borderBottom: '1px solid rgba(139,92,246,0.4)'
+                                            }}
+                                        >
+                                            <td style={{ padding: '16px 20px', fontWeight: '800', fontSize: '0.95rem', color: '#a78bfa' }}>
+                                                {userRank <= 3 ? (
+                                                    <span style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                                        <span style={{ fontSize: '1.2rem' }}>{userRank === 1 ? '🥇' : userRank === 2 ? '🥈' : '🥉'}</span>
+                                                        <span>{userRank}</span>
+                                                    </span>
+                                                ) : userRank}
+                                            </td>
+                                            <td style={{ padding: '16px 20px', fontWeight: '800', color: '#a78bfa' }}>
+                                                {userEntry.display_name || userEntry.username}
+                                                <span style={{ marginLeft: '10px', fontSize: '10px', background: 'rgba(139,92,246,0.4)', color: 'white', padding: '3px 8px', borderRadius: '10px', fontWeight: '700' }}>YOUR RESULT</span>
+                                            </td>
+                                            <td style={{ padding: '16px 20px', color: '#a78bfa', fontSize: '0.9rem' }}>
+                                                {userEntry.enrollment_number || '—'}
+                                            </td>
+                                            <td style={{ padding: '16px 20px', textAlign: 'center', fontWeight: '800', fontSize: '1rem' }}>
+                                                <span style={{ color: userEntry.percentage >= 80 ? '#10b981' : userEntry.percentage >= 60 ? '#f59e0b' : '#f87171' }}>
+                                                    {userEntry.score}
+                                                </span>
+                                                <span style={{ color: '#a78bfa', fontWeight: '400' }}>/{userEntry.total}</span>
+                                            </td>
+                                            <td style={{ padding: '16px 20px', textAlign: 'center', color: '#a78bfa', fontSize: '0.9rem', fontFamily: 'monospace', fontWeight: '600' }}>
+                                                {formatTime(userEntry.time_taken)}
+                                            </td>
+                                            <td style={{ padding: '16px 20px', textAlign: 'center', fontWeight: '900', fontSize: '1.1rem', color: userEntry.percentage >= 80 ? '#10b981' : userEntry.percentage >= 60 ? '#f59e0b' : '#f87171' }}>
+                                                {userEntry.percentage}%
+                                            </td>
+                                        </motion.tr>
+                                        {/* Spacing row */}
+                                        <tr style={{ height: '2px', background: 'rgba(139,92,246,0.2)' }}></tr>
+                                    </>
+                                )}
+                                
+                                {/* All rankings */}
                                 {entries.map((entry, idx) => {
                                     const rank = idx + 1;
-                                    const isCurrentUser = userResult && entry.username === userResult.username;
+                                    const isCurrentUser = userEntry && entry.username === userEntry.username;
                                     const isPodium = rank <= 3;
                                     
                                     return (
@@ -153,8 +199,8 @@ export default function Leaderboard({ slug, testName, userResult, onHome, onRevi
                                             animate={{ opacity: 1, x: 0 }}
                                             transition={{ delay: Math.min(idx * 0.02, 0.4) }}
                                             style={{ 
-                                                background: isCurrentUser ? 'rgba(139,92,246,0.15)' : idx % 2 === 0 ? 'rgba(255,255,255,0.02)' : 'transparent',
-                                                borderLeft: isCurrentUser ? '4px solid #8b5cf6' : '4px solid transparent',
+                                                background: isCurrentUser ? 'rgba(139,92,246,0.08)' : idx % 2 === 0 ? 'rgba(255,255,255,0.02)' : 'transparent',
+                                                borderLeft: '4px solid transparent',
                                                 borderBottom: '1px solid rgba(255,255,255,0.05)'
                                             }}
                                         >
@@ -168,7 +214,6 @@ export default function Leaderboard({ slug, testName, userResult, onHome, onRevi
                                             </td>
                                             <td style={{ padding: '14px 20px', fontWeight: isCurrentUser ? '700' : '600', color: isCurrentUser ? '#a78bfa' : 'white' }}>
                                                 {entry.display_name || entry.username}
-                                                {isCurrentUser && <span style={{ marginLeft: '10px', fontSize: '10px', background: 'rgba(139,92,246,0.3)', color: '#a78bfa', padding: '3px 8px', borderRadius: '10px', fontWeight: '700' }}>YOU</span>}
                                             </td>
                                             <td style={{ padding: '14px 20px', color: 'var(--text-secondary)', fontSize: '0.9rem' }}>
                                                 {entry.enrollment_number || '—'}
@@ -200,7 +245,7 @@ export default function Leaderboard({ slug, testName, userResult, onHome, onRevi
                     className="ghost-btn" style={{ padding: '14px 40px', fontSize: '15px' }}>
                     <ArrowLeft size={16} /> Back to Hub
                 </motion.button>
-                {userResult && (
+                {userEntry && data?.is_ended && (
                     <motion.button whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.96 }} onClick={onReview}
                         className="primary-btn" style={{ padding: '14px 40px', fontSize: '15px' }}>
                         <Target size={16} /> Review Answers
