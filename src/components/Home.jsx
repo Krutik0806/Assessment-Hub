@@ -11,7 +11,7 @@ const testColors = [
     { accent: '#f59e0b', bg: 'rgba(245,158,11,0.10)' },
 ];
 
-export default function Home({ onStartTest, onViewLeaderboard, user }) {
+export default function Home({ onStartTest, onViewLeaderboard, onReviewTest, user }) {
     const [packages, setPackages] = useState([]);
     const [examTests, setExamTests] = useState([]);
     const [openPkg, setOpenPkg] = useState({}); // { [pkg_id]: bool }
@@ -217,9 +217,16 @@ export default function Home({ onStartTest, onViewLeaderboard, user }) {
                                                 : (
                                                     <div style={{ padding: '24px' }}>
                                                         {test.has_attempted ? (
-                                                            <button className="ghost-btn" onClick={() => onViewLeaderboard(test)} style={{ width: '100%', padding: '14px', fontSize: '1rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', color: '#818cf8', fontWeight: '700' }}>
-                                                                <Trophy size={18} /> View Leaderboard
-                                                            </button>
+                                                            <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                                                                <button className="ghost-btn" onClick={() => onViewLeaderboard(test)} style={{ width: '100%', padding: '14px', fontSize: '1rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', color: '#818cf8', fontWeight: '700' }}>
+                                                                    <Trophy size={18} /> View Leaderboard
+                                                                </button>
+                                                                {test.is_ended && (
+                                                                    <button className="primary-btn" onClick={() => onReviewTest(test)} style={{ width: '100%', padding: '14px', fontSize: '1rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
+                                                                        <Trophy size={18} /> Review Answers
+                                                                    </button>
+                                                                )}
+                                                            </div>
                                                         ) : (
                                                             <button className={isEarly ? "ghost-btn" : "primary-btn"} onClick={() => initiateExam(test)} disabled={loadingQ || isEarly} style={{ width: '100%', padding: '14px', fontSize: '1rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', background: isEarly ? 'rgba(255,255,255,0.05)' : 'linear-gradient(135deg, #ef4444, #b91c1c)', cursor: isEarly ? 'not-allowed' : 'pointer', opacity: isEarly ? 0.7 : 1 }}>
                                                                 {isEarly ? <><Clock size={18} /> Starts at {startTime.toLocaleTimeString([], { timeStyle: 'short' })}</> : <><Shield size={18} /> Start Proctored Exam</>}

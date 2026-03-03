@@ -54,10 +54,12 @@ export default function Leaderboard({ slug, testName, userResult, onHome, onRevi
                 entriesCount: entries.length,
                 userResultUsername: userResult?.username,
                 userUsername: user?.username,
-                firstEntry: entries[0]?.username
+                userProp: user,
+                firstEntry: entries[0]?.username,
+                allUsernames: entries.map(e => e.username)
             });
         }
-    }, [data, userEntry, username]);
+    }, [data, userEntry, username, user, userResult]);
     
     // Debug logging
     useEffect(() => {

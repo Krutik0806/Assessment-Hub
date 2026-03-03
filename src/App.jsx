@@ -22,7 +22,11 @@ export default function App() {
     const { access } = getTokens();
     if (access) {
       authApi.me()
-        .then(u => { setUser(u); setView('home'); })
+        .then(u => { 
+          console.log('App.jsx: User loaded from authApi.me():', u); 
+          setUser(u); 
+          setView('home'); 
+        })
         .catch(() => { clearTokens(); setView('auth'); });
     } else {
       setView('auth');
@@ -148,7 +152,12 @@ export default function App() {
       ) : null}
 
       {view === 'auth' && <AuthPage onAuthSuccess={(u) => { setUser(u); setView('home'); }} />}
-      {view === 'home' && <Home onStartTest={handleStartTest} onViewLeaderboard={(test) => { setActiveTest(test); setView('leaderboard'); }} user={user} />}
+      {view === 'home' && <Home 
+        onStartTest={handleStartTest} 
+        onViewLeaderboard={(test) => { setActiveTest(test); setView('leaderboard'); }} 
+        onReviewTest={(test) => { setActiveTest(test); setView('results'); }}
+        user={user} 
+      />}
       {view === 'admin' && <AdminPage user={user} onBack={goHome} />}
 
       {/* Quiz — possibly wrapped in ExamProctor */}
@@ -164,15 +173,19 @@ export default function App() {
 
       {/* After exam → Leaderboard; after practice → Results */}
       {view === 'results' && quizResults && <Results results={quizResults} user={user} onHome={goHome} />}
-      {view === 'leaderboard' && activeTest && (
-        <Leaderboard
-          slug={activeTest.slug}
-          testName={activeTest.name}
-          userResult={quizResults}
-          onHome={goHome}
-          onReview={() => setView('results')}
-        />
-      )}
+      {view === 'leaderboard' && activeTest && (() => {
+        console.log('App.jsx: Rendering Leaderboard with user:', user);
+        return (
+          <Leaderboard
+            slug={activeTest.slug}
+            testName={activeTest.name}
+            userResult={quizResults}
+            user={user}
+            onHome={goHome}
+            onReview={() => setView('results')}
+          />
+        );
+      })()}
 
       {/* Watermark Footer */}
       {view !== 'quiz' && (
