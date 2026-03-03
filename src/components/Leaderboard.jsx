@@ -17,7 +17,7 @@ function formatTime(seconds) {
     return m > 0 ? `${m}m ${s}s` : `${s}s`;
 }
 
-export default function Leaderboard({ slug, testName, userResult, onHome, onReview, user }) {
+export default function Leaderboard({ slug, testName, userResult, onHome, onReview, loadingReview, user }) {
     const [data, setData] = useState(null);
     const [loading, setLoading] = useState(true);
     const intervalRef = useRef(null);
@@ -278,9 +278,23 @@ export default function Leaderboard({ slug, testName, userResult, onHome, onRevi
                     <ArrowLeft size={16} /> Back to Hub
                 </motion.button>
                 {userEntry && data?.is_ended && (
-                    <motion.button whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.96 }} onClick={onReview}
-                        className="primary-btn" style={{ padding: '14px 40px', fontSize: '15px' }}>
-                        <Target size={16} /> Review Answers
+                    <motion.button 
+                        whileHover={!loadingReview ? { scale: 1.04 } : {}} 
+                        whileTap={!loadingReview ? { scale: 0.96 } : {}} 
+                        onClick={onReview}
+                        disabled={loadingReview}
+                        className="primary-btn" 
+                        style={{ padding: '14px 40px', fontSize: '15px', opacity: loadingReview ? 0.6 : 1, cursor: loadingReview ? 'not-allowed' : 'pointer' }}>
+                        {loadingReview ? (
+                            <>
+                                <div style={{ width: '16px', height: '16px', border: '2px solid rgba(255,255,255,0.3)', borderTop: '2px solid white', borderRadius: '50%', animation: 'spin 0.6s linear infinite', display: 'inline-block' }} />
+                                {' '}Loading...
+                            </>
+                        ) : (
+                            <>
+                                <Target size={16} /> Review Answers
+                            </>
+                        )}
                     </motion.button>
                 )}
             </div>

@@ -17,6 +17,7 @@ export default function App() {
   const [quizResults, setQuizResults] = useState(null);
   const [user, setUser] = useState(null);
   const [submitting, setSubmitting] = useState(false);
+  const [loadingReview, setLoadingReview] = useState(false);
 
   useEffect(() => {
     const { access } = getTokens();
@@ -155,7 +156,9 @@ export default function App() {
       {view === 'home' && <Home 
         onStartTest={handleStartTest} 
         onViewLeaderboard={(test) => { setActiveTest(test); setView('leaderboard'); }} 
-        onReviewTest={async (test) => { 
+        onReviewTest={async (test) => {
+          if (loadingReview) return;
+          setLoadingReview(true);
           // Fetch user's latest exam attempt for this test
           const token = localStorage.getItem('csa_access');
           try {
@@ -168,6 +171,7 @@ export default function App() {
             
             if (!testAttempt || !testAttempt.user_answers) {
               alert('No exam attempt found for review.');
+              setLoadingReview(false);
               return;
             }
 
@@ -203,8 +207,11 @@ export default function App() {
           } catch (error) {
             console.error('Error loading review data:', error);
             alert('Failed to load review data.');
+          } finally {
+            setLoadingReview(false);
           }
         }}
+        loadingReview={loadingReview}
         user={user} 
       />}
       {view === 'admin' && <AdminPage user={user} onBack={goHome} />}
@@ -232,12 +239,14 @@ export default function App() {
             user={user}
             onHome={goHome}
             onReview={async () => {
+              if (loadingReview) return;
               // If quizResults already exists, just show them
               if (quizResults) {
                 setView('results');
                 return;
               }
               
+              setLoadingReview(true);
               // Otherwise fetch the user's latest exam attempt
               const token = localStorage.getItem('csa_access');
               try {
@@ -249,6 +258,7 @@ export default function App() {
                 
                 if (!testAttempt || !testAttempt.user_answers) {
                   alert('No exam attempt found for review.');
+                  setLoadingReview(false);
                   return;
                 }
 
@@ -283,8 +293,11 @@ export default function App() {
               } catch (error) {
                 console.error('Error loading review data:', error);
                 alert('Failed to load review data.');
+              } finally {
+                setLoadingReview(false);
               }
             }}
+            loadingReview={loadingReview}
           />
         );
       })()}

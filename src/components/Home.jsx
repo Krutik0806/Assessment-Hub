@@ -11,7 +11,7 @@ const testColors = [
     { accent: '#f59e0b', bg: 'rgba(245,158,11,0.10)' },
 ];
 
-export default function Home({ onStartTest, onViewLeaderboard, onReviewTest, user }) {
+export default function Home({ onStartTest, onViewLeaderboard, onReviewTest, loadingReview, user }) {
     const [packages, setPackages] = useState([]);
     const [examTests, setExamTests] = useState([]);
     const [openPkg, setOpenPkg] = useState({}); // { [pkg_id]: bool }
@@ -222,8 +222,31 @@ export default function Home({ onStartTest, onViewLeaderboard, onReviewTest, use
                                                                     <Trophy size={18} /> View Leaderboard
                                                                 </button>
                                                                 {test.is_ended && (
-                                                                    <button className="primary-btn" onClick={() => onReviewTest(test)} style={{ width: '100%', padding: '14px', fontSize: '1rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
-                                                                        <Trophy size={18} /> Review Answers
+                                                                    <button 
+                                                                        className="primary-btn" 
+                                                                        onClick={() => onReviewTest(test)} 
+                                                                        disabled={loadingReview} 
+                                                                        style={{ 
+                                                                            width: '100%', 
+                                                                            padding: '14px', 
+                                                                            fontSize: '1rem', 
+                                                                            display: 'flex', 
+                                                                            alignItems: 'center', 
+                                                                            justifyContent: 'center', 
+                                                                            gap: '8px', 
+                                                                            opacity: loadingReview ? 0.6 : 1, 
+                                                                            cursor: loadingReview ? 'not-allowed' : 'pointer' 
+                                                                        }}>
+                                                                        {loadingReview ? (
+                                                                            <>
+                                                                                <div style={{ width: '16px', height: '16px', border: '2px solid rgba(255,255,255,0.3)', borderTop: '2px solid white', borderRadius: '50%', animation: 'spin 0.6s linear infinite' }} />
+                                                                                Loading...
+                                                                            </>
+                                                                        ) : (
+                                                                            <>
+                                                                                <Trophy size={18} /> Review Answers
+                                                                            </>
+                                                                        )}
                                                                     </button>
                                                                 )}
                                                             </div>
