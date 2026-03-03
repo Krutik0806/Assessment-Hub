@@ -321,6 +321,7 @@ def leaderboard(request, slug):
     
     return Response({
         'test_name': test.name,
+        'is_ended': test.is_ended,
         'entries': LeaderboardEntrySerializer(best_attempts, many=True).data,
     })
 
@@ -422,6 +423,26 @@ def admin_toggle_auto_ban(request, test_id):
 
 @api_view(['PATCH'])
 @permission_classes([IsAuthenticated])
+def admin_end_test(request, test_id):
+    """Toggle test ended status. When ended, review answers become available."""
+    if not is_admin_user(request.user):
+        return Response({'error': 'Admin access required.'}, status=403)
+    try:
+        test = Test.objects.get(id=test_id)
+    except Test.DoesNotExist:
+        return Response({'error': 'Not found'}, status=404)
+    test.is_ended = not test.is_ended
+    test.save()
+    return Response({
+        'id': test.id, 
+        'name': test.name, 
+        'is_ended': test.is_ended,
+        'message': f"Test {'ended' if test.is_ended else 'reopened'} - Review answers {'available' if test.is_ended else 'locked'}"
+    })
+
+
+@api_view(['PATCH'])
+@permission_classes([IsAuthenticated])
 def admin_update_test_timing(request, test_id):
     """Update duration and scheduled start time for a test."""
     if not is_admin_user(request.user):
@@ -501,19 +522,22 @@ def admin_export_test_results(request, test_id):
         violation_count = violation.warnings if violation else 0
         is_banned = 'Yes' if (violation and violation.is_banned) else 'No'
         
+        # Format enrollment number with leading quote to prevent Excel scientific notation
+        enrollment_display = f"'{attempt.enrollment_number}" if attempt.enrollment_number else ''
+        
         writer.writerow([
             attempt.user.username,
             attempt.candidate_name or '',
-            attempt.enrollment_number or '',
+            enrollment_display,
             attempt.roll_no or '',
             attempt.candidate_email or '',
             attempt.score,
             attempt.total,
-            f"{attempt.percentage:.1f}%",
+            f"{attempt.percentage:.2f}%",
             attempt.time_taken,
             violation_count,
             is_banned,
-            attempt.completed_at.strftime('%Y-%m-%d %H:%M:%S')
+            attempt.completed_at.strftime('%d-%m-%Y %H:%M')
         ])
 
     return response

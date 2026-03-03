@@ -44,7 +44,7 @@ class TestSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Test
-        fields = ['id', 'name', 'slug', 'total', 'is_locked', 'is_active', 'order', 'is_exam_test', 'enable_auto_ban', 'duration_minutes', 'scheduled_start_time', 'has_attempted']
+        fields = ['id', 'name', 'slug', 'total', 'is_locked', 'is_active', 'order', 'is_exam_test', 'enable_auto_ban', 'is_ended', 'duration_minutes', 'scheduled_start_time', 'has_attempted']
 
     def get_has_attempted(self, obj):
         request = self.context.get('request')
@@ -141,7 +141,7 @@ class TestAdminSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Test
-        fields = ['id', 'name', 'slug', 'total', 'is_locked', 'is_active', 'order', 'is_exam_test', 'duration_minutes', 'scheduled_start_time', 'attempt_count']
+        fields = ['id', 'name', 'slug', 'total', 'is_locked', 'is_active', 'order', 'is_exam_test', 'is_ended', 'enable_auto_ban', 'duration_minutes', 'scheduled_start_time', 'attempt_count']
 
     def get_attempt_count(self, obj):
         return obj.attempts.count()

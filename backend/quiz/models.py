@@ -24,6 +24,7 @@ class Test(models.Model):
     
     # Proctoring settings
     enable_auto_ban = models.BooleanField(default=True, help_text="Auto-ban users after 3 violations. If disabled, only warnings are given.")
+    is_ended = models.BooleanField(default=False, help_text="Admin marks test as ended. Review answers become available.")
     
     # Timing and Scheduling configurations
     duration_minutes = models.PositiveIntegerField(default=60)
