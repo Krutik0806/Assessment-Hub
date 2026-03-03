@@ -155,7 +155,56 @@ export default function App() {
       {view === 'home' && <Home 
         onStartTest={handleStartTest} 
         onViewLeaderboard={(test) => { setActiveTest(test); setView('leaderboard'); }} 
-        onReviewTest={(test) => { setActiveTest(test); setView('results'); }}
+        onReviewTest={async (test) => { 
+          // Fetch user's latest exam attempt for this test
+          const token = localStorage.getItem('csa_access');
+          try {
+            const res = await fetch(`${import.meta.env.VITE_API_BASE_URL || 'http://127.0.0.1:8000/api'}/attempts/`, {
+              headers: token ? { Authorization: `Bearer ${token}` } : {},
+            });
+            const attempts = await res.json();
+            // Find most recent exam attempt for this test
+            const testAttempt = attempts.find(a => a.test_slug === test.slug && a.mode === 'exam');
+            
+            if (!testAttempt || !testAttempt.user_answers) {
+              alert('No exam attempt found for review.');
+              return;
+            }
+
+            // Fetch test questions to build testData
+            const qRes = await fetch(`${import.meta.env.VITE_API_BASE_URL || 'http://127.0.0.1:8000/api'}/tests/${test.slug}/questions/`, {
+              headers: token ? { Authorization: `Bearer ${token}` } : {},
+            });
+            const questions = await qRes.json();
+
+            // Transform attempt data to Results format
+            const userAnswers = testAttempt.user_answers.map(ua => ua.selected);
+            let correct = 0, wrong = 0, skipped = 0;
+            testAttempt.user_answers.forEach(ua => {
+              if (ua.selected.length === 0) skipped++;
+              else if (ua.is_correct) correct++;
+              else wrong++;
+            });
+
+            const resultsData = {
+              correct,
+              wrong,
+              skipped,
+              total: testAttempt.total,
+              userAnswers,
+              testData: { id: test.id, slug: test.slug, name: test.name, questions },
+              isPractice: false,
+              username: user?.username
+            };
+
+            setActiveTest(test);
+            setQuizResults(resultsData);
+            setView('results');
+          } catch (error) {
+            console.error('Error loading review data:', error);
+            alert('Failed to load review data.');
+          }
+        }}
         user={user} 
       />}
       {view === 'admin' && <AdminPage user={user} onBack={goHome} />}
@@ -182,7 +231,60 @@ export default function App() {
             userResult={quizResults}
             user={user}
             onHome={goHome}
-            onReview={() => setView('results')}
+            onReview={async () => {
+              // If quizResults already exists, just show them
+              if (quizResults) {
+                setView('results');
+                return;
+              }
+              
+              // Otherwise fetch the user's latest exam attempt
+              const token = localStorage.getItem('csa_access');
+              try {
+                const res = await fetch(`${import.meta.env.VITE_API_BASE_URL || 'http://127.0.0.1:8000/api'}/attempts/`, {
+                  headers: token ? { Authorization: `Bearer ${token}` } : {},
+                });
+                const attempts = await res.json();
+                const testAttempt = attempts.find(a => a.test_slug === activeTest.slug && a.mode === 'exam');
+                
+                if (!testAttempt || !testAttempt.user_answers) {
+                  alert('No exam attempt found for review.');
+                  return;
+                }
+
+                // Fetch test questions
+                const qRes = await fetch(`${import.meta.env.VITE_API_BASE_URL || 'http://127.0.0.1:8000/api'}/tests/${activeTest.slug}/questions/`, {
+                  headers: token ? { Authorization: `Bearer ${token}` } : {},
+                });
+                const questions = await qRes.json();
+
+                // Transform to Results format
+                const userAnswers = testAttempt.user_answers.map(ua => ua.selected);
+                let correct = 0, wrong = 0, skipped = 0;
+                testAttempt.user_answers.forEach(ua => {
+                  if (ua.selected.length === 0) skipped++;
+                  else if (ua.is_correct) correct++;
+                  else wrong++;
+                });
+
+                const resultsData = {
+                  correct,
+                  wrong,
+                  skipped,
+                  total: testAttempt.total,
+                  userAnswers,
+                  testData: { id: activeTest.id, slug: activeTest.slug, name: activeTest.name, questions },
+                  isPractice: false,
+                  username: user?.username
+                };
+
+                setQuizResults(resultsData);
+                setView('results');
+              } catch (error) {
+                console.error('Error loading review data:', error);
+                alert('Failed to load review data.');
+              }
+            }}
           />
         );
       })()}
