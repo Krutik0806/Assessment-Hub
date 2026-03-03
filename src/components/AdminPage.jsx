@@ -49,7 +49,19 @@ export default function AdminPage({ user, onBack }) {
     const act = async (key, path) => {
         setBusy(key);
         const r = await apiFetch(path, { method: 'PATCH' });
-        setDash(p => p ? ({ ...p, tests: p.tests.map(t => t.id === r.id ? { ...t, ...r } : t) }) : p);
+        console.log('AdminPage act response:', r);
+        setDash(p => {
+            if (!p) return p;
+            const updatedTests = p.tests.map(t => {
+                if (t.id === r.id) {
+                    const updated = { ...t, ...r };
+                    console.log('Test state updated:', { old: t, new: updated });
+                    return updated;
+                }
+                return t;
+            });
+            return { ...p, tests: updatedTests };
+        });
         setBusy(null);
     };
 
@@ -57,7 +69,10 @@ export default function AdminPage({ user, onBack }) {
     const togActive = (id) => act(`act-${id}`, `/admin-panel/tests/${id}/active/`);
     const togExam = (id) => act(`exam-${id}`, `/admin-panel/tests/${id}/exam/`);
     const togAutoBan = (id) => act(`autoban-${id}`, `/admin-panel/tests/${id}/auto-ban/`);
-    const togEndTest = (id) => act(`endtest-${id}`, `/admin-panel/tests/${id}/end/`);
+    const togEndTest = (id) => {
+        console.log('End Test clicked for test ID:', id);
+        return act(`endtest-${id}`, `/admin-panel/tests/${id}/end/`);
+    };
 
     const exportTest = async (id, name) => {
         setBusy(`exp-${id}`);
