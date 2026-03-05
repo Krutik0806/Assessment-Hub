@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+// eslint-disable-next-line no-unused-vars
 import { motion } from 'framer-motion';
 import { LogIn, UserPlus, Eye, EyeOff } from 'lucide-react';
 import { useGoogleLogin } from '@react-oauth/google';
@@ -87,7 +88,7 @@ export default function AuthPage({ onAuthSuccess }) {
             }
             
             if (mode === 'login') {
-                const data = await authApi.login(form.username, form.password, captchaToken);
+                await authApi.login(form.username, form.password, captchaToken);
                 const user = await authApi.me();
                 onAuthSuccess(user);
             } else {
@@ -99,7 +100,9 @@ export default function AuthPage({ onAuthSuccess }) {
             try {
                 const parsed = JSON.parse(msg);
                 msg = Object.values(parsed).flat().join(' ');
-            } catch { }
+            } catch {
+                // msg is already set, JSON parse failed
+            }
             setError(msg);
         } finally {
             setLoading(false);
