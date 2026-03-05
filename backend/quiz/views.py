@@ -31,11 +31,6 @@ def is_admin_user(user):
 @api_view(['POST'])
 @permission_classes([AllowAny])
 def register(request):
-    # Block bots
-    user_agent = request.META.get('HTTP_USER_AGENT', '').lower()
-    if any(agent in user_agent for agent in ['python-requests', 'python-urllib', 'curl', 'wget', 'bot', 'crawler']):
-        return Response({'error': 'Automated requests blocked.', 'blocked': True}, status=403)
-    
     serializer = RegisterSerializer(data=request.data)
     if serializer.is_valid():
         user = serializer.save()
@@ -48,15 +43,6 @@ def register(request):
 @permission_classes([AllowAny])
 @ratelimit(key='ip', rate='10/m', method='POST', block=True)  # Max 10 login attempts per minute per IP
 def google_login(request):
-    # BLOCK BOTS IMMEDIATELY - Check user agent first before any processing
-    user_agent = request.META.get('HTTP_USER_AGENT', '').lower()
-    blocked_agents = ['python-requests', 'python-urllib', 'curl', 'wget', 'bot', 'crawler', 'spider', 'scrapy']
-    if any(agent in user_agent for agent in blocked_agents):
-        return Response({
-            'error': 'Automated requests blocked. Use a web browser.',
-            'blocked': True
-        }, status=403)
-    
     credential = request.data.get('credential')
     email = request.data.get('email')
     google_sub = request.data.get('google_sub')

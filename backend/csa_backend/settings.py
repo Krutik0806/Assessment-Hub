@@ -30,6 +30,7 @@ INSTALLED_APPS = [
 # ── Middleware ──────────────────────────────────────────────────────────────────
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
+    "quiz.middleware.BlockBotsMiddleware",             # Block automated bots/scripts
     "whitenoise.middleware.WhiteNoiseMiddleware",       # Serve static files
     "corsheaders.middleware.CorsMiddleware",           # CORS for React frontend
     "django.contrib.sessions.middleware.SessionMiddleware",
