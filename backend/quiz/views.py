@@ -30,9 +30,19 @@ def is_admin_user(user):
 
 
 def verify_recaptcha(token, action=None):
-    """Verify reCAPTCHA v3 token and return (is_valid, score, error_message)"""
+    """Verify reCAPTCHA v3 token and return (is_valid, score, error_message)
+    
+    NOTE: This is now OPTIONAL - returns True even if token is missing.
+    This prevents blocking legitimate users with ad blockers, VPNs, or in restricted countries.
+    Bot protection is primarily handled by middleware + rate limiting.
+    """
+    import logging
+    logger = logging.getLogger(__name__)
+    
+    # If no token provided, allow but log warning
     if not token:
-        return False, 0.0, 'reCAPTCHA token is required'
+        logger.warning(f'No reCAPTCHA token provided for action: {action}')
+        return True, 0.0, 'No token (allowed)'
     
     try:
         response = requests.post(settings.RECAPTCHA_VERIFY_URL, data={
@@ -44,25 +54,31 @@ def verify_recaptcha(token, action=None):
         
         if not result.get('success'):
             error_codes = result.get('error-codes', [])
-            return False, 0.0, f'reCAPTCHA verification failed: {error_codes}'
+            logger.warning(f'reCAPTCHA failed: {error_codes}')
+            return True, 0.0, f'Verification failed (allowed): {error_codes}'
         
         score = result.get('score', 0.0)
         result_action = result.get('action', '')
         
         # Verify action matches if provided
         if action and result_action != action:
-            return False, score, f'Action mismatch: expected {action}, got {result_action}'
+            logger.warning(f'reCAPTCHA action mismatch: expected {action}, got {result_action}')
+            return True, score, f'Action mismatch (allowed)'
         
-        # Check score threshold
-        if score < settings.RECAPTCHA_SCORE_THRESHOLD:
-            return False, score, f'reCAPTCHA score too low: {score}'
+        # Check score threshold (lowered to 0.3 for privacy users)
+        if score < 0.3:
+            logger.warning(f'Low reCAPTCHA score: {score} for action: {action}')
+            return True, score, f'Low score (allowed): {score}'
         
+        logger.info(f'reCAPTCHA verified: score={score}, action={action}')
         return True, score, None
         
     except requests.RequestException as e:
-        return False, 0.0, f'reCAPTCHA verification error: {str(e)}'
+        logger.error(f'reCAPTCHA request error: {str(e)}')
+        return True, 0.0, f'Request error (allowed): {str(e)}'
     except Exception as e:
-        return False, 0.0, f'Unexpected error: {str(e)}'
+        logger.error(f'reCAPTCHA unexpected error: {str(e)}')
+        return True, 0.0, f'Error (allowed): {str(e)}'
 
 
 # ── Auth ──────────────────────────────────────────────────────────────────────
@@ -70,16 +86,10 @@ def verify_recaptcha(token, action=None):
 @api_view(['POST'])
 @permission_classes([AllowAny])
 def register(request):
-    # Verify reCAPTCHA
+    # Verify reCAPTCHA (optional - just logs suspicious activity)
     captcha_token = request.data.get('captcha_token')
     is_valid, score, error = verify_recaptcha(captcha_token, action='register')
-    
-    if not is_valid:
-        return Response({
-            'error': 'Please complete the security verification',
-            'detail': error,
-            'captcha_score': score
-        }, status=400)
+    # Note: is_valid is now always True, this just logs bot detection
     
     serializer = RegisterSerializer(data=request.data)
     if serializer.is_valid():
@@ -97,16 +107,10 @@ def register(request):
 @api_view(['POST'])
 @permission_classes([AllowAny])
 def google_login(request):
-    # Verify reCAPTCHA
+    # Verify reCAPTCHA (optional - just logs suspicious activity)
     captcha_token = request.data.get('captcha_token')
     is_valid, score, error = verify_recaptcha(captcha_token, action='google_login')
-    
-    if not is_valid:
-        return Response({
-            'error': 'Please complete the security verification',
-            'detail': error,
-            'captcha_score': score
-        }, status=400)
+    # Note: is_valid is now always True, this just logs bot detection
     
     credential = request.data.get('credential')
     email = request.data.get('email')
@@ -165,16 +169,10 @@ def login(request):
     """Custom login view with reCAPTCHA verification"""
     from django.contrib.auth import authenticate
     
-    # Verify reCAPTCHA
+    # Verify reCAPTCHA (optional - just logs suspicious activity)
     captcha_token = request.data.get('captcha_token')
     is_valid, score, error = verify_recaptcha(captcha_token, action='login')
-    
-    if not is_valid:
-        return Response({
-            'error': 'Please complete the security verification',
-            'detail': error,
-            'captcha_score': score
-        }, status=400)
+    # Note: is_valid is now always True, this just logs bot detection
     
     # Authenticate user
     username = request.data.get('username')
