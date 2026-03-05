@@ -12,7 +12,7 @@ from google.auth.transport import requests as google_requests
 from .models import Package, Test, Question, TestAttempt, UserAnswer, ExamViolation
 from .serializers import (
     RegisterSerializer, UserSerializer,
-    PackageSerializer, TestSerializer, QuestionSerializer,
+    PackageSerializer, TestSerializer, QuestionSerializer, ExamQuestionSerializer,
     AttemptCreateSerializer, TestAttemptSerializer, LeaderboardEntrySerializer,
     AdminUserSerializer,
 )
@@ -119,7 +119,13 @@ def test_questions(request, slug):
             return Response({'error': 'You are banned from this exam due to violations. Please contact an administrator.', 'banned': True}, status=403)
 
     questions = test.questions.all()
-    return Response(QuestionSerializer(questions, many=True).data)
+    
+    # For exam mode, don't send answers/explanations to prevent cheating via inspect
+    # Users will only see answers after submitting (in the results endpoint)
+    if test.is_exam_test:
+        return Response(ExamQuestionSerializer(questions, many=True).data)
+    else:
+        return Response(QuestionSerializer(questions, many=True).data)
 
 
 # ── Attempts ──────────────────────────────────────────────────────────────────
@@ -165,7 +171,8 @@ def submit_attempt(request):
         candidate_name=data.get('candidate_name', ''),
         enrollment_number=data.get('enrollment_number', ''),
         roll_no=data.get('roll_no', ''),
-        candidate_email=data.get('candidate_email', '')
+        candidate_email=data.get('candidate_email', ''),
+        batch=data.get('batch', '')
     )
     correct_count = 0
     for ans in data['answers']:
@@ -500,7 +507,7 @@ from django.http import HttpResponse
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def admin_export_test_results(request, test_id):
-    """Export all exam attempts for a test as a CSV file."""
+    """Export all exam attempts for a test as a CSV file, grouped by batch."""
     if not is_admin_user(request.user):
         return Response({'error': 'Admin access required.'}, status=403)
     try:
@@ -508,37 +515,53 @@ def admin_export_test_results(request, test_id):
     except Test.DoesNotExist:
         return Response({'error': 'Not found'}, status=404)
 
-    attempts = TestAttempt.objects.filter(test=test, mode='exam').order_by('-score', 'time_taken')
+    attempts = TestAttempt.objects.filter(test=test, mode='exam').order_by('batch', '-score', 'time_taken')
 
     response = HttpResponse(content_type='text/csv')
     response['Content-Disposition'] = f'attachment; filename="exam_results_{test.slug}.csv"'
 
     writer = csv.writer(response)
-    writer.writerow(['Username', 'Candidate Name', 'Enrollment Number', 'Roll Number', 'Email', 'Score', 'Total Questions', 'Percentage', 'Time Taken (s)', 'Violations', 'Banned', 'Completed At'])
-
-    for attempt in attempts:
-        # Get violation count for this user and test
-        violation = ExamViolation.objects.filter(user=attempt.user, test=test).first()
-        violation_count = violation.warnings if violation else 0
-        is_banned = 'Yes' if (violation and violation.is_banned) else 'No'
+    
+    # Group attempts by batch
+    from itertools import groupby
+    grouped_attempts = groupby(attempts, key=lambda x: x.batch or 'No Batch')
+    
+    first_batch = True
+    for batch_name, batch_attempts in grouped_attempts:
+        # Add separator between batches (skip for first batch)
+        if not first_batch:
+            writer.writerow([])  # Empty row as separator
         
-        # Format enrollment number with leading quote to prevent Excel scientific notation
-        enrollment_display = f"'{attempt.enrollment_number}" if attempt.enrollment_number else ''
+        # Batch header
+        writer.writerow([f'===== BATCH {batch_name} ====='])
+        writer.writerow(['Username', 'Candidate Name', 'Enrollment Number', 'Roll Number', 'Email', 'Batch', 'Score', 'Total Questions', 'Percentage', 'Time Taken (s)', 'Violations', 'Banned', 'Completed At'])
         
-        writer.writerow([
-            attempt.user.username,
-            attempt.candidate_name or '',
-            enrollment_display,
-            attempt.roll_no or '',
-            attempt.candidate_email or '',
-            attempt.score,
-            attempt.total,
-            f"{attempt.percentage:.2f}%",
-            attempt.time_taken,
-            violation_count,
-            is_banned,
-            attempt.completed_at.strftime('%d-%m-%Y %H:%M')
-        ])
+        for attempt in batch_attempts:
+            # Get violation count for this user and test
+            violation = ExamViolation.objects.filter(user=attempt.user, test=test).first()
+            violation_count = violation.warnings if violation else 0
+            is_banned = 'Yes' if (violation and violation.is_banned) else 'No'
+            
+            # Format enrollment number with leading quote to prevent Excel scientific notation
+            enrollment_display = f"'{attempt.enrollment_number}" if attempt.enrollment_number else ''
+            
+            writer.writerow([
+                attempt.user.username,
+                attempt.candidate_name or '',
+                enrollment_display,
+                attempt.roll_no or '',
+                attempt.candidate_email or '',
+                attempt.batch or '',
+                attempt.score,
+                attempt.total,
+                f"{attempt.percentage:.2f}%",
+                attempt.time_taken,
+                violation_count,
+                is_banned,
+                attempt.completed_at.strftime('%d-%m-%Y %H:%M')
+            ])
+        
+        first_batch = False
 
     return response
 

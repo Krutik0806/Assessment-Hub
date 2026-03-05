@@ -32,6 +32,48 @@ export default function Quiz({ testData, mode, onFinish, onQuit, user, submittin
         return () => clearInterval(timer);
     }, [isPractice]);
 
+    // Block copy/paste in exam mode to prevent AI extension cheating
+    useEffect(() => {
+        if (isPractice) return;
+
+        const preventCopy = (e) => {
+            e.preventDefault();
+            return false;
+        };
+
+        const preventKeys = (e) => {
+            // Block Ctrl+C, Ctrl+A, Ctrl+X, Ctrl+V, Ctrl+U (view source)
+            if (e.ctrlKey && (e.key === 'c' || e.key === 'a' || e.key === 'x' || e.key === 'v' || e.key === 'u')) {
+                e.preventDefault();
+                return false;
+            }
+            // Block F12 (DevTools)
+            if (e.key === 'F12') {
+                e.preventDefault();
+                return false;
+            }
+        };
+
+        const preventContextMenu = (e) => {
+            e.preventDefault();
+            return false;
+        };
+
+        document.addEventListener('copy', preventCopy);
+        document.addEventListener('cut', preventCopy);
+        document.addEventListener('paste', preventCopy);
+        document.addEventListener('keydown', preventKeys);
+        document.addEventListener('contextmenu', preventContextMenu);
+
+        return () => {
+            document.removeEventListener('copy', preventCopy);
+            document.removeEventListener('cut', preventCopy);
+            document.removeEventListener('paste', preventCopy);
+            document.removeEventListener('keydown', preventKeys);
+            document.removeEventListener('contextmenu', preventContextMenu);
+        };
+    }, [isPractice]);
+
     const finishTest = () => {
         let correct = 0, wrong = 0, skipped = 0;
 
@@ -122,7 +164,7 @@ export default function Quiz({ testData, mode, onFinish, onQuit, user, submittin
     const answeredCount = userAnswers.filter(a => a !== null && a.length > 0).length;
 
     return (
-        <div className="quiz-container">
+        <div className="quiz-container" style={!isPractice ? { userSelect: 'none', WebkitUserSelect: 'none', MozUserSelect: 'none', msUserSelect: 'none' } : {}}>
             {/* Quiz Area */}
             <section className="glass-panel" style={{ padding: '32px', position: 'relative', overflow: 'hidden' }}>
 
@@ -155,8 +197,9 @@ export default function Quiz({ testData, mode, onFinish, onQuit, user, submittin
                         animate={{ opacity: 1, x: 0 }}
                         exit={{ opacity: 0, x: -20 }}
                         transition={{ duration: 0.2 }}
+                        onSelectStart={!isPractice ? (e) => e.preventDefault() : undefined}
                     >
-                        <h2 style={{ fontSize: '1.4rem', lineHeight: '1.5', marginBottom: '24px' }}>{q.question}</h2>
+                        <h2 style={{ fontSize: '1.4rem', lineHeight: '1.5', marginBottom: '24px', userSelect: !isPractice ? 'none' : 'auto' }}>{q.question}</h2>
 
                         {q.image && (
                             <img src={'/' + q.image} alt="Ref" style={{ width: '100%', maxHeight: '300px', objectFit: 'contain', borderRadius: '12px', border: '1px solid var(--border-light)', marginBottom: '24px' }} />

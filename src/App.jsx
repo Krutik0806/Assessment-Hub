@@ -175,11 +175,17 @@ export default function App() {
               return;
             }
 
-            // Fetch test questions to build testData
-            const qRes = await fetch(`${import.meta.env.VITE_API_BASE_URL || 'http://127.0.0.1:8000/api'}/tests/${test.slug}/questions/`, {
-              headers: token ? { Authorization: `Bearer ${token}` } : {},
-            });
-            const questions = await qRes.json();
+            // Build questions from user_answers (which includes correct answers & explanations)
+            const questions = testAttempt.user_answers.map((ua, idx) => ({
+              id: idx + 1,
+              number: ua.question_number,
+              question: ua.question_text,
+              options: ua.options,
+              answer: ua.correct_answer,
+              explanation: ua.explanation,
+              image: null,
+              multi: ua.correct_answer.length > 1
+            }));
 
             // Transform attempt data to Results format
             const userAnswers = testAttempt.user_answers.map(ua => ua.selected);
@@ -262,11 +268,17 @@ export default function App() {
                   return;
                 }
 
-                // Fetch test questions
-                const qRes = await fetch(`${import.meta.env.VITE_API_BASE_URL || 'http://127.0.0.1:8000/api'}/tests/${activeTest.slug}/questions/`, {
-                  headers: token ? { Authorization: `Bearer ${token}` } : {},
-                });
-                const questions = await qRes.json();
+                // Build questions from user_answers (which includes correct answers & explanations)
+                const questions = testAttempt.user_answers.map((ua, idx) => ({
+                  id: idx + 1,
+                  number: ua.question_number,
+                  question: ua.question_text,
+                  options: ua.options,
+                  answer: ua.correct_answer,
+                  explanation: ua.explanation,
+                  image: null,
+                  multi: ua.correct_answer.length > 1
+                }));
 
                 // Transform to Results format
                 const userAnswers = testAttempt.user_answers.map(ua => ua.selected);

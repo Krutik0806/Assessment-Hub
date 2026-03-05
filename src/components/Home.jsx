@@ -18,7 +18,7 @@ export default function Home({ onStartTest, onViewLeaderboard, onReviewTest, loa
     const [loading, setLoading] = useState(true);
     const [loadingQ, setLoadingQ] = useState(false);
     const [regModal, setRegModal] = useState(null);
-    const [regForm, setRegForm] = useState({ candidate_name: '', enrollment_number: '', roll_no: '', candidate_email: '' });
+    const [regForm, setRegForm] = useState({ candidate_name: '', enrollment_number: '', roll_no: '', candidate_email: '', batch: '' });
     const fetchedRef = useRef(false);
 
     // Fetch once on mount
@@ -45,7 +45,7 @@ export default function Home({ onStartTest, onViewLeaderboard, onReviewTest, loa
     useEffect(() => { fetchData(); }, [fetchData]);
 
     const initiateExam = (test) => {
-        setRegForm({ candidate_name: user?.first_name || '', enrollment_number: '', roll_no: '', candidate_email: user?.email || '' });
+        setRegForm({ candidate_name: user?.first_name || '', enrollment_number: '', roll_no: '', candidate_email: user?.email || '', batch: '' });
         setRegModal(test);
     };
 
@@ -309,6 +309,15 @@ export default function Home({ onStartTest, onViewLeaderboard, onReviewTest, loa
                                 <div style={{ marginBottom: '8px' }}>
                                     <label style={{ display: 'block', fontSize: '13px', color: 'var(--text-secondary)', marginBottom: '8px', fontWeight: '600' }}><Mail size={12} style={{ marginRight: '4px', verticalAlign: '-1px' }} /> Official Email</label>
                                     <input required type="email" value={regForm.candidate_email} onChange={e => setRegForm(p => ({ ...p, candidate_email: e.target.value }))} style={{ width: '100%', padding: '12px 16px', borderRadius: '10px', background: 'rgba(255,255,255,0.04)', border: '1px solid var(--border-light)', color: 'white', fontSize: '15px', outline: 'none' }} placeholder="john@university.edu" />
+                                </div>
+                                <div style={{ marginBottom: '8px' }}>
+                                    <label style={{ display: 'block', fontSize: '13px', color: 'var(--text-secondary)', marginBottom: '8px', fontWeight: '600' }}><Package size={12} style={{ marginRight: '4px', verticalAlign: '-1px' }} /> Batch</label>
+                                    <select required value={regForm.batch} onChange={e => setRegForm(p => ({ ...p, batch: e.target.value }))} style={{ width: '100%', padding: '12px 16px', borderRadius: '10px', background: 'rgba(255,255,255,0.04)', border: '1px solid var(--border-light)', color: 'white', fontSize: '15px', outline: 'none', cursor: 'pointer' }}>
+                                        <option value="" disabled style={{ background: '#1a1a2e', color: '#888' }}>Select your batch</option>
+                                        <option value="A" style={{ background: '#1a1a2e', color: 'white' }}>Batch A</option>
+                                        <option value="B" style={{ background: '#1a1a2e', color: 'white' }}>Batch B</option>
+                                        <option value="C" style={{ background: '#1a1a2e', color: 'white' }}>Batch C</option>
+                                    </select>
                                 </div>
 
                                 <button type="submit" disabled={loadingQ} style={{ width: '100%', padding: '14px', borderRadius: '10px', border: 'none', background: 'linear-gradient(135deg, #ef4444, #b91c1c)', color: 'white', fontWeight: '700', fontSize: '16px', cursor: loadingQ ? 'not-allowed' : 'pointer', opacity: loadingQ ? 0.7 : 1, display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '8px' }}>

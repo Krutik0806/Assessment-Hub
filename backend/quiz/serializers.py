@@ -71,6 +71,13 @@ class QuestionSerializer(serializers.ModelSerializer):
         fields = ['id', 'number', 'question', 'options', 'answer', 'explanation', 'image', 'multi']
 
 
+class ExamQuestionSerializer(serializers.ModelSerializer):
+    """Serializer for exam questions - excludes answers and explanations to prevent cheating via inspect"""
+    class Meta:
+        model = Question
+        fields = ['id', 'number', 'question', 'options', 'image', 'multi']
+
+
 # ── Attempts ──────────────────────────────────────────────────────────────────
 
 class UserAnswerInputSerializer(serializers.Serializer):
@@ -89,6 +96,7 @@ class AttemptCreateSerializer(serializers.Serializer):
     enrollment_number = serializers.CharField(required=False, allow_blank=True, allow_null=True)
     roll_no = serializers.CharField(required=False, allow_blank=True, allow_null=True)
     candidate_email = serializers.EmailField(required=False, allow_blank=True, allow_null=True)
+    batch = serializers.CharField(required=False, allow_blank=True, allow_null=True)
 
 
 class UserAnswerSerializer(serializers.ModelSerializer):
@@ -113,7 +121,7 @@ class TestAttemptSerializer(serializers.ModelSerializer):
         model = TestAttempt
         fields = [
             'id', 'test_name', 'test_slug', 'mode', 'score', 'total', 'percentage', 'time_taken', 'completed_at', 
-            'candidate_name', 'enrollment_number', 'roll_no', 'candidate_email', 'user_answers'
+            'candidate_name', 'enrollment_number', 'roll_no', 'candidate_email', 'batch', 'user_answers'
         ]
 
 
@@ -126,7 +134,7 @@ class LeaderboardEntrySerializer(serializers.ModelSerializer):
 
     class Meta:
         model = TestAttempt
-        fields = ['username', 'display_name', 'candidate_name', 'enrollment_number', 'score', 'total', 'percentage', 'time_taken', 'completed_at']
+        fields = ['username', 'display_name', 'candidate_name', 'enrollment_number', 'batch', 'score', 'total', 'percentage', 'time_taken', 'completed_at']
     
     def get_display_name(self, obj):
         """Return candidate_name if available, otherwise username"""

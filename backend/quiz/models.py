@@ -74,6 +74,7 @@ class TestAttempt(models.Model):
     enrollment_number = models.CharField(max_length=100, blank=True, null=True)
     roll_no = models.CharField(max_length=100, blank=True, null=True)
     candidate_email = models.EmailField(blank=True, null=True)
+    batch = models.CharField(max_length=10, blank=True, null=True, help_text="Batch (e.g., A, B, C)")
 
     @property
     def percentage(self):
