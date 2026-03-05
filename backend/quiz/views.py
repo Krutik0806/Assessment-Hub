@@ -7,7 +7,6 @@ from django.contrib.auth.models import User
 from django.db.models import Avg
 from django.utils import timezone
 from django_ratelimit.decorators import ratelimit
-from functools import wraps
 import csv
 from google.oauth2 import id_token as google_id_token
 from google.auth.transport import requests as google_requests
@@ -23,22 +22,6 @@ GOOGLE_CLIENT_ID = '695327652700-2222uagliv0imrptrtv9gks7pb7fecoj.apps.googleuse
 ADMIN_EMAIL = 'chamthakrutik4@gmail.com'
 
 
-def block_bots(view_func):
-    """Block automated scripts and load testers from accessing endpoints."""
-    @wraps(view_func)
-    def wrapper(request, *args, **kwargs):
-        user_agent = request.META.get('HTTP_USER_AGENT', '').lower()
-        # Block common load testing and bot user agents
-        blocked_agents = ['python-requests', 'python-urllib', 'curl', 'wget', 'bot', 'crawler', 'spider']
-        if any(agent in user_agent for agent in blocked_agents):
-            return Response({
-                'error': 'Automated requests are not allowed. Please use a web browser.',
-                'blocked': True
-            }, status=403)
-        return view_func(request, *args, **kwargs)
-    return wrapper
-
-
 def is_admin_user(user):
     return user.is_authenticated and (user.is_staff or user.email == ADMIN_EMAIL)
 
@@ -48,6 +31,11 @@ def is_admin_user(user):
 @api_view(['POST'])
 @permission_classes([AllowAny])
 def register(request):
+    # Block bots
+    user_agent = request.META.get('HTTP_USER_AGENT', '').lower()
+    if any(agent in user_agent for agent in ['python-requests', 'python-urllib', 'curl', 'wget', 'bot', 'crawler']):
+        return Response({'error': 'Automated requests blocked.', 'blocked': True}, status=403)
+    
     serializer = RegisterSerializer(data=request.data)
     if serializer.is_valid():
         user = serializer.save()
@@ -58,9 +46,17 @@ def register(request):
 
 @api_view(['POST'])
 @permission_classes([AllowAny])
-@block_bots  # Block automated scripts immediately
 @ratelimit(key='ip', rate='10/m', method='POST', block=True)  # Max 10 login attempts per minute per IP
 def google_login(request):
+    # BLOCK BOTS IMMEDIATELY - Check user agent first before any processing
+    user_agent = request.META.get('HTTP_USER_AGENT', '').lower()
+    blocked_agents = ['python-requests', 'python-urllib', 'curl', 'wget', 'bot', 'crawler', 'spider', 'scrapy']
+    if any(agent in user_agent for agent in blocked_agents):
+        return Response({
+            'error': 'Automated requests blocked. Use a web browser.',
+            'blocked': True
+        }, status=403)
+    
     credential = request.data.get('credential')
     email = request.data.get('email')
     google_sub = request.data.get('google_sub')
