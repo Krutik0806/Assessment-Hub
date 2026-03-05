@@ -166,14 +166,25 @@ export default function App() {
               headers: token ? { Authorization: `Bearer ${token}` } : {},
             });
             const attempts = await res.json();
+            console.log('📊 All attempts:', attempts);
+            
             // Find most recent exam attempt for this test
             const testAttempt = attempts.find(a => a.test_slug === test.slug && a.mode === 'exam');
+            console.log('📋 Test attempt for review:', testAttempt);
             
-            if (!testAttempt || !testAttempt.user_answers) {
-              alert('No exam attempt found for review.');
+            if (!testAttempt) {
+              alert('No exam attempt found for this test.');
               setLoadingReview(false);
               return;
             }
+
+            if (!testAttempt.user_answers || testAttempt.user_answers.length === 0) {
+              alert('No answer data available for review.');
+              setLoadingReview(false);
+              return;
+            }
+
+            console.log('✅ User answers:', testAttempt.user_answers);
 
             // Build questions from user_answers (which includes correct answers & explanations)
             const questions = testAttempt.user_answers.map((ua, idx) => ({
@@ -181,26 +192,28 @@ export default function App() {
               number: ua.question_number,
               question: ua.question_text,
               options: ua.options,
-              answer: ua.correct_answer,
-              explanation: ua.explanation,
+              answer: ua.correct_answer || [],
+              explanation: ua.explanation || 'No explanation available.',
               image: null,
-              multi: ua.correct_answer.length > 1
+              multi: (ua.correct_answer && ua.correct_answer.length > 1) || false
             }));
 
             // Transform attempt data to Results format
-            const userAnswers = testAttempt.user_answers.map(ua => ua.selected);
+            const userAnswers = testAttempt.user_answers.map(ua => ua.selected || []);
             let correct = 0, wrong = 0, skipped = 0;
             testAttempt.user_answers.forEach(ua => {
-              if (ua.selected.length === 0) skipped++;
+              if (!ua.selected || ua.selected.length === 0) skipped++;
               else if (ua.is_correct) correct++;
               else wrong++;
             });
+
+            console.log(`📈 Scores - Correct: ${correct}, Wrong: ${wrong}, Skipped: ${skipped}, Total: ${testAttempt.total}`);
 
             const resultsData = {
               correct,
               wrong,
               skipped,
-              total: testAttempt.total,
+              total: testAttempt.total || questions.length,
               userAnswers,
               testData: { id: test.id, slug: test.slug, name: test.name, questions },
               isPractice: false,
@@ -211,8 +224,8 @@ export default function App() {
             setQuizResults(resultsData);
             setView('results');
           } catch (error) {
-            console.error('Error loading review data:', error);
-            alert('Failed to load review data.');
+            console.error('❌ Error loading review data:', error);
+            alert('Failed to load review data. Check console for details.');
           } finally {
             setLoadingReview(false);
           }
@@ -260,13 +273,24 @@ export default function App() {
                   headers: token ? { Authorization: `Bearer ${token}` } : {},
                 });
                 const attempts = await res.json();
-                const testAttempt = attempts.find(a => a.test_slug === activeTest.slug && a.mode === 'exam');
+                console.log('📊 All attempts:', attempts);
                 
-                if (!testAttempt || !testAttempt.user_answers) {
-                  alert('No exam attempt found for review.');
+                const testAttempt = attempts.find(a => a.test_slug === activeTest.slug && a.mode === 'exam');
+                console.log('📋 Test attempt for review:', testAttempt);
+                
+                if (!testAttempt) {
+                  alert('No exam attempt found for this test.');
                   setLoadingReview(false);
                   return;
                 }
+
+                if (!testAttempt.user_answers || testAttempt.user_answers.length === 0) {
+                  alert('No answer data available for review.');
+                  setLoadingReview(false);
+                  return;
+                }
+
+                console.log('✅ User answers:', testAttempt.user_answers);
 
                 // Build questions from user_answers (which includes correct answers & explanations)
                 const questions = testAttempt.user_answers.map((ua, idx) => ({
@@ -274,26 +298,28 @@ export default function App() {
                   number: ua.question_number,
                   question: ua.question_text,
                   options: ua.options,
-                  answer: ua.correct_answer,
-                  explanation: ua.explanation,
+                  answer: ua.correct_answer || [],
+                  explanation: ua.explanation || 'No explanation available.',
                   image: null,
-                  multi: ua.correct_answer.length > 1
+                  multi: (ua.correct_answer && ua.correct_answer.length > 1) || false
                 }));
 
                 // Transform to Results format
-                const userAnswers = testAttempt.user_answers.map(ua => ua.selected);
+                const userAnswers = testAttempt.user_answers.map(ua => ua.selected || []);
                 let correct = 0, wrong = 0, skipped = 0;
                 testAttempt.user_answers.forEach(ua => {
-                  if (ua.selected.length === 0) skipped++;
+                  if (!ua.selected || ua.selected.length === 0) skipped++;
                   else if (ua.is_correct) correct++;
                   else wrong++;
                 });
+
+                console.log(`📈 Scores - Correct: ${correct}, Wrong: ${wrong}, Skipped: ${skipped}, Total: ${testAttempt.total}`);
 
                 const resultsData = {
                   correct,
                   wrong,
                   skipped,
-                  total: testAttempt.total,
+                  total: testAttempt.total || questions.length,
                   userAnswers,
                   testData: { id: activeTest.id, slug: activeTest.slug, name: activeTest.name, questions },
                   isPractice: false,
@@ -303,12 +329,12 @@ export default function App() {
                 setQuizResults(resultsData);
                 setView('results');
               } catch (error) {
-                console.error('Error loading review data:', error);
-                alert('Failed to load review data.');
+                console.error('❌ Error loading review data:', error);
+                alert('Failed to load review data. Check console for details.');
               } finally {
                 setLoadingReview(false);
               }
-            }}
+            }}}
             loadingReview={loadingReview}
           />
         );
