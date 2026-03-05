@@ -129,3 +129,35 @@ CORS_ALLOWED_ORIGINS = os.environ.get(
     "http://localhost:5173 http://localhost:3000"
 ).split()
 CORS_ALLOW_CREDENTIALS = True
+
+# ── Rate Limiting (django-ratelimit) ───────────────────────────────────────────
+# Configure for Render's reverse proxy setup
+RATELIMIT_USE_CACHE = 'default'
+RATELIMIT_ENABLE = True
+
+# Cache configuration for rate limiting
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+        'LOCATION': 'ratelimit-cache',
+    }
+}
+
+# Trust X-Forwarded-For from Render proxy
+RATELIMIT_IP_META_KEY = 'HTTP_X_FORWARDED_FOR'
+
+# ── Rate Limiting (django-ratelimit) ───────────────────────────────────────────
+# Configure for Render's reverse proxy setup
+RATELIMIT_USE_CACHE = 'default'
+RATELIMIT_ENABLE = True
+
+# Cache configuration for rate limiting
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+        'LOCATION': 'ratelimit-cache',
+    }
+}
+
+# Trust X-Forwarded-For from Render proxy
+RATELIMIT_IP_META_KEY = 'HTTP_X_FORWARDED_FOR'

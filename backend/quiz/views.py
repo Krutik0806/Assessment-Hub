@@ -7,6 +7,7 @@ from django.contrib.auth.models import User
 from django.db.models import Avg
 from django.utils import timezone
 from django_ratelimit.decorators import ratelimit
+from functools import wraps
 import csv
 from google.oauth2 import id_token as google_id_token
 from google.auth.transport import requests as google_requests
@@ -20,6 +21,22 @@ from .serializers import (
 
 GOOGLE_CLIENT_ID = '695327652700-2222uagliv0imrptrtv9gks7pb7fecoj.apps.googleusercontent.com'
 ADMIN_EMAIL = 'chamthakrutik4@gmail.com'
+
+
+def block_bots(view_func):
+    """Block automated scripts and load testers from accessing endpoints."""
+    @wraps(view_func)
+    def wrapper(request, *args, **kwargs):
+        user_agent = request.META.get('HTTP_USER_AGENT', '').lower()
+        # Block common load testing and bot user agents
+        blocked_agents = ['python-requests', 'python-urllib', 'curl', 'wget', 'bot', 'crawler', 'spider']
+        if any(agent in user_agent for agent in blocked_agents):
+            return Response({
+                'error': 'Automated requests are not allowed. Please use a web browser.',
+                'blocked': True
+            }, status=403)
+        return view_func(request, *args, **kwargs)
+    return wrapper
 
 
 def is_admin_user(user):
@@ -41,6 +58,7 @@ def register(request):
 
 @api_view(['POST'])
 @permission_classes([AllowAny])
+@block_bots  # Block automated scripts immediately
 @ratelimit(key='ip', rate='10/m', method='POST', block=True)  # Max 10 login attempts per minute per IP
 def google_login(request):
     credential = request.data.get('credential')
