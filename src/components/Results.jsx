@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Home as HomeIcon, CheckCircle2, XCircle, RotateCcw, ListChecks } from 'lucide-react';
 
@@ -8,6 +8,19 @@ export default function Results({ results, onHome }) {
     const passed = pct >= 70;
 
     const [showReview, setShowReview] = useState(false);
+    const [autoRedirectTimer, setAutoRedirectTimer] = useState(3);
+
+    // Auto-redirect to home for practice mode after showing score
+    useEffect(() => {
+        if (isPractice && !showReview && autoRedirectTimer > 0) {
+            const timer = setTimeout(() => {
+                setAutoRedirectTimer(prev => prev - 1);
+            }, 1000);
+            return () => clearTimeout(timer);
+        } else if (isPractice && !showReview && autoRedirectTimer === 0) {
+            onHome();
+        }
+    }, [isPractice, showReview, autoRedirectTimer, onHome]);
 
     if (showReview) {
         return (
@@ -105,7 +118,10 @@ export default function Results({ results, onHome }) {
 
                 <h1 style={{ fontSize: '2.5rem', marginBottom: '8px' }}>{passed ? 'Great Job!' : 'Keep Practicing!'}</h1>
                 <p style={{ color: 'var(--text-secondary)', fontSize: '1.1rem', marginBottom: '40px' }}>
-                    {passed ? 'You successfully passed the test. Excellent.' : 'Review your answers below to see where you can improve.'}
+                    {isPractice 
+                        ? `Your Score: ${pct}% - Returning to home in ${autoRedirectTimer}s...` 
+                        : (passed ? 'You successfully passed the test. Excellent.' : 'Review your answers below to see where you can improve.')
+                    }
                 </p>
 
                 {/* Circular Progress (conceptual) */}
@@ -154,11 +170,13 @@ export default function Results({ results, onHome }) {
 
                 <div style={{ display: 'flex', gap: '16px' }}>
                     <motion.button whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }} className="ghost-btn" onClick={onHome} style={{ flex: 1, justifyContent: 'center' }}>
-                        <HomeIcon size={18} /> Home
+                        <HomeIcon size={18} /> {isPractice ? 'Go Home Now' : 'Home'}
                     </motion.button>
-                    <motion.button whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }} className="primary-btn" onClick={() => setShowReview(true)} style={{ flex: 2, justifyContent: 'center' }}>
-                        <ListChecks size={18} /> Review Answers
-                    </motion.button>
+                    {!isPractice && (
+                        <motion.button whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }} className="primary-btn" onClick={() => setShowReview(true)} style={{ flex: 2, justifyContent: 'center' }}>
+                            <ListChecks size={18} /> Review Answers
+                        </motion.button>
+                    )}
                 </div>
 
             </motion.div>
