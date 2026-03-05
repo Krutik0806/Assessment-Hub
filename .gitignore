@@ -44,3 +44,9 @@ old_version/
 extract_questions.js
 models.txt
 seed_now.py
+
+# Load testing (contains production URLs - keep private!)
+backend/load_test.py
+backend/load_test_exam.py
+backend/LOAD_TESTING.md
+backend/all_tests_data.txt
