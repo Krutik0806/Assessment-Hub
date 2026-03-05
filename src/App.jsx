@@ -61,16 +61,45 @@ export default function App() {
 
   const handleFinishTest = async (results) => {
     if (submitting) return; // Prevent duplicate submissions
-    setSubmitting(true);
     
     setQuizResults({ ...results, username: user?.username });
 
     // Safety check: ensure questions exist
     if (!results.testData?.questions || results.testData.questions.length === 0) {
       console.error('No questions data available');
-      setSubmitting(false);
       return;
     }
+
+    // For practice mode, show results immediately without waiting for API
+    if (results.isPractice) {
+      setView('results');
+      
+      // Submit to backend in background (no loading state)
+      const answers = results.testData.questions.map((q, i) => ({
+        question_id: q.id,
+        selected: results.userAnswers[i] || []
+      }));
+
+      const token = localStorage.getItem('csa_access');
+      fetch(`${import.meta.env.VITE_API_BASE_URL || 'http://127.0.0.1:8000/api'}/attempts/submit/`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          ...(token ? { Authorization: `Bearer ${token}` } : {})
+        },
+        body: JSON.stringify({
+          test_id: results.testData.id,
+          mode: 'practice',
+          time_taken: results.time_taken || 0,
+          answers,
+        })
+      }).catch(e => console.error('Failed to submit practice attempt:', e));
+      
+      return;
+    }
+
+    // For exam mode, wait for submission before showing results
+    setSubmitting(true);
 
     // Build payload for backend
     const answers = results.testData.questions.map((q, i) => ({
