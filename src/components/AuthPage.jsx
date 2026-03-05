@@ -4,7 +4,10 @@ import { LogIn, UserPlus, Eye, EyeOff } from 'lucide-react';
 import { useGoogleLogin } from '@react-oauth/google';
 import { authApi, saveTokens } from '../api';
 
-const API_BASE = import.meta.env.VITE_API_BASE_URL || 'http://127.0.0.1:8000/api';
+const API_BASE = import.meta.env.VITE_API_BASE_URL || 
+  (window.location.hostname.includes('onrender.com') 
+    ? 'https://assessment-hub-backend.onrender.com/api'
+    : 'http://127.0.0.1:8000/api');
 
 export default function AuthPage({ onAuthSuccess }) {
     const [mode, setMode] = useState('login');

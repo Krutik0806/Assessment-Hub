@@ -3,7 +3,10 @@
  * All requests automatically attach the JWT access token if available.
  */
 
-const BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://127.0.0.1:8000/api';
+const BASE_URL = import.meta.env.VITE_API_BASE_URL || 
+  (window.location.hostname.includes('onrender.com') 
+    ? 'https://assessment-hub-backend.onrender.com/api'
+    : 'http://127.0.0.1:8000/api');
 
 // ── Auth helpers ──────────────────────────────────────────────────────────────
 export const getTokens = () => ({

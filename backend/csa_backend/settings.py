@@ -125,10 +125,15 @@ SIMPLE_JWT = {
 
 # ── CORS ───────────────────────────────────────────────────────────────────────
 # Allow all origins in dev; lock down to FRONTEND_URL in production via env var
-CORS_ALLOWED_ORIGINS = os.environ.get(
+cors_origins_str = os.environ.get(
     "CORS_ALLOWED_ORIGINS",
     "http://localhost:5173 http://localhost:3000"
-).split()
+)
+# Split by comma or space to support both formats
+CORS_ALLOWED_ORIGINS = [
+    origin.strip() 
+    for origin in (cors_origins_str.replace(',', ' ').split())
+]
 CORS_ALLOW_CREDENTIALS = True
 
 # ── Rate Limiting (django-ratelimit) ───────────────────────────────────────────
