@@ -41,8 +41,17 @@ def register(request):
 
 @api_view(['POST'])
 @permission_classes([AllowAny])
-@ratelimit(key='ip', rate='10/m', method='POST', block=True)  # Max 10 login attempts per minute per IP
+@ratelimit(key='ip', rate='10/m', method='POST', block=False)  # Don't block - we'll handle it manually
 def google_login(request):
+    import logging
+    logger = logging.getLogger(__name__)
+    logger.info(f"Google login attempt - email: {request.data.get('email')}, has_credential: {bool(request.data.get('credential'))}")
+    
+    # Check rate limit manually and return JSON error
+    from django_ratelimit.decorators import is_ratelimited
+    if is_ratelimited(request, group='google_login', key='ip', rate='10/m', method='POST', increment=True):
+        return Response({'error': 'Too many login attempts. Please try again later.'}, status=429)
+    
     credential = request.data.get('credential')
     email = request.data.get('email')
     google_sub = request.data.get('google_sub')
@@ -68,6 +77,8 @@ def google_login(request):
             name_parts = name.strip().split()
             first_name = name_parts[0] if name_parts else ''
         
+        logger.info(f"Creating/getting user for email: {email}, name: {name}")
+        
         user, created = User.objects.get_or_create(
             email=email, 
             defaults={
@@ -75,6 +86,8 @@ def google_login(request):
                 'first_name': first_name
             }
         )
+        
+        logger.info(f"User {'created' if created else 'retrieved'}: {user.username}")
         
         # Handle duplicate usernames
         if created and User.objects.filter(username=user.username).exclude(pk=user.pk).exists():
@@ -88,6 +101,7 @@ def google_login(request):
             user.save()
 
         refresh = RefreshToken.for_user(user)
+        logger.info(f"Google login successful for {email}")
         return Response({
             'user': UserSerializer(user).data, 
             'access': str(refresh.access_token), 
@@ -95,6 +109,7 @@ def google_login(request):
             'is_new_user': created
         })
     except Exception as e:
+        logger.error(f"Google login error for {email}: {str(e)}", exc_info=True)
         return Response({'error': f'Server error: {str(e)}'}, status=500)
 
 
