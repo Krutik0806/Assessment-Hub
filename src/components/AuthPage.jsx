@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { LogIn, UserPlus, Eye, EyeOff } from 'lucide-react';
 import { useGoogleLogin } from '@react-oauth/google';
-import { authApi, saveTokens } from '../api';
+import { authApi, saveTokens, getCaptchaToken } from '../api';
 
 const API_BASE = import.meta.env.VITE_API_BASE_URL || 
   (window.location.hostname.includes('onrender.com') 
@@ -27,14 +27,20 @@ export default function AuthPage({ onAuthSuccess }) {
             setGoogleLoading(true);
             setError('');
             try {
-                // Step 1: Get user info from Google using the access token
+                // Step 1: Get reCAPTCHA token
+                const captchaToken = await getCaptchaToken('google_login');
+                if (!captchaToken) {
+                    throw new Error('Security verification failed. Please refresh and try again.');
+                }
+                
+                // Step 2: Get user info from Google using the access token
                 const userInfoRes = await fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
                     headers: { Authorization: `Bearer ${tokenResponse.access_token}` },
                 });
                 if (!userInfoRes.ok) throw new Error('Failed to fetch Google user info');
                 const userInfo = await userInfoRes.json();
 
-                // Step 2: Exchange with our Django backend
+                // Step 3: Exchange with our Django backend
                 const res = await fetch(`${API_BASE}/auth/google/`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
@@ -42,16 +48,20 @@ export default function AuthPage({ onAuthSuccess }) {
                         email: userInfo.email,
                         name: userInfo.name,
                         google_sub: userInfo.sub,
+                        captcha_token: captchaToken,
                     }),
                 });
                 const data = await res.json();
-                if (!res.ok) throw new Error(data.error || 'Backend error');
+                if (!res.ok) {
+                    const errorMsg = data.detail || data.error || 'Backend error';
+                    throw new Error(errorMsg);
+                }
 
-                // Step 3: Save tokens & log in
+                // Step 4: Save tokens & log in
                 saveTokens(data.access, data.refresh);
                 onAuthSuccess(data.user);
             } catch (err) {
-                console.error('Google login error:', err);
+                console.error('⚠️ Google sign-in failed:', err);
                 setError(`Google sign-in failed: ${err.message}`);
             } finally {
                 setGoogleLoading(false);
@@ -69,12 +79,19 @@ export default function AuthPage({ onAuthSuccess }) {
         setError('');
         setLoading(true);
         try {
+            // Get reCAPTCHA token
+            const action = mode === 'login' ? 'login' : 'register';
+            const captchaToken = await getCaptchaToken(action);
+            if (!captchaToken) {
+                throw new Error('Security verification failed. Please refresh and try again.');
+            }
+            
             if (mode === 'login') {
-                const data = await authApi.login(form.username, form.password);
+                const data = await authApi.login(form.username, form.password, captchaToken);
                 const user = await authApi.me();
                 onAuthSuccess(user);
             } else {
-                const data = await authApi.register(form.username, form.email, form.password, form.password2);
+                const data = await authApi.register(form.username, form.email, form.password, form.password2, captchaToken);
                 onAuthSuccess(data.user);
             }
         } catch (err) {

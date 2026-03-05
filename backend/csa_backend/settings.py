@@ -152,18 +152,7 @@ CACHES = {
 # Trust X-Forwarded-For from Render proxy
 RATELIMIT_IP_META_KEY = 'HTTP_X_FORWARDED_FOR'
 
-# ── Rate Limiting (django-ratelimit) ───────────────────────────────────────────
-# Configure for Render's reverse proxy setup
-RATELIMIT_USE_CACHE = 'default'
-RATELIMIT_ENABLE = True
-
-# Cache configuration for rate limiting
-CACHES = {
-    'default': {
-        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
-        'LOCATION': 'ratelimit-cache',
-    }
-}
-
-# Trust X-Forwarded-For from Render proxy
-RATELIMIT_IP_META_KEY = 'HTTP_X_FORWARDED_FOR'
+# ── reCAPTCHA v3 ───────────────────────────────────────────────────────────────
+RECAPTCHA_SECRET_KEY = os.environ.get('RECAPTCHA_SECRET_KEY', '6LdspoAsAAAAALEPUvxNV8SsRj-HM4mJAVfuKBnG')
+RECAPTCHA_VERIFY_URL = 'https://www.google.com/recaptcha/api/siteverify'
+RECAPTCHA_SCORE_THRESHOLD = 0.5  # Reject if score < 0.5 (0.0 = bot, 1.0 = human)

@@ -3,11 +3,14 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import RefreshToken
+from rest_framework_simplejwt.views import TokenObtainPairView
 from django.contrib.auth.models import User
 from django.db.models import Avg
 from django.utils import timezone
+from django.conf import settings
 from django_ratelimit.decorators import ratelimit
 import csv
+import requests
 from google.oauth2 import id_token as google_id_token
 from google.auth.transport import requests as google_requests
 from .models import Package, Test, Question, TestAttempt, UserAnswer, ExamViolation
@@ -26,22 +29,85 @@ def is_admin_user(user):
     return user.is_authenticated and (user.is_staff or user.email == ADMIN_EMAIL)
 
 
+def verify_recaptcha(token, action=None):
+    """Verify reCAPTCHA v3 token and return (is_valid, score, error_message)"""
+    if not token:
+        return False, 0.0, 'reCAPTCHA token is required'
+    
+    try:
+        response = requests.post(settings.RECAPTCHA_VERIFY_URL, data={
+            'secret': settings.RECAPTCHA_SECRET_KEY,
+            'response': token
+        }, timeout=5)
+        
+        result = response.json()
+        
+        if not result.get('success'):
+            error_codes = result.get('error-codes', [])
+            return False, 0.0, f'reCAPTCHA verification failed: {error_codes}'
+        
+        score = result.get('score', 0.0)
+        result_action = result.get('action', '')
+        
+        # Verify action matches if provided
+        if action and result_action != action:
+            return False, score, f'Action mismatch: expected {action}, got {result_action}'
+        
+        # Check score threshold
+        if score < settings.RECAPTCHA_SCORE_THRESHOLD:
+            return False, score, f'reCAPTCHA score too low: {score}'
+        
+        return True, score, None
+        
+    except requests.RequestException as e:
+        return False, 0.0, f'reCAPTCHA verification error: {str(e)}'
+    except Exception as e:
+        return False, 0.0, f'Unexpected error: {str(e)}'
+
+
 # ── Auth ──────────────────────────────────────────────────────────────────────
 
 @api_view(['POST'])
 @permission_classes([AllowAny])
 def register(request):
+    # Verify reCAPTCHA
+    captcha_token = request.data.get('captcha_token')
+    is_valid, score, error = verify_recaptcha(captcha_token, action='register')
+    
+    if not is_valid:
+        return Response({
+            'error': 'Please complete the security verification',
+            'detail': error,
+            'captcha_score': score
+        }, status=400)
+    
     serializer = RegisterSerializer(data=request.data)
     if serializer.is_valid():
         user = serializer.save()
         refresh = RefreshToken.for_user(user)
-        return Response({'user': UserSerializer(user).data, 'access': str(refresh.access_token), 'refresh': str(refresh)}, status=201)
+        return Response({
+            'user': UserSerializer(user).data, 
+            'access': str(refresh.access_token), 
+            'refresh': str(refresh),
+            'captcha_score': score
+        }, status=201)
     return Response(serializer.errors, status=400)
 
 
 @api_view(['POST'])
 @permission_classes([AllowAny])
 def google_login(request):
+    # Verify reCAPTCHA
+    captcha_token = request.data.get('captcha_token')
+    is_valid, score, error = verify_recaptcha(captcha_token, action='google_login')
+    
+    if not is_valid:
+        return Response({
+            'error': 'Please complete the security verification',
+            'detail': error,
+            'captcha_score': score
+        }, status=400)
+    
     credential = request.data.get('credential')
     email = request.data.get('email')
     google_sub = request.data.get('google_sub')
@@ -88,7 +154,47 @@ def google_login(request):
         'user': UserSerializer(user).data, 
         'access': str(refresh.access_token), 
         'refresh': str(refresh), 
-        'is_new_user': created
+        'is_new_user': created,
+        'captcha_score': score
+    })
+
+
+@api_view(['POST'])
+@permission_classes([AllowAny])
+def login(request):
+    """Custom login view with reCAPTCHA verification"""
+    from django.contrib.auth import authenticate
+    
+    # Verify reCAPTCHA
+    captcha_token = request.data.get('captcha_token')
+    is_valid, score, error = verify_recaptcha(captcha_token, action='login')
+    
+    if not is_valid:
+        return Response({
+            'error': 'Please complete the security verification',
+            'detail': error,
+            'captcha_score': score
+        }, status=400)
+    
+    # Authenticate user
+    username = request.data.get('username')
+    password = request.data.get('password')
+    
+    if not username or not password:
+        return Response({'error': 'Username and password are required'}, status=400)
+    
+    user = authenticate(username=username, password=password)
+    
+    if user is None:
+        return Response({'error': 'Invalid credentials'}, status=401)
+    
+    # Generate tokens
+    refresh = RefreshToken.for_user(user)
+    return Response({
+        'user': UserSerializer(user).data,
+        'access': str(refresh.access_token),
+        'refresh': str(refresh),
+        'captcha_score': score
     })
 
 

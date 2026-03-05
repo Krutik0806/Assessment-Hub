@@ -1,12 +1,12 @@
 from django.urls import path
-from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
+from rest_framework_simplejwt.views import TokenRefreshView
 from . import views
 
 urlpatterns = [
     # Auth
     path('auth/register/', views.register),
     path('auth/google/', views.google_login),
-    path('auth/login/', TokenObtainPairView.as_view()),
+    path('auth/login/', views.login),  # Custom login with reCAPTCHA
     path('auth/refresh/', TokenRefreshView.as_view()),
     path('auth/me/', views.me),
 

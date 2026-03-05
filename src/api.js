@@ -8,6 +8,27 @@ const BASE_URL = import.meta.env.VITE_API_BASE_URL ||
     ? 'https://assessment-hub-backend.onrender.com/api'
     : 'http://127.0.0.1:8000/api');
 
+// ── reCAPTCHA helper ──────────────────────────────────────────────────────────
+const RECAPTCHA_SITE_KEY = '6LdspoAsAAAAAEzKy5Ud5D-0PnlpA280DnOKJtQI';
+
+export const getCaptchaToken = async (action) => {
+    if (!window.grecaptcha || !window.grecaptcha.ready) {
+        console.warn('reCAPTCHA not loaded');
+        return null;
+    }
+    
+    return new Promise((resolve) => {
+        window.grecaptcha.ready(() => {
+            window.grecaptcha.execute(RECAPTCHA_SITE_KEY, { action })
+                .then(token => resolve(token))
+                .catch(err => {
+                    console.error('reCAPTCHA error:', err);
+                    resolve(null);
+                });
+        });
+    });
+};
+
 // ── Auth helpers ──────────────────────────────────────────────────────────────
 export const getTokens = () => ({
     access: localStorage.getItem('csa_access'),
@@ -71,16 +92,16 @@ async function apiFetch(path, options = {}) {
 
 // ── Auth API ──────────────────────────────────────────────────────────────────
 export const authApi = {
-    register: (username, email, password, password2) =>
+    register: (username, email, password, password2, captcha_token) =>
         apiFetch('/auth/register/', {
             method: 'POST',
-            body: JSON.stringify({ username, email, password, password2 }),
+            body: JSON.stringify({ username, email, password, password2, captcha_token }),
         }),
 
-    login: async (username, password) => {
+    login: async (username, password, captcha_token) => {
         const data = await apiFetch('/auth/login/', {
             method: 'POST',
-            body: JSON.stringify({ username, password }),
+            body: JSON.stringify({ username, password, captcha_token }),
         });
         saveTokens(data.access, data.refresh);
         return data;
