@@ -334,7 +334,7 @@ export default function App() {
               } finally {
                 setLoadingReview(false);
               }
-            }}}
+            }}
             loadingReview={loadingReview}
           />
         );
