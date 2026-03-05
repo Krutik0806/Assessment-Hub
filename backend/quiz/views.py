@@ -61,16 +61,41 @@ def google_login(request):
     if not email:
         return Response({'error': 'Could not retrieve email.'}, status=400)
 
-    user, created = User.objects.get_or_create(email=email, defaults={'username': email.split('@')[0], 'first_name': name.split()[0] if name else ''})
-    if created and User.objects.filter(username=user.username).exclude(pk=user.pk).exists():
-        user.username = f"{email.split('@')[0]}_{user.pk}"
-    if email == ADMIN_EMAIL and not user.is_staff:
-        user.is_staff = True
-        user.is_superuser = True
-    user.save()
+    try:
+        # Extract first name safely
+        first_name = ''
+        if name:
+            name_parts = name.strip().split()
+            first_name = name_parts[0] if name_parts else ''
+        
+        user, created = User.objects.get_or_create(
+            email=email, 
+            defaults={
+                'username': email.split('@')[0], 
+                'first_name': first_name
+            }
+        )
+        
+        # Handle duplicate usernames
+        if created and User.objects.filter(username=user.username).exclude(pk=user.pk).exists():
+            user.username = f"{email.split('@')[0]}_{user.pk}"
+            user.save()
+        
+        # Grant admin privileges if needed
+        if email == ADMIN_EMAIL and not user.is_staff:
+            user.is_staff = True
+            user.is_superuser = True
+            user.save()
 
-    refresh = RefreshToken.for_user(user)
-    return Response({'user': UserSerializer(user).data, 'access': str(refresh.access_token), 'refresh': str(refresh), 'is_new_user': created})
+        refresh = RefreshToken.for_user(user)
+        return Response({
+            'user': UserSerializer(user).data, 
+            'access': str(refresh.access_token), 
+            'refresh': str(refresh), 
+            'is_new_user': created
+        })
+    except Exception as e:
+        return Response({'error': f'Server error: {str(e)}'}, status=500)
 
 
 @api_view(['GET'])
