@@ -171,6 +171,19 @@ export default function Quiz({ testData, mode, onFinish, onQuit, user, submittin
 
     const answeredCount = userAnswers.filter(a => a !== null && a.length > 0).length;
 
+    // Show submitting state when finishing test
+    if (submitting) {
+        return (
+            <div className="quiz-container" style={{ padding: '40px', textAlign: 'center' }}>
+                <div className="glass-panel" style={{ padding: '60px' }}>
+                    <div style={{ fontSize: '1.2rem', color: 'var(--text-secondary)' }}>
+                        Submitting your {isPractice ? 'practice test' : 'exam'}...
+                    </div>
+                </div>
+            </div>
+        );
+    }
+
     // Safety check: if question is not loaded, show loading state
     if (!q || !q.options) {
         return (
