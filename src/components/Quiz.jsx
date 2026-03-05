@@ -107,7 +107,7 @@ export default function Quiz({ testData, mode, onFinish, onQuit, user, submittin
 
     const handleOptionClick = (optIdx) => {
         const q = questions[currentIndex];
-        if (!q || !q.answer) return; // Safety check
+        if (!q) return; // Safety check: question must exist
         
         let currentSel = userAnswers[currentIndex] || [];
 
@@ -143,7 +143,7 @@ export default function Quiz({ testData, mode, onFinish, onQuit, user, submittin
 
     const submitPracticeAnswer = (sel) => {
         const q = questions[currentIndex];
-        if (!q || !q.answer) return; // Safety check
+        if (!q || !q.answer) return; // Safety check: answer needed for practice mode
         
         const sortedSel = [...sel].sort();
         const sortedAns = [...q.answer].sort();

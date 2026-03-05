@@ -94,7 +94,7 @@ class UserAnswer(models.Model):
 
 
 class ExamViolation(models.Model):
-    """Tracks tab-switch / focus-loss violations during a proctored exam."""
+    """Tracks proctoring violations during an exam (tab switches, focus loss, extension popups, etc.)."""
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='violations')
     test = models.ForeignKey(Test, on_delete=models.CASCADE, related_name='violations')
     warnings = models.PositiveIntegerField(default=0)

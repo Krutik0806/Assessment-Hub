@@ -79,6 +79,89 @@ export default function ExamProctor({ testId, slug, testName, children, onBanned
         };
     }, [phase, sendViolation]);
 
+    // Extension/popup overlay detection
+    useEffect(() => {
+        if (phase !== 'active') return;
+
+        const detectedElements = new WeakSet(); // Track already detected elements
+        const appRoot = document.getElementById('root'); // Your app root
+
+        const checkElement = (element) => {
+            // Ignore if already detected or is part of our app
+            if (detectedElements.has(element) || element === appRoot || appRoot?.contains(element)) {
+                return false;
+            }
+
+            // Check for high z-index (extension overlays typically use z-index > 9000)
+            const zIndex = parseInt(window.getComputedStyle(element).zIndex);
+            if (!isNaN(zIndex) && zIndex > 9000) {
+                detectedElements.add(element);
+                return true;
+            }
+
+            // Check for iframes (many extensions inject iframes)
+            if (element.tagName === 'IFRAME' && !element.src.includes(window.location.origin)) {
+                detectedElements.add(element);
+                return true;
+            }
+
+            // Check for extension-specific attributes/classes
+            const className = element.className?.toString() || '';
+            const id = element.id || '';
+            if (
+                className.includes('extension-') ||
+                className.includes('chrome-') ||
+                className.includes('__') || // Many extensions use __ prefix
+                id.includes('extension-') ||
+                id.includes('chrome-') ||
+                element.hasAttribute('data-lastpass-icon-root') || // LastPass
+                element.hasAttribute('data-dashlane-') || // Dashlane
+                className.includes('1password') // 1Password
+            ) {
+                detectedElements.add(element);
+                return true;
+            }
+
+            return false;
+        };
+
+        // Monitor DOM mutations for extension overlays
+        const observer = new MutationObserver((mutations) => {
+            for (const mutation of mutations) {
+                for (const node of mutation.addedNodes) {
+                    if (node.nodeType === 1 && checkElement(node)) { // 1 = Element node
+                        console.warn('Extension overlay detected:', node);
+                        sendViolation();
+                        break;
+                    }
+                }
+            }
+        });
+
+        // Observe body for any child additions
+        observer.observe(document.body, {
+            childList: true,
+            subtree: false // Only watch direct children of body
+        });
+
+        // Also check existing elements on mount (in case extensions already loaded)
+        const existingChecks = setTimeout(() => {
+            const bodyChildren = Array.from(document.body.children);
+            for (const child of bodyChildren) {
+                if (child !== appRoot && checkElement(child)) {
+                    console.warn('Pre-existing extension overlay detected:', child);
+                    sendViolation();
+                    break;
+                }
+            }
+        }, 1000); // Delay to let extensions initialize
+
+        return () => {
+            observer.disconnect();
+            clearTimeout(existingChecks);
+        };
+    }, [phase, sendViolation]);
+
     const resumeExam = () => {
         // Try to re-enter fullscreen
         const el = document.documentElement;
@@ -112,7 +195,7 @@ export default function ExamProctor({ testId, slug, testName, children, onBanned
                             <AlertTriangle size={56} color="#f59e0b" style={{ margin: '0 auto 20px', display: 'block' }} />
                             <h2 style={{ fontSize: '1.8rem', fontWeight: '900', marginBottom: '12px', color: '#f59e0b' }}>⚠️ Warning {warnings}{autoBanEnabled ? '/3' : ''}</h2>
                             <p style={{ color: '#e5e7eb', fontSize: '1rem', lineHeight: '1.6', marginBottom: '8px' }}>
-                                You switched tabs or left the exam window.
+                                You triggered a violation: Tab switch, window blur, fullscreen exit, or browser extension popup detected.
                             </p>
                             <p style={{ color: autoBanEnabled ? '#f87171' : '#fbbf24', fontWeight: '700', marginBottom: '32px' }}>
                                 {warningMessage}
@@ -137,10 +220,10 @@ export default function ExamProctor({ testId, slug, testName, children, onBanned
                             <XOctagon size={64} color="#ef4444" style={{ margin: '0 auto 20px', display: 'block' }} />
                             <h2 style={{ fontSize: '2rem', fontWeight: '900', color: '#ef4444', marginBottom: '16px' }}>Access Revoked</h2>
                             <p style={{ color: '#e5e7eb', fontSize: '1rem', lineHeight: '1.6', marginBottom: '8px' }}>
-                                You left the exam window a second time. Your session has been <strong style={{ color: '#ef4444' }}>terminated</strong>.
+                                You triggered multiple violations (tab switches, popups, or extensions). Your session has been <strong style={{ color: '#ef4444' }}>terminated</strong>.
                             </p>
                             <p style={{ color: '#9ca3af', fontSize: '0.9rem', marginBottom: '32px' }}>
-                                Contact your administrator to request access. You cannot re-enter this exam without admin approval.
+                                {warningMessage || 'Contact your administrator to request access. You cannot re-enter this exam without admin approval.'}
                             </p>
                             <button onClick={onQuit}
                                 style={{ background: 'rgba(239,68,68,0.15)', color: '#f87171', border: '1px solid rgba(239,68,68,0.3)', padding: '12px 32px', borderRadius: '10px', fontWeight: '700', cursor: 'pointer', fontSize: '15px' }}>

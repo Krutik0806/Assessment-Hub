@@ -300,20 +300,32 @@ def submit_attempt(request):
         batch=data.get('batch', '')
     )
     correct_count = 0
+    user_answers_created = 0
+    
     for ans in data['answers']:
         try:
             question = Question.objects.get(id=ans['question_id'])
         except Question.DoesNotExist:
+            import logging
+            logging.warning(f"Question ID {ans.get('question_id')} not found during submission")
             continue
-        selected = sorted(ans['selected'])
+        selected = sorted(ans['selected']) if ans['selected'] else []
         correct = sorted(question.answer)
         is_correct = selected == correct
         if is_correct:
             correct_count += 1
         UserAnswer.objects.create(attempt=attempt, question=question, selected=ans['selected'], is_correct=is_correct)
+        user_answers_created += 1
 
     attempt.score = correct_count
     attempt.save()
+    
+    # Reload attempt with user_answers to return complete data
+    attempt = TestAttempt.objects.prefetch_related('user_answers__question').get(pk=attempt.pk)
+    
+    import logging
+    logging.info(f"Submission complete: attempt_id={attempt.id}, score={correct_count}/{len(data['answers'])}, user_answers_created={user_answers_created}")
+    
     return Response(TestAttemptSerializer(attempt).data, status=201)
 
 
@@ -380,7 +392,7 @@ def exam_warn(request):
         return Response({
             'warnings': violation.warnings, 
             'banned': True,
-            'message': 'You have been banned from this exam due to 3 tab-switch violations.'
+            'message': 'You have been banned from this exam due to multiple violations (tab switches, extensions, or popups).'
         })
     
     violation.save()
@@ -388,9 +400,9 @@ def exam_warn(request):
     # Return warning message
     if test.enable_auto_ban:
         remaining = 3 - violation.warnings
-        message = f'Warning {violation.warnings}/3: Do not switch tabs! {remaining} more violation(s) will result in a ban.'
+        message = f'Warning {violation.warnings}/3: Violation detected (tab switch, extension popup, or focus loss). {remaining} more violation(s) will result in a ban.'
     else:
-        message = f'Warning {violation.warnings}: Tab switching detected. Please stay focused on the exam.'
+        message = f'Warning {violation.warnings}: Violation detected (tab switch, extension popup, or focus loss). Stay focused on the exam.'
     
     return Response({
         'warnings': violation.warnings, 
@@ -703,7 +715,14 @@ def admin_export_test_results(request, test_id):
 def admin_users(request):
     if not is_admin_user(request.user):
         return Response({'error': 'Admin access required.'}, status=403)
-    users = User.objects.all().order_by('-date_joined')
+    # Optimize: Use annotate + prefetch_related to avoid N+1 queries
+    # Was: 1 + (3 × num_users) queries, Now: 4 total queries
+    users = User.objects.annotate(
+        attempt_count=Count('attempts')
+    ).prefetch_related(
+        'attempts',
+        'violations'
+    ).order_by('-date_joined')
     return Response(AdminUserSerializer(users, many=True).data)
 
 
@@ -767,11 +786,17 @@ def admin_create_test_from_pdf(request):
 
     pdf_bytes = pdf_file.read()
 
+    # Track extraction time
+    import time
+    start_time = time.time()
+    
     try:
         from .pdf_extractor import extract_questions_with_gemini
         questions = extract_questions_with_gemini(pdf_bytes, test_name)
     except Exception as e:
         return Response({'error': f'Gemini extraction failed: {str(e)}'}, status=500)
+
+    extraction_time = round(time.time() - start_time, 2)
 
     if not questions:
         return Response({'error': 'No questions could be extracted from the PDF.'}, status=400)
@@ -804,6 +829,9 @@ def admin_create_test_from_pdf(request):
     )
 
     created_questions = []
+    multi_choice_count = 0
+    single_choice_count = 0
+    
     for i, q in enumerate(questions, 1):
         qq = Question.objects.create(
             test=test, number=i,
@@ -811,14 +839,61 @@ def admin_create_test_from_pdf(request):
             answer=q['answer'], explanation=q['explanation'],
             multi=q['multi'],
         )
+        
+        if q['multi']:
+            multi_choice_count += 1
+        else:
+            single_choice_count += 1
+            
         created_questions.append({
             'number': i, 'question': qq.question[:80] + ('…' if len(qq.question) > 80 else ''),
             'options': len(qq.options), 'answer': qq.answer,
         })
 
+    # Generate extraction summary for admin notification
+    summary = {
+        'total_questions': len(created_questions),
+        'single_choice': single_choice_count,
+        'multi_choice': multi_choice_count,
+        'extraction_time_seconds': extraction_time,
+        'pdf_filename': pdf_file.name,
+        'test_id': test.id,
+        'test_name': test.name,
+        'test_slug': test.slug,
+        'package': package.name if package else 'No Package',
+    }
+    
+    import logging
+    logger = logging.getLogger(__name__)
+    logger.info(f"""
+    ✅ PDF EXTRACTION COMPLETE
+    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    📄 PDF: {pdf_file.name}
+    📝 Test Created: {test.name} (ID: {test.id}, slug: {test.slug})
+    📦 Package: {package.name if package else 'None'}
+    
+    📊 EXTRACTION SUMMARY:
+    • Total Questions: {len(created_questions)}
+    • Single Choice: {single_choice_count}
+    • Multi Choice: {multi_choice_count}
+    • Processing Time: {extraction_time}s
+    
+    🎯 Top 3 Questions:
+    {chr(10).join([f"  {i+1}. {q['question'][:60]}..." for i, q in enumerate(created_questions[:3])])}
+    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    """)
+
     return Response({
         'success': True,
-        'test': {'id': test.id, 'name': test.name, 'slug': test.slug, 'total': len(created_questions)},
+        'message': f'✅ Successfully extracted {len(created_questions)} questions from "{pdf_file.name}"',
+        'test': {
+            'id': test.id, 
+            'name': test.name, 
+            'slug': test.slug, 
+            'total': len(created_questions),
+            'package': package.name if package else None,
+        },
+        'summary': summary,
         'questions_preview': created_questions[:5],
     }, status=201)
 

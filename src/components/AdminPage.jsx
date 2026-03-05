@@ -179,6 +179,15 @@ export default function AdminPage({ user, onBack }) {
             setPdfName('');
             if (fileInputRef.current) fileInputRef.current.value = '';
             loadAll(); // refresh tests list
+            
+            // Show browser notification if permission granted
+            if ('Notification' in window && Notification.permission === 'granted') {
+                new Notification('✅ PDF Extraction Complete!', {
+                    body: `Successfully extracted ${data.summary?.total_questions || data.test.total} questions from "${data.test.name}"`,
+                    icon: '/favicon.ico',
+                    tag: 'pdf-extraction',
+                });
+            }
         } catch (err) {
             setPdfError(err.message);
         } finally {
@@ -272,6 +281,27 @@ export default function AdminPage({ user, onBack }) {
                     {/* ── AI PDF Import ── */}
                     {tab === 'ai_import' && (
                         <motion.div key="ai" initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}>
+                            {/* Notification Permission Banner */}
+                            {'Notification' in window && Notification.permission === 'default' && (
+                                <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }}
+                                    style={{ marginBottom: '20px', padding: '16px', background: 'rgba(147,51,234,0.1)', border: '1px solid rgba(147,51,234,0.3)', borderRadius: '12px', display: 'flex', alignItems: 'center', gap: '12px' }}>
+                                    <div style={{ fontSize: '1.5rem' }}>🔔</div>
+                                    <div style={{ flex: 1 }}>
+                                        <div style={{ color: '#c084fc', fontWeight: '600', fontSize: '0.9rem', marginBottom: '4px' }}>
+                                            Enable Desktop Notifications
+                                        </div>
+                                        <div style={{ color: '#e9d5ff', fontSize: '0.8rem' }}>
+                                            Get notified when PDF extraction completes, even if you switch tabs
+                                        </div>
+                                    </div>
+                                    <button 
+                                        onClick={() => Notification.requestPermission()}
+                                        style={{ padding: '8px 16px', background: 'rgba(168,85,247,0.2)', border: '1px solid #a855f7', borderRadius: '8px', color: '#c084fc', cursor: 'pointer', fontSize: '0.8rem', fontWeight: '600', whiteSpace: 'nowrap' }}>
+                                        Enable
+                                    </button>
+                                </motion.div>
+                            )}
+
                             <div className="glass-panel" style={{ padding: '32px', maxWidth: '640px', margin: '0 auto' }}>
                                 <div style={{ textAlign: 'center', marginBottom: '24px' }}>
                                     <div style={{ width: '56px', height: '56px', borderRadius: '16px', background: 'linear-gradient(135deg, #a855f7, #6366f1)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 16px' }}>
@@ -324,25 +354,62 @@ export default function AdminPage({ user, onBack }) {
                                 {/* Success Result */}
                                 {pdfResult && (
                                     <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}
-                                        style={{ marginTop: '24px', padding: '20px', background: 'rgba(34,197,94,0.1)', border: '1px solid rgba(34,197,94,0.2)', borderRadius: '12px' }}>
-                                        <div style={{ display: 'flex', alignItems: 'center', gap: '10px', color: '#4ade80', marginBottom: '12px', fontWeight: '700', fontSize: '1.1rem' }}>
-                                            <CheckCircle size={20} /> Test Created Successfully!
-                                        </div>
-                                        <div style={{ color: '#d1fae5', fontSize: '0.9rem', marginBottom: '16px' }}>
-                                            <strong>{pdfResult.test.name}</strong> • extracted {pdfResult.test.total} questions.
+                                        style={{ marginTop: '24px', padding: '24px', background: 'rgba(34,197,94,0.1)', border: '1px solid rgba(34,197,94,0.2)', borderRadius: '12px' }}>
+                                        <div style={{ display: 'flex', alignItems: 'center', gap: '10px', color: '#4ade80', marginBottom: '16px', fontWeight: '700', fontSize: '1.1rem' }}>
+                                            <CheckCircle size={24} /> {pdfResult.message || 'Test Created Successfully!'}
                                         </div>
 
-                                        <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                                            <p style={{ fontSize: '0.8rem', color: '#a7f3d0' }}>Preview of parsed questions:</p>
-                                            {pdfResult.questions_preview.map(q => (
-                                                <div key={q.number} style={{ background: 'rgba(0,0,0,0.2)', padding: '10px', borderRadius: '8px', fontSize: '13px', color: '#e5e7eb' }}>
-                                                    <span style={{ color: '#4ade80', fontWeight: '700', marginRight: '6px' }}>Q{q.number}.</span>
-                                                    {q.question}
-                                                    <div style={{ marginTop: '4px', fontSize: '11px', color: '#9ca3af' }}>
-                                                        {q.options} options • Answer info captured
+                                        {/* Extraction Summary */}
+                                        {pdfResult.summary && (
+                                            <div style={{ background: 'rgba(0,0,0,0.2)', padding: '16px', borderRadius: '10px', marginBottom: '16px' }}>
+                                                <div style={{ color: '#a7f3d0', fontSize: '0.95rem', fontWeight: '600', marginBottom: '12px' }}>
+                                                    📊 Extraction Summary
+                                                </div>
+                                                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', gap: '12px', fontSize: '0.85rem' }}>
+                                                    <div>
+                                                        <div style={{ color: '#6ee7b7', fontSize: '0.75rem', marginBottom: '4px' }}>Total Questions</div>
+                                                        <div style={{ color: '#fff', fontWeight: '700', fontSize: '1.3rem' }}>{pdfResult.summary.total_questions}</div>
+                                                    </div>
+                                                    <div>
+                                                        <div style={{ color: '#6ee7b7', fontSize: '0.75rem', marginBottom: '4px' }}>Single Choice</div>
+                                                        <div style={{ color: '#fff', fontWeight: '700', fontSize: '1.3rem' }}>{pdfResult.summary.single_choice}</div>
+                                                    </div>
+                                                    <div>
+                                                        <div style={{ color: '#6ee7b7', fontSize: '0.75rem', marginBottom: '4px' }}>Multi Choice</div>
+                                                        <div style={{ color: '#fff', fontWeight: '700', fontSize: '1.3rem' }}>{pdfResult.summary.multi_choice}</div>
+                                                    </div>
+                                                    <div>
+                                                        <div style={{ color: '#6ee7b7', fontSize: '0.75rem', marginBottom: '4px' }}>Processing Time</div>
+                                                        <div style={{ color: '#fff', fontWeight: '700', fontSize: '1.3rem' }}>{pdfResult.summary.extraction_time_seconds}s</div>
                                                     </div>
                                                 </div>
-                                            ))}
+                                                <div style={{ marginTop: '12px', paddingTop: '12px', borderTop: '1px solid rgba(167,243,208,0.2)', color: '#d1fae5', fontSize: '0.8rem' }}>
+                                                    📄 PDF: <strong>{pdfResult.summary.pdf_filename}</strong><br />
+                                                    📦 Package: <strong>{pdfResult.summary.package}</strong><br />
+                                                    🔗 Test Slug: <strong>{pdfResult.summary.test_slug}</strong>
+                                                </div>
+                                            </div>
+                                        )}
+
+                                        {/* Success Message */}
+                                        <div style={{ padding: '12px', background: 'rgba(74,222,128,0.15)', borderRadius: '8px', border: '1px solid rgba(74,222,128,0.3)' }}>
+                                            <div style={{ fontSize: '0.9rem', color: '#d1fae5', textAlign: 'center' }}>
+                                                ✨ <strong>{pdfResult.test.name}</strong> is now available in the Tests tab!
+                                            </div>
+                                        </div>
+
+                                        {/* Success Actions */}
+                                        <div style={{ marginTop: '16px', paddingTop: '16px', borderTop: '1px solid rgba(167,243,208,0.2)', display: 'flex', gap: '10px', alignItems: 'center' }}>
+                                            <button 
+                                                onClick={() => { setTab('tests'); setPdfResult(null); }}
+                                                style={{ padding: '8px 16px', background: 'rgba(74,222,128,0.2)', border: '1px solid #4ade80', borderRadius: '8px', color: '#4ade80', cursor: 'pointer', fontSize: '0.85rem', fontWeight: '600' }}>
+                                                View in Tests Tab
+                                            </button>
+                                            <button 
+                                                onClick={() => setPdfResult(null)}
+                                                style={{ padding: '8px 16px', background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '8px', color: '#d1fae5', cursor: 'pointer', fontSize: '0.85rem' }}>
+                                                Close
+                                            </button>
                                         </div>
                                     </motion.div>
                                 )}

@@ -217,9 +217,23 @@ export default function Home({ onStartTest, onViewLeaderboard, onReviewTest, loa
                                                 : (
                                                     <div style={{ padding: '24px' }}>
                                                         {test.has_attempted ? (
-                                                            <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-                                                                <button className="ghost-btn" onClick={() => onViewLeaderboard(test)} style={{ width: '100%', padding: '14px', fontSize: '1rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', color: '#818cf8', fontWeight: '700' }}>
-                                                                    <Trophy size={18} /> View Leaderboard
+                                                            <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+                                                                <button 
+                                                                    className="ghost-btn" 
+                                                                    onClick={() => onViewLeaderboard(test)} 
+                                                                    style={{ 
+                                                                        flex: '1', 
+                                                                        minWidth: '140px',
+                                                                        padding: '12px 16px', 
+                                                                        fontSize: '0.9rem', 
+                                                                        display: 'flex', 
+                                                                        alignItems: 'center', 
+                                                                        justifyContent: 'center', 
+                                                                        gap: '6px', 
+                                                                        color: '#818cf8', 
+                                                                        fontWeight: '700' 
+                                                                    }}>
+                                                                    <Trophy size={16} /> Leaderboard
                                                                 </button>
                                                                 {test.is_ended && (
                                                                     <button 
@@ -227,28 +241,47 @@ export default function Home({ onStartTest, onViewLeaderboard, onReviewTest, loa
                                                                         onClick={() => onReviewTest(test)} 
                                                                         disabled={loadingReview} 
                                                                         style={{ 
-                                                                            width: '100%', 
-                                                                            padding: '14px', 
-                                                                            fontSize: '1rem', 
+                                                                            flex: '1',
+                                                                            minWidth: '140px',
+                                                                            padding: '12px 16px', 
+                                                                            fontSize: '0.9rem', 
                                                                             display: 'flex', 
                                                                             alignItems: 'center', 
                                                                             justifyContent: 'center', 
-                                                                            gap: '8px', 
+                                                                            gap: '6px', 
                                                                             opacity: loadingReview ? 0.6 : 1, 
                                                                             cursor: loadingReview ? 'not-allowed' : 'pointer' 
                                                                         }}>
                                                                         {loadingReview ? (
                                                                             <>
-                                                                                <div style={{ width: '16px', height: '16px', border: '2px solid rgba(255,255,255,0.3)', borderTop: '2px solid white', borderRadius: '50%', animation: 'spin 0.6s linear infinite' }} />
+                                                                                <div style={{ width: '14px', height: '14px', border: '2px solid rgba(255,255,255,0.3)', borderTop: '2px solid white', borderRadius: '50%', animation: 'spin 0.6s linear infinite' }} />
                                                                                 Loading...
                                                                             </>
                                                                         ) : (
                                                                             <>
-                                                                                <Trophy size={18} /> Review Answers
+                                                                                <Trophy size={16} /> Review
                                                                             </>
                                                                         )}
                                                                     </button>
                                                                 )}
+                                                                <button 
+                                                                    className="ghost-btn" 
+                                                                    onClick={() => onStartTest(test.id, test.slug, test.name, [], 'practice')} 
+                                                                    style={{ 
+                                                                        flex: '1',
+                                                                        minWidth: '140px',
+                                                                        padding: '12px 16px', 
+                                                                        fontSize: '0.9rem', 
+                                                                        display: 'flex', 
+                                                                        alignItems: 'center', 
+                                                                        justifyContent: 'center', 
+                                                                        gap: '6px', 
+                                                                        color: '#4ade80', 
+                                                                        fontWeight: '700',
+                                                                        border: '1px solid rgba(74,222,128,0.3)'
+                                                                    }}>
+                                                                    <PlayCircle size={16} /> Practice
+                                                                </button>
                                                             </div>
                                                         ) : (
                                                             <button className={isEarly ? "ghost-btn" : "primary-btn"} onClick={() => initiateExam(test)} disabled={loadingQ || isEarly} style={{ width: '100%', padding: '14px', fontSize: '1rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', background: isEarly ? 'rgba(255,255,255,0.05)' : 'linear-gradient(135deg, #ef4444, #b91c1c)', cursor: isEarly ? 'not-allowed' : 'pointer', opacity: isEarly ? 0.7 : 1 }}>

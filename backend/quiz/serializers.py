@@ -156,7 +156,7 @@ class TestAdminSerializer(serializers.ModelSerializer):
 
 
 class AdminUserSerializer(serializers.ModelSerializer):
-    attempt_count = serializers.SerializerMethodField()
+    attempt_count = serializers.IntegerField(read_only=True)  # From annotate
     last_attempt = serializers.SerializerMethodField()
     active_bans = serializers.SerializerMethodField()
 
@@ -164,13 +164,17 @@ class AdminUserSerializer(serializers.ModelSerializer):
         model = User
         fields = ['id', 'username', 'email', 'first_name', 'date_joined', 'is_active', 'attempt_count', 'last_attempt', 'active_bans']
 
-    def get_attempt_count(self, obj):
-        return obj.attempts.count()
-
     def get_last_attempt(self, obj):
-        last = obj.attempts.order_by('-completed_at').first()
-        return str(last.completed_at) if last else None
+        # Use prefetched attempts to avoid N+1 query
+        attempts = getattr(obj, '_prefetched_objects_cache', {}).get('attempts', obj.attempts.all())
+        try:
+            last = max(attempts, key=lambda a: a.completed_at)
+            return str(last.completed_at)
+        except (ValueError, AttributeError):
+            return None
 
     def get_active_bans(self, obj):
-        bans = ExamViolation.objects.filter(user=obj, is_banned=True)
+        # Use prefetched violations to avoid N+1 query
+        violations = getattr(obj, '_prefetched_objects_cache', {}).get('violations', obj.violations.all())
+        bans = [v for v in violations if v.is_banned]
         return [{'test_id': b.test_id, 'test_name': b.test.name} for b in bans]
