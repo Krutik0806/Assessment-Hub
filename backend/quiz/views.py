@@ -6,6 +6,7 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from django.contrib.auth.models import User
 from django.db.models import Avg
 from django.utils import timezone
+from django_ratelimit.decorators import ratelimit
 import csv
 from google.oauth2 import id_token as google_id_token
 from google.auth.transport import requests as google_requests
@@ -40,6 +41,7 @@ def register(request):
 
 @api_view(['POST'])
 @permission_classes([AllowAny])
+@ratelimit(key='ip', rate='10/m', method='POST', block=True)  # Max 10 login attempts per minute per IP
 def google_login(request):
     credential = request.data.get('credential')
     email = request.data.get('email')

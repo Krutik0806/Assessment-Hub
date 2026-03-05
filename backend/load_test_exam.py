@@ -7,10 +7,17 @@ import asyncio
 import aiohttp
 import time
 import random
+import os
 from datetime import datetime
 
 
-BASE_URL = "https://assessment-hub-backend.onrender.com"  # Change to deployed URL for production test
+# SECURITY: Only allow load testing on localhost - NEVER production!
+ALLOWED_BASE_URL = os.environ.get("LOAD_TEST_URL", "http://localhost:8000")
+
+if "render.com" in ALLOWED_BASE_URL.lower() or "production" in ALLOWED_BASE_URL.lower():
+    raise ValueError("🚨 BLOCKED: Load testing production servers is prohibited! Use local server only.")
+
+BASE_URL = ALLOWED_BASE_URL
 NUM_STUDENTS = 200
 TEST_SLUG = "test1"  # Which test to simulate (use slug, not ID)
 

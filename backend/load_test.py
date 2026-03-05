@@ -8,11 +8,17 @@ import aiohttp
 import time
 from datetime import datetime
 import json
+import os
 
 
 # Configuration
-BASE_URL = "https://assessment-hub-backend.onrender.com"  # Change to your deployed URL
-# For local testing: BASE_URL = "http://localhost:8000"
+# SECURITY: Only allow load testing on localhost - NEVER production!
+ALLOWED_BASE_URL = os.environ.get("LOAD_TEST_URL", "http://localhost:8000")
+
+if "render.com" in ALLOWED_BASE_URL.lower() or "production" in ALLOWED_BASE_URL.lower():
+    raise ValueError("🚨 BLOCKED: Load testing production servers is prohibited! Use local server only.")
+
+BASE_URL = ALLOWED_BASE_URL
 
 NUM_USERS = 150  # Number of concurrent users to simulate
 TEST_DURATION = 60  # Seconds to run the test
