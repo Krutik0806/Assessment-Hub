@@ -39,8 +39,8 @@ export default function App() {
     setTestMode(mode);
     setIsExamTest(isExam);
     setCandidateDetails(details);
-    // For proctored exams, load questions here if not already loaded
-    if (questions.length === 0 && isExam) {
+    // Load questions if not already loaded (for both exam and practice modes)
+    if (questions.length === 0) {
       const token = localStorage.getItem('csa_access');
       fetch(`${import.meta.env.VITE_API_BASE_URL || 'http://127.0.0.1:8000/api'}/tests/${slug}/questions/`, {
         headers: token ? { Authorization: `Bearer ${token}` } : {},
