@@ -5,7 +5,7 @@ from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework_simplejwt.views import TokenObtainPairView
 from django.contrib.auth.models import User
-from django.db.models import Avg
+from django.db.models import Avg, Count
 from django.utils import timezone
 from django.conf import settings
 from django_ratelimit.decorators import ratelimit
@@ -320,7 +320,8 @@ def submit_attempt(request):
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def my_attempts(request):
-    attempts = TestAttempt.objects.filter(user=request.user).order_by('-completed_at')
+    # Prefetch user_answers and related question data to avoid N+1 queries
+    attempts = TestAttempt.objects.filter(user=request.user).prefetch_related('user_answers__question').order_by('-completed_at')
     return Response(TestAttemptSerializer(attempts, many=True).data)
 
 
@@ -328,7 +329,8 @@ def my_attempts(request):
 @permission_classes([IsAuthenticated])
 def attempt_detail(request, pk):
     try:
-        attempt = TestAttempt.objects.get(pk=pk, user=request.user)
+        # Prefetch user_answers to include full question data
+        attempt = TestAttempt.objects.prefetch_related('user_answers__question').get(pk=pk, user=request.user)
     except TestAttempt.DoesNotExist:
         return Response({'error': 'Not found'}, status=404)
     return Response(TestAttemptSerializer(attempt).data)
@@ -469,17 +471,22 @@ def admin_dashboard(request):
     total_users = User.objects.count()
     total_attempts = TestAttempt.objects.count()
     avg_score = TestAttempt.objects.aggregate(avg=Avg('score'))['avg'] or 0
-    tests = Test.objects.all()
+    
+    # Optimize: Use annotate to calculate aggregations in one query instead of N+1 queries
+    tests = Test.objects.annotate(
+        attempt_count=Count('attempts'),
+        avg_attempt_score=Avg('attempts__score')
+    ).all()
 
     test_stats = []
     for t in tests:
-        avg = t.attempts.aggregate(avg=Avg('score'))['avg'] or 0
+        avg = t.avg_attempt_score or 0
         test_stats.append({
             'id': t.id, 'name': t.name, 'slug': t.slug,
             'is_locked': t.is_locked, 'is_active': t.is_active,
             'is_exam_test': t.is_exam_test,
             'total_questions': t.total,
-            'attempt_count': t.attempts.count(),
+            'attempt_count': t.attempt_count,
             'avg_score': round((avg / t.total * 100) if t.total else 0, 1),
         })
 

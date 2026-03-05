@@ -21,6 +21,12 @@ export default function Results({ results, onHome }) {
 
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
                     {testData.questions.map((q, i) => {
+                        // Safety check: skip if question data is incomplete
+                        if (!q || !q.options || !Array.isArray(q.answer)) {
+                            console.warn(`Question ${i + 1} has incomplete data:`, q);
+                            return null;
+                        }
+                        
                         const letters = ['A', 'B', 'C', 'D', 'E', 'F'];
                         const sel = userAnswers[i] || [];
 

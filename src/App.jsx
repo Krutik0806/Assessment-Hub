@@ -63,6 +63,13 @@ export default function App() {
     
     setQuizResults({ ...results, username: user?.username });
 
+    // Safety check: ensure questions exist
+    if (!results.testData?.questions || results.testData.questions.length === 0) {
+      console.error('No questions data available');
+      setSubmitting(false);
+      return;
+    }
+
     // Build payload for backend
     const answers = results.testData.questions.map((q, i) => ({
       question_id: q.id,

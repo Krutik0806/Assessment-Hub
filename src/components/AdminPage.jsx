@@ -459,7 +459,7 @@ export default function AdminPage({ user, onBack }) {
                                         <motion.div key={u.id} layout initial={{ opacity: 0, x: -8 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: Math.min(i * 0.02, 0.3) }}
                                             className="glass-panel" style={{ padding: '20px 24px', display: 'flex', alignItems: 'center', gap: '16px', flexWrap: 'wrap', opacity: u.is_active ? 1 : 0.5, marginBottom: '6px' }}>
                                             <div style={{ width: '48px', height: '48px', borderRadius: '50%', background: isAdmin ? 'linear-gradient(135deg,#8b5cf6,#06b6d4)' : 'rgba(255,255,255,0.08)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: '800', fontSize: '18px', color: 'white', flexShrink: 0 }}>
-                                                {u.username[0].toUpperCase()}
+                                                {u.username ? u.username[0].toUpperCase() : '?'}
                                             </div>
                                             <div style={{ flex: 1, minWidth: '140px' }}>
                                                 <div style={{ fontWeight: '700', fontSize: '0.9rem', display: 'flex', alignItems: 'center', gap: '6px', flexWrap: 'wrap' }}>

@@ -79,6 +79,10 @@ export default function Quiz({ testData, mode, onFinish, onQuit, user, submittin
 
         if (!isPractice) {
             questions.forEach((q, i) => {
+                if (!q || !q.answer) {
+                    skipped++;
+                    return;
+                }
                 const sel = userAnswers[i] || [];
                 if (sel.length === 0) skipped++;
                 else {
@@ -103,6 +107,8 @@ export default function Quiz({ testData, mode, onFinish, onQuit, user, submittin
 
     const handleOptionClick = (optIdx) => {
         const q = questions[currentIndex];
+        if (!q || !q.answer) return; // Safety check
+        
         let currentSel = userAnswers[currentIndex] || [];
 
         if (isPractice) {
@@ -137,6 +143,8 @@ export default function Quiz({ testData, mode, onFinish, onQuit, user, submittin
 
     const submitPracticeAnswer = (sel) => {
         const q = questions[currentIndex];
+        if (!q || !q.answer) return; // Safety check
+        
         const sortedSel = [...sel].sort();
         const sortedAns = [...q.answer].sort();
         const isCorrect = JSON.stringify(sortedSel) === JSON.stringify(sortedAns);
@@ -163,6 +171,17 @@ export default function Quiz({ testData, mode, onFinish, onQuit, user, submittin
 
     const answeredCount = userAnswers.filter(a => a !== null && a.length > 0).length;
 
+    // Safety check: if question is not loaded, show loading state
+    if (!q || !q.options) {
+        return (
+            <div className="quiz-container" style={{ padding: '40px', textAlign: 'center' }}>
+                <div className="glass-panel" style={{ padding: '60px' }}>
+                    <div style={{ fontSize: '1.2rem', color: 'var(--text-secondary)' }}>Loading question...</div>
+                </div>
+            </div>
+        );
+    }
+
     return (
         <div className="quiz-container" style={!isPractice ? { userSelect: 'none', WebkitUserSelect: 'none', MozUserSelect: 'none', msUserSelect: 'none' } : {}}>
             {/* Quiz Area */}
@@ -172,7 +191,7 @@ export default function Quiz({ testData, mode, onFinish, onQuit, user, submittin
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
                     <div style={{ color: 'var(--accent-base)', fontWeight: '600' }}>Question {currentIndex + 1} of {totalQ}</div>
                     <div style={{ display: 'flex', gap: '8px' }}>
-                        {q.multi && (
+                        {q.multi && q.answer && (
                             <span style={{ fontSize: '12px', background: 'rgba(167, 139, 250, 0.2)', padding: '4px 10px', borderRadius: '100px', color: 'var(--accent-base)' }}>
                                 Select {q.answer.length}
                             </span>
@@ -197,7 +216,8 @@ export default function Quiz({ testData, mode, onFinish, onQuit, user, submittin
                         animate={{ opacity: 1, x: 0 }}
                         exit={{ opacity: 0, x: -20 }}
                         transition={{ duration: 0.2 }}
-                        onSelectStart={!isPractice ? (e) => e.preventDefault() : undefined}
+                        style={!isPractice ? { userSelect: 'none', WebkitUserSelect: 'none' } : {}}
+                        onMouseDown={!isPractice ? (e) => { if (e.detail > 1) e.preventDefault(); } : undefined}
                     >
                         <h2 style={{ fontSize: '1.4rem', lineHeight: '1.5', marginBottom: '24px', userSelect: !isPractice ? 'none' : 'auto' }}>{q.question}</h2>
 

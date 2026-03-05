@@ -311,3 +311,22 @@ p {
 ::-webkit-scrollbar-thumb:hover {
   background: rgba(255, 255, 255, 0.2);
 }
+
+/* reCAPTCHA Badge Customization */
+.grecaptcha-badge {
+  /* Move to bottom-left instead of bottom-right */
+  left: 4px !important;
+  right: auto !important;
+  
+  /* Make it much smaller - 50% size */
+  transform: scale(0.5);
+  transform-origin: left bottom;
+  
+  /* Make it more transparent when not hovered */
+  opacity: 0.4;
+  transition: opacity 0.3s ease;
+}
+
+.grecaptcha-badge:hover {
+  opacity: 0.9;
+}
