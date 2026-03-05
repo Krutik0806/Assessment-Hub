@@ -245,9 +245,13 @@ def test_questions(request, slug):
 
     questions = test.questions.all()
     
-    # For exam mode, don't send answers/explanations to prevent cheating via inspect
+    # Check if this is practice mode (query parameter)
+    mode = request.GET.get('mode', None)
+    
+    # For exam mode (not practice), don't send answers/explanations to prevent cheating
     # Users will only see answers after submitting (in the results endpoint)
-    if test.is_exam_test:
+    # Practice mode always gets answers regardless of test type
+    if test.is_exam_test and mode != 'practice':
         return Response(ExamQuestionSerializer(questions, many=True).data)
     else:
         return Response(QuestionSerializer(questions, many=True).data)

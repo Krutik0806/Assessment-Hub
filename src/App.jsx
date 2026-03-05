@@ -42,7 +42,9 @@ export default function App() {
     // Load questions if not already loaded (for both exam and practice modes)
     if (questions.length === 0) {
       const token = localStorage.getItem('csa_access');
-      fetch(`${import.meta.env.VITE_API_BASE_URL || 'http://127.0.0.1:8000/api'}/tests/${slug}/questions/`, {
+      // Pass mode parameter so backend knows to include answers for practice mode
+      const modeParam = mode === 'practice' ? '?mode=practice' : '';
+      fetch(`${import.meta.env.VITE_API_BASE_URL || 'http://127.0.0.1:8000/api'}/tests/${slug}/questions/${modeParam}`, {
         headers: token ? { Authorization: `Bearer ${token}` } : {},
       }).then(r => r.json()).then(data => {
         if (Array.isArray(data)) {
