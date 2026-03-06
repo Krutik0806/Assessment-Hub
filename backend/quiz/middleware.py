@@ -2,6 +2,9 @@
 Middleware to block automated bot requests while allowing legitimate traffic.
 """
 from django.http import JsonResponse
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 class BlockBotsMiddleware:
@@ -15,12 +18,21 @@ class BlockBotsMiddleware:
         self.blocked_agents = [
             'python-requests',
             'python-urllib',
+            'aiohttp',
+            'httpx',
+            'urllib3',
             'curl',
             'wget',
             'scrapy',
             'bot',
             'crawler',
-            'spider'
+            'spider',
+            'python/',  # Catches "Python/3.13" etc
+            'go-http-client',
+            'java',
+            'rust-',
+            'node-fetch',
+            'axios',
         ]
     
     def __call__(self, request):
@@ -34,6 +46,9 @@ class BlockBotsMiddleware:
             # Allow python-requests ONLY for health check endpoint
             if path == '/api/health/':
                 return self.get_response(request)
+            
+            # Log blocked bot attempt
+            logger.warning(f'🛑 Blocked bot request: {user_agent[:100]} → {path}')
             
             # Block all other bot requests
             return JsonResponse({
