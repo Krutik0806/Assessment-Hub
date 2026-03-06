@@ -136,13 +136,19 @@ def google_login(request):
         name_parts = name.strip().split()
         first_name = name_parts[0] if name_parts else ''
 
-    user, created = User.objects.get_or_create(
-        email=email, 
-        defaults={
-            'username': email.split('@')[0], 
-            'first_name': first_name
-        }
-    )
+    # Handle duplicate email addresses in database
+    try:
+        user, created = User.objects.get_or_create(
+            email=email, 
+            defaults={
+                'username': email.split('@')[0], 
+                'first_name': first_name
+            }
+        )
+    except User.MultipleObjectsReturned:
+        # Multiple users with same email - use the first one (oldest account)
+        user = User.objects.filter(email=email).order_by('id').first()
+        created = False
     
     if created and User.objects.filter(username=user.username).exclude(pk=user.pk).exists():
         user.username = f"{email.split('@')[0]}_{user.pk}"
