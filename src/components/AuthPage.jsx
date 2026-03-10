@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 // eslint-disable-next-line no-unused-vars
 import { motion } from 'framer-motion';
-import { LogIn, UserPlus, Eye, EyeOff } from 'lucide-react';
-import { useGoogleLogin } from '@react-oauth/google';
-import { authApi, saveTokens, getCaptchaToken } from '../api';
+import { LogIn, Eye, EyeOff } from 'lucide-react';
+// import { useGoogleLogin } from '@react-oauth/google';  // TEMPORARILY DISABLED
+import { authApi, getCaptchaToken } from '../api';
 
 const API_BASE = import.meta.env.VITE_API_BASE_URL || 
   (window.location.hostname.includes('onrender.com') 
@@ -11,19 +11,20 @@ const API_BASE = import.meta.env.VITE_API_BASE_URL ||
     : 'http://127.0.0.1:8000/api');
 
 export default function AuthPage({ onAuthSuccess }) {
-    const [mode, setMode] = useState('login');
+    // const [mode, setMode] = useState('login');  // TEMPORARILY DISABLED - login only
     const [form, setForm] = useState({ username: '', email: '', password: '', password2: '' });
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
-    const [googleLoading, setGoogleLoading] = useState(false);
+    // const [googleLoading, setGoogleLoading] = useState(false);  // TEMPORARILY DISABLED
     const [showPw, setShowPw] = useState(false);
 
     const update = (key) => (e) => setForm(f => ({ ...f, [key]: e.target.value }));
 
     // ── Google Sign-In ────────────────────────────────────────────────────────────
+    // TEMPORARILY DISABLED - using hardcoded student authentication only
     // The implicit flow gives us an access_token. We fetch the user's info from
     // Google's userinfo endpoint, then relay email+sub to our Django backend.
-    const triggerGoogle = useGoogleLogin({
+    /* const triggerGoogle = useGoogleLogin({
         onSuccess: async (tokenResponse) => {
             setGoogleLoading(true);
             setError('');
@@ -72,7 +73,7 @@ export default function AuthPage({ onAuthSuccess }) {
             console.error('Google OAuth error:', err);
             setError('Google sign-in was cancelled or blocked by your browser.');
         },
-    });
+    }); */
 
     // ── Username / Password ────────────────────────────────────────────────────────
     const handleSubmit = async (e) => {
@@ -80,21 +81,13 @@ export default function AuthPage({ onAuthSuccess }) {
         setError('');
         setLoading(true);
         try {
-            // Get reCAPTCHA token
-            const action = mode === 'login' ? 'login' : 'register';
-            const captchaToken = await getCaptchaToken(action);
-            if (!captchaToken) {
-                throw new Error('Security verification failed. Please refresh and try again.');
-            }
+            // Get reCAPTCHA token (optional - backend allows login even if this fails)
+            const captchaToken = await getCaptchaToken('login');
             
-            if (mode === 'login') {
-                await authApi.login(form.username, form.password, captchaToken);
-                const user = await authApi.me();
-                onAuthSuccess(user);
-            } else {
-                const data = await authApi.register(form.username, form.email, form.password, form.password2, captchaToken);
-                onAuthSuccess(data.user);
-            }
+            // Login with email and enrollment number
+            await authApi.login(form.username, form.password, captchaToken);
+            const user = await authApi.me();
+            onAuthSuccess(user);
         } catch (err) {
             let msg = err.message || 'Something went wrong.';
             try {
@@ -116,7 +109,7 @@ export default function AuthPage({ onAuthSuccess }) {
     };
 
     return (
-        <div style={{ maxWidth: '1400px', margin: '0 auto', minHeight: '10vh', display: 'flex', alignItems: 'center', padding: '40px 24px', gap: '80px', flexWrap: 'wrap' }}>
+        <div style={{ maxWidth: '1400px', margin: '0 auto', minHeight: '10vh', display: 'flex', alignItems: 'center', padding: '10px 24px', gap: '80px', flexWrap: 'wrap' }}>
 
             {/* ── Left Side: Landing Content ── */}
             <motion.div initial={{ opacity: 0, x: -30 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.5 }} style={{ flex: '1 1 500px', display: 'flex', flexDirection: 'column', gap: '20px' }}>
@@ -179,19 +172,42 @@ export default function AuthPage({ onAuthSuccess }) {
                 transition={{ duration: 0.5, delay: 0.1 }}
                 style={{ flex: '1 1 400px', maxWidth: '480px', margin: '0 auto', width: '100%' }}
             >
-                <div className="glass-panel" style={{ padding: '48px 40px', width: '100%' }}>
+                {/* Fun Header Above Login */}
+                <motion.div
+                    initial={{ opacity: 0, y: -20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.6 }}
+                    style={{ textAlign: 'center', marginBottom: '12px' }}
+                >
+                    <h3 style={{ 
+                        fontSize: '2rem', 
+                        fontWeight: '700', 
+                        background: 'linear-gradient(135deg, #a78bfa 0%, #ec4899 100%)',
+                        WebkitBackgroundClip: 'text',
+                        WebkitTextFillColor: 'transparent',
+                        marginBottom: '8px'
+                    }}>
+                        Aur karo login....
+                    </h3>
+                    <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem' }}>
+                        Authorized students & faculty only
+                    </p>
+                </motion.div>
+
+                <div className="glass-panel" style={{ padding: '36px 40px', width: '100%' }}>
                     {/* Form Header */}
-                    <div style={{ textAlign: 'center', marginBottom: '32px' }}>
+                    <div style={{ textAlign: 'center', marginBottom: '24px' }}>
                         <h2 style={{ fontSize: '1.8rem', marginBottom: '8px', fontWeight: '800' }}>
-                            {mode === 'login' ? 'Welcome Back' : 'Create Account'}
+                            Student Login
                         </h2>
                         <p style={{ color: 'var(--text-secondary)', fontSize: '0.95rem' }}>
-                            {mode === 'login' ? 'Sign in to access your dashboard' : 'Join to start tracking your progress'}
+                            Enter your email and enrollment number
                         </p>
                     </div>
 
+                    {/* TEMPORARILY DISABLED: Google Sign-In and Registration */}
                     {/* ── Google Button ─────────────────────────────────────────────────────── */}
-                    <motion.button
+                    {/* <motion.button
                         whileHover={{ scale: 1.02 }}
                         whileTap={{ scale: 0.97 }}
                         onClick={() => { setError(''); triggerGoogle(); }}
@@ -219,17 +235,17 @@ export default function AuthPage({ onAuthSuccess }) {
                         )}
                         {googleLoading ? 'Signing in...' : 'Continue with Google'}
                     </motion.button>
-                    <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
+                    <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style> */}
 
                     {/* Divider */}
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '20px' }}>
+                    {/* <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '20px' }}>
                         <div style={{ flex: 1, height: '1px', background: 'var(--border-light)' }} />
                         <span style={{ color: 'var(--text-secondary)', fontSize: '13px' }}>or</span>
                         <div style={{ flex: 1, height: '1px', background: 'var(--border-light)' }} />
-                    </div>
+                    </div> */}
 
                     {/* Mode switcher */}
-                    <div style={{ display: 'flex', gap: '8px', background: 'rgba(255,255,255,0.04)', borderRadius: '12px', padding: '4px', marginBottom: '20px' }}>
+                    {/* <div style={{ display: 'flex', gap: '8px', background: 'rgba(255,255,255,0.04)', borderRadius: '12px', padding: '4px', marginBottom: '20px' }}>
                         {['login', 'register'].map(m => (
                             <button key={m} onClick={() => { setMode(m); setError(''); }}
                                 style={{
@@ -241,27 +257,27 @@ export default function AuthPage({ onAuthSuccess }) {
                                 {m === 'login' ? '🔑 Login' : '✨ Register'}
                             </button>
                         ))}
-                    </div>
+                    </div> */}
 
                     {/* Form */}
                     <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
                         <div>
-                            <label style={{ display: 'block', fontSize: '13px', color: 'var(--text-secondary)', marginBottom: '6px', fontWeight: '500' }}>Username</label>
-                            <input value={form.username} onChange={update('username')} required placeholder="your_username" style={inputStyle} />
+                            <label style={{ display: 'block', fontSize: '13px', color: 'var(--text-secondary)', marginBottom: '6px', fontWeight: '500' }}>Email Address</label>
+                            <input value={form.username} onChange={update('username')} required placeholder="enrollment@paruluniversity.ac.in" type="email" style={inputStyle} />
                         </div>
 
-                        {mode === 'register' && (
+                        {/* {mode === 'register' && (
                             <div>
                                 <label style={{ display: 'block', fontSize: '13px', color: 'var(--text-secondary)', marginBottom: '6px', fontWeight: '500' }}>Email</label>
                                 <input type="email" value={form.email} onChange={update('email')} placeholder="you@example.com" style={inputStyle} />
                             </div>
-                        )}
+                        )} */}
 
                         <div>
-                            <label style={{ display: 'block', fontSize: '13px', color: 'var(--text-secondary)', marginBottom: '6px', fontWeight: '500' }}>Password</label>
+                            <label style={{ display: 'block', fontSize: '13px', color: 'var(--text-secondary)', marginBottom: '6px', fontWeight: '500' }}>Enrollment Number (Password)</label>
                             <div style={{ position: 'relative' }}>
                                 <input type={showPw ? 'text' : 'password'} value={form.password} onChange={update('password')}
-                                    required minLength={6} placeholder="Min 6 characters"
+                                    required minLength={6} placeholder="Enter your enrollment number"
                                     style={{ ...inputStyle, paddingRight: '48px' }} />
                                 <button type="button" onClick={() => setShowPw(s => !s)}
                                     style={{ position: 'absolute', right: '12px', top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-secondary)' }}>
@@ -270,12 +286,12 @@ export default function AuthPage({ onAuthSuccess }) {
                             </div>
                         </div>
 
-                        {mode === 'register' && (
+                        {/* {mode === 'register' && (
                             <div>
                                 <label style={{ display: 'block', fontSize: '13px', color: 'var(--text-secondary)', marginBottom: '6px', fontWeight: '500' }}>Confirm Password</label>
                                 <input type="password" value={form.password2} onChange={update('password2')} required placeholder="Repeat your password" style={inputStyle} />
                             </div>
-                        )}
+                        )} */}
 
                         {error && (
                             <motion.div
@@ -290,7 +306,7 @@ export default function AuthPage({ onAuthSuccess }) {
                             whileHover={!loading ? { scale: 1.02 } : {}} whileTap={!loading ? { scale: 0.97 } : {}}
                             className="primary-btn"
                             style={{ width: '100%', padding: '14px', fontSize: '16px', marginTop: '4px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
-                            {loading ? 'Please wait...' : (mode === 'login' ? <><LogIn size={18} /> Sign In</> : <><UserPlus size={18} /> Create Account</>)}
+                            {loading ? 'Please wait...' : (<><LogIn size={18} /> Sign In</>)}
                         </motion.button>
                     </form>
                 </div>
