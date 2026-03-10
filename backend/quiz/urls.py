@@ -4,9 +4,9 @@ from . import views
 
 urlpatterns = [
     # Auth
-    path('auth/register/', views.register),
-    path('auth/google/', views.google_login),
-    path('auth/login/', views.login),  # Custom login with reCAPTCHA
+    # path('auth/register/', views.register),  # TEMPORARILY DISABLED - hardcoded auth only
+    # path('auth/google/', views.google_login),  # TEMPORARILY DISABLED - hardcoded auth only
+    path('auth/login/', views.login),  # Hardcoded student authentication
     path('auth/refresh/', TokenRefreshView.as_view()),
     path('auth/me/', views.me),
 

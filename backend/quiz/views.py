@@ -83,114 +83,196 @@ def verify_recaptcha(token, action=None):
 
 # ── Auth ──────────────────────────────────────────────────────────────────────
 
-@api_view(['POST'])
-@permission_classes([AllowAny])
-def register(request):
-    # Verify reCAPTCHA (optional - just logs suspicious activity)
-    captcha_token = request.data.get('captcha_token')
-    is_valid, score, error = verify_recaptcha(captcha_token, action='register')
-    # Note: is_valid is now always True, this just logs bot detection
-    
-    serializer = RegisterSerializer(data=request.data)
-    if serializer.is_valid():
-        user = serializer.save()
-        refresh = RefreshToken.for_user(user)
-        return Response({
-            'user': UserSerializer(user).data, 
-            'access': str(refresh.access_token), 
-            'refresh': str(refresh),
-            'captcha_score': score
-        }, status=201)
-    return Response(serializer.errors, status=400)
+# TEMPORARILY DISABLED - Using hardcoded student authentication only
+# @api_view(['POST'])
+# @permission_classes([AllowAny])
+# def register(request):
+#     # Verify reCAPTCHA (optional - just logs suspicious activity)
+#     captcha_token = request.data.get('captcha_token')
+#     is_valid, score, error = verify_recaptcha(captcha_token, action='register')
+#     # Note: is_valid is now always True, this just logs bot detection
+#     
+#     serializer = RegisterSerializer(data=request.data)
+#     if serializer.is_valid():
+#         user = serializer.save()
+#         refresh = RefreshToken.for_user(user)
+#         return Response({
+#             'user': UserSerializer(user).data, 
+#             'access': str(refresh.access_token), 
+#             'refresh': str(refresh),
+#             'captcha_score': score
+#         }, status=201)
+#     return Response(serializer.errors, status=400)
 
 
-@api_view(['POST'])
-@permission_classes([AllowAny])
-def google_login(request):
-    # Verify reCAPTCHA (optional - just logs suspicious activity)
-    captcha_token = request.data.get('captcha_token')
-    is_valid, score, error = verify_recaptcha(captcha_token, action='google_login')
-    # Note: is_valid is now always True, this just logs bot detection
-    
-    credential = request.data.get('credential')
-    email = request.data.get('email')
-    google_sub = request.data.get('google_sub')
-    name = request.data.get('name', '')
+# TEMPORARILY DISABLED - Using hardcoded student authentication only
+# @api_view(['POST'])
+# @permission_classes([AllowAny])
+# def google_login(request):
+#     # Verify reCAPTCHA (optional - just logs suspicious activity)
+#     captcha_token = request.data.get('captcha_token')
+#     is_valid, score, error = verify_recaptcha(captcha_token, action='google_login')
+#     # Note: is_valid is now always True, this just logs bot detection
+#     
+#     credential = request.data.get('credential')
+#     email = request.data.get('email')
+#     google_sub = request.data.get('google_sub')
+#     name = request.data.get('name', '')
+# 
+#     if credential:
+#         try:
+#             idinfo = google_id_token.verify_oauth2_token(credential, google_requests.Request(), GOOGLE_CLIENT_ID)
+#             email = idinfo.get('email')
+#             name = idinfo.get('given_name', idinfo.get('name', ''))
+#         except ValueError as e:
+#             return Response({'error': f'Invalid Google token: {e}'}, status=400)
+#     elif not (email and google_sub):
+#         return Response({'error': 'Provide credential or email+google_sub.'}, status=400)
+# 
+#     if not email:
+#         return Response({'error': 'Could not retrieve email.'}, status=400)
+# 
+#     # Safe name parsing to avoid crashes
+#     first_name = ''
+#     if name:
+#         name_parts = name.strip().split()
+#         first_name = name_parts[0] if name_parts else ''
+# 
+#     # Handle duplicate email addresses in database
+#     try:
+#         user, created = User.objects.get_or_create(
+#             email=email, 
+#             defaults={
+#                 'username': email.split('@')[0], 
+#                 'first_name': first_name
+#             }
+#         )
+#     except User.MultipleObjectsReturned:
+#         # Multiple users with same email - use the first one (oldest account)
+#         user = User.objects.filter(email=email).order_by('id').first()
+#         created = False
+#     
+#     if created and User.objects.filter(username=user.username).exclude(pk=user.pk).exists():
+#         user.username = f"{email.split('@')[0]}_{user.pk}"
+#     
+#     if email == ADMIN_EMAIL and not user.is_staff:
+#         user.is_staff = True
+#         user.is_superuser = True
+#     
+#     user.save()
+# 
+#     refresh = RefreshToken.for_user(user)
+#     return Response({
+#         'user': UserSerializer(user).data, 
+#         'access': str(refresh.access_token), 
+#         'refresh': str(refresh), 
+#         'is_new_user': created,
+#         'captcha_score': score
+#     })
 
-    if credential:
-        try:
-            idinfo = google_id_token.verify_oauth2_token(credential, google_requests.Request(), GOOGLE_CLIENT_ID)
-            email = idinfo.get('email')
-            name = idinfo.get('given_name', idinfo.get('name', ''))
-        except ValueError as e:
-            return Response({'error': f'Invalid Google token: {e}'}, status=400)
-    elif not (email and google_sub):
-        return Response({'error': 'Provide credential or email+google_sub.'}, status=400)
-
-    if not email:
-        return Response({'error': 'Could not retrieve email.'}, status=400)
-
-    # Safe name parsing to avoid crashes
-    first_name = ''
-    if name:
-        name_parts = name.strip().split()
-        first_name = name_parts[0] if name_parts else ''
-
-    # Handle duplicate email addresses in database
-    try:
-        user, created = User.objects.get_or_create(
-            email=email, 
-            defaults={
-                'username': email.split('@')[0], 
-                'first_name': first_name
-            }
-        )
-    except User.MultipleObjectsReturned:
-        # Multiple users with same email - use the first one (oldest account)
-        user = User.objects.filter(email=email).order_by('id').first()
-        created = False
-    
-    if created and User.objects.filter(username=user.username).exclude(pk=user.pk).exists():
-        user.username = f"{email.split('@')[0]}_{user.pk}"
-    
-    if email == ADMIN_EMAIL and not user.is_staff:
-        user.is_staff = True
-        user.is_superuser = True
-    
-    user.save()
-
-    refresh = RefreshToken.for_user(user)
-    return Response({
-        'user': UserSerializer(user).data, 
-        'access': str(refresh.access_token), 
-        'refresh': str(refresh), 
-        'is_new_user': created,
-        'captcha_score': score
-    })
 
 
 @api_view(['POST'])
 @permission_classes([AllowAny])
 def login(request):
-    """Custom login view with reCAPTCHA verification"""
-    from django.contrib.auth import authenticate
+    """Hardcoded login for authorized students, faculty, and admin"""
+    import json
+    import os
+    from django.conf import settings
     
-    # Verify reCAPTCHA (optional - just logs suspicious activity)
-    captcha_token = request.data.get('captcha_token')
-    is_valid, score, error = verify_recaptcha(captcha_token, action='login')
-    # Note: is_valid is now always True, this just logs bot detection
-    
-    # Authenticate user
-    username = request.data.get('username')
+    # Get credentials from request
+    email = request.data.get('username')  # Frontend sends email as 'username'
     password = request.data.get('password')
     
-    if not username or not password:
-        return Response({'error': 'Username and password are required'}, status=400)
+    if not email or not password:
+        return Response({'error': 'Email and password are required'}, status=400)
     
-    user = authenticate(username=username, password=password)
+    # Hardcoded admin and faculty accounts
+    special_accounts = {
+        'chamthakrutik4@gmail.com': {'password': 'admin123', 'name': 'Krutik Chamtha', 'is_admin': True},
+        'kruti.sutaria25509@paruluniversity.ac.in': {'password': '25509', 'name': 'Kruti Sutaria', 'is_admin': False},
+        'shweta.yagnik39983@paruluniversity.ac.in': {'password': '39983', 'name': 'Shweta Yagnik', 'is_admin': False},
+        'mahipal.khoja35948@paruluniversity.ac.in': {'password': '35948', 'name': 'Mahipal Khoja', 'is_admin': False},
+    }
     
-    if user is None:
+    # Check for special accounts first
+    if email.lower() in special_accounts:
+        account = special_accounts[email.lower()]
+        if password != account['password']:
+            return Response({'error': 'Invalid credentials'}, status=401)
+        
+        # Create or get admin/faculty user
+        username = email.split('@')[0]
+        try:
+            user = User.objects.get(email=email)
+            # Update admin status if needed
+            if account['is_admin'] and not user.is_staff:
+                user.is_staff = True
+                user.is_superuser = True
+                user.save()
+        except User.DoesNotExist:
+            user = User.objects.create_user(
+                username=username,
+                email=email,
+                first_name=account['name'].split()[0],
+                password=password
+            )
+            if account['is_admin']:
+                user.is_staff = True
+                user.is_superuser = True
+                user.save()
+        except User.MultipleObjectsReturned:
+            user = User.objects.filter(email=email).order_by('id').first()
+            if account['is_admin'] and not user.is_staff:
+                user.is_staff = True
+                user.is_superuser = True
+                user.save()
+        
+        # Generate tokens
+        refresh = RefreshToken.for_user(user)
+        return Response({
+            'user': UserSerializer(user).data,
+            'access': str(refresh.access_token),
+            'refresh': str(refresh),
+        })
+    
+    # Load hardcoded student list
+    students_file = os.path.join(settings.BASE_DIR, 'students_data.json')
+    try:
+        with open(students_file, 'r') as f:
+            students = json.load(f)
+    except FileNotFoundError:
+        return Response({'error': 'Student data not found'}, status=500)
+    except json.JSONDecodeError:
+        return Response({'error': 'Invalid student data'}, status=500)
+    
+    # Check if email exists in authorized students list
+    student = None
+    for s in students:
+        if s.get('email', '').lower() == email.lower():
+            student = s
+            break
+    
+    if not student:
+        return Response({'error': 'Access denied - Email not in authorized student list'}, status=403)
+    
+    # Verify password matches enrollment number
+    if password != student.get('enrollment'):
         return Response({'error': 'Invalid credentials'}, status=401)
+    
+    # Create or get user for this student
+    username = email.split('@')[0]  # Use enrollment as username
+    try:
+        user = User.objects.get(email=email)
+    except User.DoesNotExist:
+        user = User.objects.create_user(
+            username=username,
+            email=email,
+            first_name=student.get('name', '').split()[0] if student.get('name') else '',
+            password=password
+        )
+    except User.MultipleObjectsReturned:
+        user = User.objects.filter(email=email).order_by('id').first()
     
     # Generate tokens
     refresh = RefreshToken.for_user(user)
@@ -198,7 +280,6 @@ def login(request):
         'user': UserSerializer(user).data,
         'access': str(refresh.access_token),
         'refresh': str(refresh),
-        'captcha_score': score
     })
 
 
