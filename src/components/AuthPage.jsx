@@ -277,7 +277,7 @@ export default function AuthPage({ onAuthSuccess }) {
                             <label style={{ display: 'block', fontSize: '13px', color: 'var(--text-secondary)', marginBottom: '6px', fontWeight: '500' }}>Enrollment Number (Password)</label>
                             <div style={{ position: 'relative' }}>
                                 <input type={showPw ? 'text' : 'password'} value={form.password} onChange={update('password')}
-                                    required minLength={6} placeholder="Enter your enrollment number"
+                                    required placeholder="Enter your enrollment number"
                                     style={{ ...inputStyle, paddingRight: '48px' }} />
                                 <button type="button" onClick={() => setShowPw(s => !s)}
                                     style={{ position: 'absolute', right: '12px', top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-secondary)' }}>
