@@ -1,0 +1,267 @@
+[
+    {
+        "id": 21,
+        "question": "When a CI is set to retire, dependent CIs management data processes attempt to cascade-update all the CIs depending on that CI to retire. What table are the dependent CIs added to when a parent CI is set to retire?",
+        "options": [
+            "cmdb_dependent_ci_class_exclusion",
+            "cmdb_dependent_ci_extra_rels_config",
+            "cmdb_related_entry",
+            "cmdb_ci_related_retire",
+            "cmdb_dependent_ci_ledger"
+        ],
+        "answer": [4],
+        "explanation": "When a CI enters End of Life, dependent CIs are tracked in the cmdb_dependent_ci_ledger table. This table stores CIs pending retirement as part of CMDB lifecycle management and cleanup processes.",
+        "multi": false
+    },
+    {
+        "id": 22,
+        "question": "Which ServiceNow tool allows you to receive prompt notifications for specific security events, such as user lockouts or insecure actions?",
+        "options": [
+            "Security posture dashboards",
+            "Security metrics",
+            "Security scanner",
+            "Security event notifications"
+        ],
+        "answer": [3],
+        "explanation": "This tool enables real-time alerts for security events, monitoring actions like impersonation or lockouts, and configurable notification policies.",
+        "multi": false
+    },
+    {
+        "id": 23,
+        "question": "Which option enables you to sort Visual Task Boards using criteria you create?",
+        "options": [
+            "Load Filter",
+            "Edit Filter & Sort",
+            "Interactive Filter",
+            "Breakdown Element"
+        ],
+        "answer": [1],
+        "explanation": "Using Edit Filter & Sort, you can define custom sorting criteria, group cards (e.g., by priority), and apply sorting to both Freeform and Data-driven boards.",
+        "multi": false
+    },
+    {
+        "id": 24,
+        "question": "What are the two types of inbound email actions? (Select 2)",
+        "options": [
+            "Send an email back to the source that triggered the action",
+            "Template the inbound email response",
+            "Forward the inbound email to the intended user",
+            "Set a value for a field in the target table"
+        ],
+        "answer": [0, 3],
+        "explanation": "Inbound email actions perform Record actions (update/create records) and Email replies (respond back to sender).",
+        "multi": true
+    },
+    {
+        "id": 25,
+        "question": "What Flow Designer benefit corresponds to extending flow content by subscribing to Integration Hub or installing spokes?",
+        "options": [
+            "Repeatable",
+            "Robust",
+            "Scalable",
+            "Centralised"
+        ],
+        "answer": [2],
+        "explanation": "Scalability refers to extending functionality by adding spokes, integrating external systems, and expanding automation capabilities.",
+        "multi": false
+    },
+    {
+        "id": 26,
+        "question": "What variable type can be only used once in a catalogue item?",
+        "options": [
+            "Requested For",
+            "Masked",
+            "Rich Text Label",
+            "Macro"
+        ],
+        "answer": [0],
+        "explanation": "A catalog item can have only one 'Requested For' variable, as it defines the target user of the request.",
+        "multi": false
+    },
+    {
+        "id": 27,
+        "question": "How do you embed report visualisations in the body of scheduled report emails?",
+        "options": [
+            "Include them as attachments",
+            "Drag and drop images to the body section",
+            "Insert the report links",
+            "Select Embedded PNG"
+        ],
+        "answer": [3],
+        "explanation": "Choosing Embedded PNG inserts the report visualization directly into the email body instead of attaching it.",
+        "multi": false
+    },
+    {
+        "id": 28,
+        "question": "What is a stakeholder’s role in implementing and maintaining the CMDB?",
+        "options": [
+            "Identify necessary reports showing CI health",
+            "Determine specific CI information required to support capabilities and build organisational buy-in",
+            "Create a go-forward strategy",
+            "Import CI data"
+        ],
+        "answer": [1],
+        "explanation": "Stakeholders define what data is needed, ensure alignment with business goals, and help gain organizational support.",
+        "multi": false
+    },
+    {
+        "id": 29,
+        "question": "What records can AI generate in ServiceNow via the Now Assist skills? (Select 2)",
+        "options": [
+            "User records",
+            "Catalogue items",
+            "Knowledge articles",
+            "Configuration items"
+        ],
+        "answer": [1, 2],
+        "explanation": "Now Assist can generate catalog items and draft knowledge articles. It does not create users or CIs.",
+        "multi": true
+    },
+    {
+        "id": 30,
+        "question": "Where do you navigate on the platform to filter system notifications by category and search within them? (Select 2)",
+        "options": [
+            "All > System Notification > Email > Notification Filters",
+            "Admin > Subscription Management > Settings",
+            "All > System Notification > Email > Notification Categories",
+            "All > Self-Service > My Notification Preferences > Advanced Preferences",
+            "User Profile > Preferences > Notifications > Advanced Preferences"
+        ],
+        "answer": [3, 4],
+        "explanation": "Advanced Preferences allow filtering notifications, searching, and customizing delivery settings.",
+        "multi": true
+    },
+    {
+        "id": 31,
+        "question": "How do you delete related records from the archive log and archive (ar_) tables?",
+        "options": [
+            "Delete archive record log entries",
+            "Create archive destroy rules",
+            "Re-archive restored records",
+            "Restore archived records"
+        ],
+        "answer": [1],
+        "explanation": "Archive destroy rules define deletion conditions and automatically remove archived data via batch processes.",
+        "multi": false
+    },
+    {
+        "id": 32,
+        "question": "How can you show keyboard shortcuts for the page you are viewing in a modal?",
+        "options": [
+            "Select \"Show help\" icon",
+            "Press Ctrl + / (Windows) or Cmd + / (Mac)",
+            "Use profile keyboard shortcuts",
+            "Press F1"
+        ],
+        "answer": [1],
+        "explanation": "This shortcut opens a modal showing available keyboard shortcuts for the current page.",
+        "multi": false
+    },
+    {
+        "id": 33,
+        "question": "How can you measure and track article views, page views, and searches performed by unauthenticated users?",
+        "options": [
+            "Remove user criteria",
+            "Report number of articles",
+            "Collect knowledge usage metrics",
+            "Retire articles"
+        ],
+        "answer": [2],
+        "explanation": "Knowledge usage metrics track article views, page visits, and search activity (including unauthenticated users).",
+        "multi": false
+    },
+    {
+        "id": 34,
+        "question": "Which group types are provided in the base system? (Select 3)",
+        "options": [
+            "approval",
+            "survey",
+            "itil",
+            "catalog",
+            "notification"
+        ],
+        "answer": [1, 2, 3],
+        "explanation": "Default group types include ITIL, Catalog, and Survey.",
+        "multi": true
+    },
+    {
+        "id": 35,
+        "question": "How do users know what form view they see when accessing a record?",
+        "options": [
+            "Open Form Designer",
+            "Only one view exists",
+            "It is displayed next to or by hovering over the record’s display name in the form header",
+            "Use Additional Actions menu",
+            "View annotations"
+        ],
+        "answer": [2],
+        "explanation": "The current view is visible next to the record name, or on hover in the form header.",
+        "multi": false
+    },
+    {
+        "id": 36,
+        "question": "Which menu allows users to perform quick reports, configure lists, and export data?",
+        "options": [
+            "Record Context Menu",
+            "Column Context Menu",
+            "List Context Menu",
+            "Value Context Menu"
+        ],
+        "answer": [1],
+        "explanation": "Accessed by right-clicking a column header, it allows quick reports, sorting/grouping, and exporting.",
+        "multi": false
+    },
+    {
+        "id": 37,
+        "question": "Where do you navigate to quickly find tables, configurations, and metadata for any application?",
+        "options": [
+            "Analytics Hub",
+            "Integration Hub",
+            "Manager Hub",
+            "Configuration Hub",
+            "RPA Hub"
+        ],
+        "answer": [3],
+        "explanation": "Configuration Hub provides centralized access to app data, including tables, metadata, and configs all in one place.",
+        "multi": false
+    },
+    {
+        "id": 38,
+        "question": "Where do you navigate to access the Catalog Builder?",
+        "options": [
+            "All > Service Catalog > Catalog Builder",
+            "All > Self Service > Catalog Builder",
+            "All > Service Catalog Wizards > Catalog Builder",
+            "All > Service Catalog > Catalogue Definitions > Catalog Builder"
+        ],
+        "answer": [0],
+        "explanation": "The Catalog Builder is accessed via All > Service Catalog > Catalog Builder.",
+        "multi": false
+    },
+    {
+        "id": 39,
+        "question": "What is the auto-populated prefix for a custom table in the global application?",
+        "options": [
+            "z_",
+            "x_",
+            "c_",
+            "u_"
+        ],
+        "answer": [3],
+        "explanation": "Custom tables in the global scope are automatically prefixed with u_.",
+        "multi": false
+    },
+    {
+        "id": 40,
+        "question": "Which statements are true about Data Policies? (Select 3)",
+        "options": [
+            "Dependent on how record is updated",
+            "Have a condition as trigger",
+            "Script-free server-side files",
+            "Can take different actions when condition is true/false"
+        ],
+        "answer": [1, 2, 3],
+        "explanation": "Data Policies enforce data consistency, are server-side and script-free, use conditions, and apply actions based on their evaluation.",
+        "multi": true
+    }
+]

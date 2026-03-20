@@ -1,0 +1,272 @@
+[
+    {
+        "id": 41,
+        "question": "Under which Report Designer tab can you define the report grouping?",
+        "options": [
+            "Style",
+            "Type",
+            "Configure",
+            "Data"
+        ],
+        "answer": [2],
+        "explanation": "The Configure tab is where you define the report grouping (Group by options). The Style tab is for colours, title, and chart properties. The Type tab is for selecting the visualisation format. The Data tab is for entering the Report name, Source type, table, or data source.",
+        "multi": false
+    },
+    {
+        "id": 42,
+        "question": "What do you use to set values for the mandatory fields that are not in the import spreadsheet? For example, when data is imported into the Choice table for Categories and Subcategories.",
+        "options": [
+            "Map",
+            "Coalesce",
+            "Target field",
+            "Source script"
+        ],
+        "answer": [3],
+        "explanation": "Source script is used to set values for mandatory fields not present in the import spreadsheet. For instance, when mapping categories and subcategories, you can conditionally set values without relying entirely on source fields.",
+        "multi": false
+    },
+    {
+        "id": 43,
+        "question": "Where can users author cross-enterprise workflows and create a single, unified process on the Now Platform?",
+        "options": [
+            "Workflow Studio Playbooks",
+            "Process Flow",
+            "Flow Designer",
+            "Virtual Task Boards"
+        ],
+        "answer": [0],
+        "explanation": "Workflow Studio Playbooks (previously Process Automation Designer) enables process owners to author cross-enterprise workflows and create a single, unified process by connecting flows, subflows, and actions into a digitized task board.",
+        "multi": false
+    },
+    {
+        "id": 44,
+        "question": "You can test a flow, subflow or action in the background and run it with sample data. What is bypassed in the Flow Designer to allow testing?",
+        "options": [
+            "The actions that are not part of the main flow",
+            "Flow trigger conditions",
+            "The sample data you provide",
+            "The subflows"
+        ],
+        "answer": [1],
+        "explanation": "Flow trigger conditions are bypassed in Flow Designer to allow background testing using sample data, causing the system to act as if the trigger was met natively.",
+        "multi": false
+    },
+    {
+        "id": 45,
+        "question": "What actions can you take with Flow Designer? (Select 3)",
+        "options": [
+            "Define multiple flows with the same trigger conditions on a table",
+            "Look up and delete multiple existing records as a single action",
+            "Test a flow, subflow, or action in the background",
+            "Duplicate an action or subflow within a flow"
+        ],
+        "answer": [1, 2, 3],
+        "explanation": "Flow Designer lets you perform bulk deletes, test in the background, and duplicate flow components. Defining multiple flows with identical triggers should be avoided to prevent execution conflicts.",
+        "multi": true
+    },
+    {
+        "id": 46,
+        "question": "Configuration Hub allows you to track delta changes, over-allocated subscriptions, customisations, and slow execution on the product home page by selecting a product family. Where do you navigate to access Configuration Hub? (Select 2)",
+        "options": [
+            "All > Admin Center > Configuration Hub",
+            "All > Now Experience Framework > Configuration Hub",
+            "Admin > Configuration Hub",
+            "Workspaces > Configuration Hub"
+        ],
+        "answer": [0, 2],
+        "explanation": "Configuration Hub can be accessed via left navigation (All > Admin Center > Configuration Hub) or the Admin tab (Admin > Configuration Hub).",
+        "multi": true
+    },
+    {
+        "id": 47,
+        "question": "What do you call a single row in a table or list?",
+        "options": [
+            "Item",
+            "Record",
+            "Field",
+            "Class",
+            "Application",
+            "Entry",
+            "Data"
+        ],
+        "answer": [1],
+        "explanation": "A table is a collection of records. Each record corresponds to a row in a table, and each field on a record corresponds to a column.",
+        "multi": false
+    },
+    {
+        "id": 48,
+        "question": "Which of the following is NOT a group type in the base instance?",
+        "options": [
+            "itil",
+            "incident",
+            "catalog",
+            "survey"
+        ],
+        "answer": [1],
+        "explanation": "Incident is NOT a default group type. Out-of-the-box group types are catalog, itil, and survey.",
+        "multi": false
+    },
+    {
+        "id": 49,
+        "question": "What can you do with the Workflow Studio Playbooks? (Select 3)",
+        "options": [
+            "Guide agents and fulfillers through complicated playbooks from start to finish",
+            "Organise playbook activities in a digitised task board or diagram interface",
+            "Connect multiple flows and actions into an end-to-end business workflow",
+            "Replace existing Flow Designer flows, subflows, or actions to automate process activities"
+        ],
+        "answer": [0, 1, 2],
+        "explanation": "Workflow Studio Playbooks organize and connect process activities systematically. They reuse (not replace) existing Flow Designer flows and actions.",
+        "multi": true
+    },
+    {
+        "id": 50,
+        "question": "What can be configured for questions in Catalog UI Policy Actions without the need to script? (Select 2)",
+        "options": [
+            "Set field messages",
+            "Set values",
+            "Set field types",
+            "Set access roles",
+            "Set text styles"
+        ],
+        "answer": [0, 1],
+        "explanation": "Catalog UI Policy Actions allow you to conditionally 'Set field messages' and 'Set values' for catalog questions without scripting.",
+        "multi": true
+    },
+    {
+        "id": 51,
+        "question": "What rules work with existing Access Control rules (ACLs) to deny access to tables and records that do not match subject attributes?",
+        "options": [
+            "Data privacy",
+            "Data separation",
+            "Data filtration",
+            "Data classification"
+        ],
+        "answer": [2],
+        "explanation": "Data filtration acts alongside ACLs to deny access to tables/records mismatched with subject attributes. It runs before ACL evaluation.",
+        "multi": false
+    },
+    {
+        "id": 52,
+        "question": "Based on the Shared Responsibility Model, who is responsible for securing the configuration of the instances, authentication and authorisation, and data encryption at rest?",
+        "options": [
+            "Network provider (third-party)",
+            "Data controller (customer)",
+            "Data processor (ServiceNow)",
+            "Data centre provider (colocation)"
+        ],
+        "answer": [1],
+        "explanation": "Under the Shared Responsibility Model, the data controller (customer) is responsible for securing instance configurations, access via authentication, and data encryption choices at rest.",
+        "multi": false
+    },
+    {
+        "id": 53,
+        "question": "What can agents do with the Sidebar feature in the Next Experience UI? (Select 2)",
+        "options": [
+            "Have real-time collaboration with others from a Workspace interaction-based record",
+            "Broadcast a text message or initiate a conference call with other agents",
+            "Communicate with the caller/requester directly",
+            "Integrate with other Workspaces to display related records",
+            "Create, open and search for discussions about their work"
+        ],
+        "answer": [0, 4],
+        "explanation": "Sidebar enables real-time collaboration among agents resolving tasks and allows users to create/search for discussions in their workspaces.",
+        "multi": true
+    },
+    {
+        "id": 54,
+        "question": "What are some of the benefits often recognised by branding your instance? (Select 3)",
+        "options": [
+            "Create a shared identity",
+            "Gain user trust",
+            "Accelerate adoption rates",
+            "Share comprehensive assignment rules",
+            "Reduce service desk calls"
+        ],
+        "answer": [0, 1, 2],
+        "explanation": "Branding fosters a shared identity, increases user trust by aligning with corporate visuals, and accelerates platform adoption rates.",
+        "multi": true
+    },
+    {
+        "id": 55,
+        "question": "When migrating to Platform Analytics, some visualisations, aspects of visualisations, and filters are migrated in compatibility mode. How are these artifacts inserted in the migrated dashboard?",
+        "options": [
+            "As a hyperlink to the Core UI dashboard",
+            "As embedded content (iframes)",
+            "In a new dashboard tab",
+            "As screenshots/images"
+        ],
+        "answer": [1],
+        "explanation": "All custom content blocks and non-Analytics widgets migrate in compatibility mode, appearing as embedded content (iframes) on the new dashboard.",
+        "multi": false
+    },
+    {
+        "id": 56,
+        "question": "What authentication method is used as a Single Sign-On (SSO) identity provider (IdP) to allow users to log in to ServiceNow using their social identity provider, like Google and Okta?",
+        "options": [
+            "LDAP",
+            "Digest Authentication",
+            "SAML 2.0",
+            "OpenID Connect"
+        ],
+        "answer": [3],
+        "explanation": "OpenID Connect (OIDC) provides modern SSO integrations for both B2C (Google) and B2B (Okta) social identity providers.",
+        "multi": false
+    },
+    {
+        "id": 57,
+        "question": "Search engine optimisation (SEO) helps portal users find the necessary information and engage more with your portal. Adding SEO information to your public portal pages improves how external search engines index and rank pages to make them more findable. What information can you add to Service Portal pages to improve SEO? (Select 3)",
+        "options": [
+            "Images instead of long texts",
+            "Human readable keywords to page URLs",
+            "Dynamic titles to portal pages",
+            "Meta tags to public pages",
+            "Access restrictions to public pages"
+        ],
+        "answer": [1, 2, 3],
+        "explanation": "SEO optimization natively supports Human readable keywords to URLs, dynamic titles to portal pages, and robust Meta tags for public pages.",
+        "multi": true
+    },
+    {
+        "id": 58,
+        "question": "What do you configure for catalogue items or record producers in Catalog Builder to make them discoverable on Employee Center?",
+        "options": [
+            "Short Description and Description",
+            "Variables and Variable Sets",
+            "Topics and Taxonomy",
+            "Catalogues and Categories"
+        ],
+        "answer": [2],
+        "explanation": "Topics and Taxonomy provide hierarchical categorizations making resources discoverable across the unified Employee Center.",
+        "multi": false
+    },
+    {
+        "id": 59,
+        "question": "What feature allows you to use simple natural language queries in a search string to query for a set of CIs in the CMDB?",
+        "options": [
+            "Contextual Search",
+            "CMDB Data Manager",
+            "Conditional Search",
+            "Intelligent Search",
+            "Multisource CMDB"
+        ],
+        "answer": [3],
+        "explanation": "Intelligent Search allows admins to draft complex search intents intuitively using conversational natural language query (NLQ) constructs.",
+        "multi": false
+    },
+    {
+        "id": 60,
+        "question": "What details can you find in the import set record after running an import? (Select 3)",
+        "options": [
+            "Import Set Rows",
+            "Import Log",
+            "Import Maps",
+            "Import Set Runs",
+            "Concurrent Import Sets",
+            "Import Set API"
+        ],
+        "answer": [0, 1, 3],
+        "explanation": "After processing imports, admins review the robust tabs: Import Set Rows, Import Log, and Import Set Runs to identify process flow and row states.",
+        "multi": true
+    }
+]

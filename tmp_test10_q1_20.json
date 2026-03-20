@@ -1,0 +1,269 @@
+[
+    {
+        "id": 1,
+        "question": "Which score indicates the level of adherence of your ServiceNow instance security settings to recommended best practices?",
+        "options": [
+            "Risk security score",
+            "Complementary security score",
+            "Hardening compliance score",
+            "Compliant risk score"
+        ],
+        "answer": [2],
+        "explanation": "The Hardening compliance score measures how well your instance security configurations align with ServiceNow recommended best practices. It evaluates security properties and provides insights through score trends, allowing administrators to identify gaps and improve the overall security posture of the instance.",
+        "multi": false
+    },
+    {
+        "id": 2,
+        "question": "Which of the following can you do using the Catalog Builder? (Select 3)",
+        "options": [
+            "Configure the default value for a question in Catalog Builder",
+            "Add, remove or update multiple images of a catalogue item",
+            "Configure the Catalog Builder so catalogue item editors can enter custom details",
+            "Set the minimum and maximum number of items for an order",
+            "Transfer catalogue items published through Catalog Builder using exclusive update sets",
+            "Administer tables and forms visually from a single user interface"
+        ],
+        "answer": [0, 2, 4],
+        "explanation": "Catalog Builder is a guided, low-code tool for creating and managing catalog items. It allows setting default values for questions, configuring the editor experience, and automatically generating exclusive update sets for safe transfer between instances. It does not manage tables/forms or advanced order constraints.",
+        "multi": true
+    },
+    {
+        "id": 3,
+        "question": "What are the advantages of a ticketing integration between a ServiceNow instance and a third-party system? (Select 3)",
+        "options": [
+            "Tracking ticket activity for accurate reporting",
+            "Transforming data for more uniform processing",
+            "No requirement for a unique key between systems",
+            "Synchronising the systems so that notifications can be triggered"
+        ],
+        "answer": [0, 1, 3],
+        "explanation": "Ticketing integrations enable data synchronization (keeps both systems updated), data transformation (ensures compatibility), and activity tracking (improves reporting and auditability). A unique key (like ticket number) is still required.",
+        "multi": true
+    },
+    {
+        "id": 4,
+        "question": "What do you use to understand changes made for users, groups, roles, and ACLs, such as information about who has modified what, where and when?",
+        "options": [
+            "Identity Center",
+            "Identity and Access Audit",
+            "Instance Security Center",
+            "Access Analyzer"
+        ],
+        "answer": [1],
+        "explanation": "Identity and Access Audit provides tracking of who changed what and when, visibility into changes in users, roles, groups, and ACLs, and support for security audits and compliance.",
+        "multi": false
+    },
+    {
+        "id": 5,
+        "question": "Which of the following field types have a one-to-many relationship? (Select 3)",
+        "options": [
+            "Choice Field",
+            "Name-Value Pairs",
+            "Glide List",
+            "Reference fields",
+            "Document ID fields"
+        ],
+        "answer": [2, 3, 4],
+        "explanation": "These field types represent relationships: Reference field (one record linked to another table), Glide List (multiple records from another table), and Document ID (dynamic reference to any table). Choice fields and name-value pairs do not create relational links.",
+        "multi": true
+    },
+    {
+        "id": 6,
+        "question": "Where can you set a value or a message for a question in Catalog Builder based on a set of conditions?",
+        "options": [
+            "Settings",
+            "Preview",
+            "Dynamic behavior",
+            "Details"
+        ],
+        "answer": [2],
+        "explanation": "Dynamic behavior in Catalog Builder allows setting field values automatically, showing messages/help text, and applying conditional logic without scripting. It is equivalent to UI Policies but in a guided builder interface.",
+        "multi": false
+    },
+    {
+        "id": 7,
+        "question": "What setting on the List Control page can speed up loading large lists?",
+        "options": [
+            "Omit if empty",
+            "Remove pagination count",
+            "Omit filters",
+            "Hierarchical lists"
+        ],
+        "answer": [1],
+        "explanation": "Counting total records in large tables is expensive. Disabling pagination count skips total record calculation and improves list loading performance significantly.",
+        "multi": false
+    },
+    {
+        "id": 8,
+        "question": "Notifications in the Now Platform occur through which of the following methods? (Select 3)",
+        "options": [
+            "SMS",
+            "Email",
+            "Workplace Chat",
+            "Meeting Invitation",
+            "Virtual Agent"
+        ],
+        "answer": [0, 1, 3],
+        "explanation": "ServiceNow supports notifications via Email (primary channel), SMS (converted from email if configured), and Meeting invitations (calendar-based notifications).",
+        "multi": true
+    },
+    {
+        "id": 9,
+        "question": "What feature is added for tasks to give users safer and more secure access to the reports on the dashboards?",
+        "options": [
+            "UI action to auto-generate reports",
+            "UI policy actions",
+            "report_view access control lists",
+            "report_user role",
+            "Elevate role option"
+        ],
+        "answer": [2],
+        "explanation": "The report_view ACL controls who can view reports, ensures users only see data they are authorized for, and enhances dashboard security by restricting report access.",
+        "multi": false
+    },
+    {
+        "id": 10,
+        "question": "What role is required to create record producers to allow users to raise issues directly from the Service Catalogue?",
+        "options": [
+            "catalog_item_designer",
+            "itil_admin",
+            "incident_manager",
+            "catalog_admin"
+        ],
+        "answer": [3],
+        "explanation": "The catalog_admin role manages catalog items and record producers and allows creation of forms for users to submit requests/issues.",
+        "multi": false
+    },
+    {
+        "id": 11,
+        "question": "Which of the following is true about assigning a task? (Select 2)",
+        "options": [
+            "Tasks are automatically routed to an assignment group",
+            "Tasks created through email are routed to the Service Desk",
+            "Assigned to value is limited to the selected assignment group",
+            "Upon assignment, all group members receive an email"
+        ],
+        "answer": [2, 3],
+        "explanation": "Users in 'Assigned to' must belong to the selected assignment group, and notifications are sent to group members on assignment. Tasks are NOT automatically routed unless assignment rules are configured.",
+        "multi": true
+    },
+    {
+        "id": 12,
+        "question": "At what point is the resolution SLA escalated to the task assignee\u2019s manager for the first time?",
+        "options": [
+            "At 50% time elapsed",
+            "At 100% time elapsed",
+            "At 75% time elapsed",
+            "Never"
+        ],
+        "answer": [2],
+        "explanation": "Default SLA notifications: 50% \u2192 notify assignee, 75% \u2192 notify assignee + manager (first escalation), 100% \u2192 breach notification.",
+        "multi": false
+    },
+    {
+        "id": 13,
+        "question": "How does ServiceNow process an inbound email with a watermark of an existing record?",
+        "options": [
+            "Ignores email",
+            "Creates child record",
+            "Overwrites all values",
+            "Updates existing task"
+        ],
+        "answer": [3],
+        "explanation": "Watermark links email to an existing record. Inbound email actions identify the record via watermark and update it using defined script/logic. If no watermark, a new record is created.",
+        "multi": false
+    },
+    {
+        "id": 14,
+        "question": "What can you do in the SLA Timeline for a task? (Select 3)",
+        "options": [
+            "Send notifications",
+            "Identify why a task update triggered a stage",
+            "View SLA/OLA progress",
+            "View related task updates"
+        ],
+        "answer": [1, 2, 3],
+        "explanation": "SLA Timeline provides full lifecycle visibility, trigger analysis (why SLA changed stage), tracking across SLAs and OLAs, and related updates insight. It is analytical, not action-based.",
+        "multi": true
+    },
+    {
+        "id": 15,
+        "question": "Which application allows you to compare reports against report_view and read ACLs?",
+        "options": [
+            "Security Jump Start",
+            "Reporting Statistics",
+            "Anonymous Report Center",
+            "Report Security",
+            "ACL Assessment for Reports"
+        ],
+        "answer": [4],
+        "explanation": "This tool evaluates report_view vs read ACL conflicts, identifies users who cannot access reports, and helps fix access/security mismatches.",
+        "multi": false
+    },
+    {
+        "id": 16,
+        "question": "Which UI action updates a record and stays on the same page?",
+        "options": [
+            "Update",
+            "Insert",
+            "Save",
+            "Submit"
+        ],
+        "answer": [2],
+        "explanation": "Save \u2192 updates record and stays. Update \u2192 updates and reloads to previous screen. Insert \u2192 creates new record. Submit \u2192 saves new record and exits.",
+        "multi": false
+    },
+    {
+        "id": 17,
+        "question": "Lists provide context menus at three different levels. What are they? (Select 3)",
+        "options": [
+            "List description menu",
+            "List column context menu",
+            "List filter context menu",
+            "List title menu",
+            "List fields context menu"
+        ],
+        "answer": [1, 3, 4],
+        "explanation": "Three levels: List title menu \u2192 overall list actions, Column context menu \u2192 column operations, Field context menu \u2192 field-specific actions.",
+        "multi": true
+    },
+    {
+        "id": 18,
+        "question": "What is the default portal for new (ZBoot) instances?",
+        "options": [
+            "Instance Security Center",
+            "Knowledge Portal",
+            "Employee Center",
+            "Service Workspace Portal"
+        ],
+        "answer": [2],
+        "explanation": "For new instances, the default portal is Employee Center. Older instances used Service Portal. Employee Center provides a modern, unified user experience.",
+        "multi": false
+    },
+    {
+        "id": 19,
+        "question": "What application allows you to create or edit a catalogue item using a guided experience?",
+        "options": [
+            "Process Automation Designer",
+            "Maintain Items",
+            "Catalog Builder",
+            "Flow Designer"
+        ],
+        "answer": [2],
+        "explanation": "Catalog Builder provides a guided UI for catalog creation, supports restrictions, templates, and validations, and is designed for low-code/no-code users.",
+        "multi": false
+    },
+    {
+        "id": 20,
+        "question": "What can you leverage to eliminate scripting for a catalogue item or variable set?",
+        "options": [
+            "Verification Rules",
+            "Assignment Lookup Rules",
+            "Business Rules",
+            "Data Lookup Rules"
+        ],
+        "answer": [3],
+        "explanation": "Data Lookup Rules automatically set field values based on conditions and replace scripting logic. They are used heavily in Service Catalog to simplify configurations.",
+        "multi": false
+    }
+]

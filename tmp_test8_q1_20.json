@@ -1,0 +1,274 @@
+[
+    {
+        "id": 1,
+        "question": "What are the possible data source file formats for an import set? (Select 4)",
+        "options": [
+            "XLSX",
+            "XML",
+            "JSON",
+            "TXT",
+            "CSV"
+        ],
+        "answer": [0, 1, 2, 4],
+        "explanation": "An import set can pull data from local source files in XML, CSV, XLS, XLSX, and JSON formats. It can also connect via network servers, LDAP, or JDBC. TXT (text) is not a supported file format for a data source.",
+        "multi": true
+    },
+    {
+        "id": 2,
+        "question": "What role can manage all aspects of the Service Catalog application and the scripting functions?",
+        "options": [
+            "Administrators (admin)",
+            "Catalogue editors (catalog_editor)",
+            "Catalogue managers (catalog_manager)",
+            "Catalogue administrators (catalog_admin)"
+        ],
+        "answer": [0],
+        "explanation": "While catalog_admin can manage most catalog aspects (items, categories, etc.), they cannot manage scripting functions or business rules. Only the admin role has permissions to manage technical scripting and advanced functions within the Service Catalog.",
+        "multi": false
+    },
+    {
+        "id": 3,
+        "question": "What role is required to create and edit Access Controls?",
+        "options": [
+            "admin",
+            "elevated_admin",
+            "elevated_security",
+            "security",
+            "security_admin"
+        ],
+        "answer": [4],
+        "explanation": "The security_admin role is an elevated privilege role required to create and edit Access Control Lists (ACLs). Even the default admin user must manually use the Elevate Roles feature in the user menu to activate this role for the duration of their session.",
+        "multi": false
+    },
+    {
+        "id": 4,
+        "question": "Where in the Flow Designer can you find information about the actions you add to a flow?",
+        "options": [
+            "Virtual Agent Help",
+            "Flow Assistant",
+            "Help Panel",
+            "Connect Support"
+        ],
+        "answer": [2],
+        "explanation": "The Help Panel in Flow Designer provides on-demand information for building flows and using flow logic. When you add an action, the panel displays help topics specific to that action, including its inputs and outputs.",
+        "multi": false
+    },
+    {
+        "id": 5,
+        "question": "What options are available for users when setting their notification preferences in Next Experience? (Select 3)",
+        "options": [
+            "Create, edit, or delete system notifications for a particular channel",
+            "Create custom notifications by subscribing to system notifications and applying desired conditions",
+            "Create, edit, or delete notification channels for instant messages, email, SMS, and voice",
+            "Set global notification preferences for all active users in the system",
+            "Enable or disable a particular channel for receiving notifications"
+        ],
+        "answer": [1, 2, 4],
+        "explanation": "Users can personalize their experience by creating custom notifications via subscriptions, managing their own channels (like adding a personal email or SMS number), and toggling specific channels on or off. Admins are the only ones who can manage system notifications or set global preferences.",
+        "multi": true
+    },
+    {
+        "id": 6,
+        "question": "Which option in the Email Client Template allows you to include attachments from emails while replying to or forwarding emails?",
+        "options": [
+            "Include attachment from email",
+            "Email Attachment Conditions",
+            "Attachment Send Action",
+            "'Attachment is true' condition",
+            "glide.email.inbound.image_sys_attachment.filter.action system property"
+        ],
+        "answer": [0],
+        "explanation": "Within an Email Client Template, selecting the 'Include attachment from email' option enables the system to carry over attachments when a user replies or forwards a message within a configurable workspace.",
+        "multi": false
+    },
+    {
+        "id": 7,
+        "question": "When do onSubmit Client Scripts execute their script logic? (Select 3)",
+        "options": [
+            "When a user clicks the Lookup button on a reference field",
+            "When a user clicks the Submit button",
+            "When a user clicks the Update button",
+            "When a user clicks the Delete button",
+            "When a user clicks the Save menu item in the Additional Actions menu"
+        ],
+        "answer": [1, 2, 4],
+        "explanation": "onSubmit() scripts run whenever a form is being saved to the database. This includes clicking Submit (for new records), Update (for existing records), or selecting Save from the context menu. They do not run for deletions or simple reference lookups.",
+        "multi": true
+    },
+    {
+        "id": 8,
+        "question": "What is the minimum required component in each flow in Flow Designer? (Select 2)",
+        "options": [
+            "Action",
+            "Flow Logic",
+            "Trigger",
+            "Subflow"
+        ],
+        "answer": [0, 2],
+        "explanation": "Every flow requires at least one Trigger (to define when the flow starts) and at least one Action (to define what the flow does, such as updating a record or requesting an approval).",
+        "multi": true
+    },
+    {
+        "id": 9,
+        "question": "Who can create additional ad-hoc tasks for a requested item?",
+        "options": [
+            "Any of the fulfillers",
+            "Fulfillers with permissions",
+            "The requester",
+            "Any of the approvers"
+        ],
+        "answer": [1],
+        "explanation": "A process user (fulfiller) with the appropriate permissions can add an ad-hoc SCTASK to a RITM (Requested Item) if additional work is needed. This must be done while the RITM is still active.",
+        "multi": false
+    },
+    {
+        "id": 10,
+        "question": "What is the primary way to interact with the applications and information in a ServiceNow instance?",
+        "options": [
+            "Application Programming Interface (API)",
+            "Next Experience Unified Navigation",
+            "Service Portal",
+            "Workspace",
+            "ServiceNow Mobile Apps"
+        ],
+        "answer": [1],
+        "explanation": "Next Experience Unified Navigation (the header and menus across the top) is the primary framework for interacting with the platform. It unifies apps, provides global search, notifications, and access to all menus in a single pane.",
+        "multi": false
+    },
+    {
+        "id": 11,
+        "question": "Each time a knowledge article is viewed, a record is added to which table?",
+        "options": [
+            "Knowledge [kb_knowledge]",
+            "Knowledge Search Log [ts_query_kb]",
+            "Knowledge Feedback [kb_feedback]",
+            "Knowledge Use [kb_use]"
+        ],
+        "answer": [3],
+        "explanation": "The kb_use table tracks article views and attachments to tasks. This data helps administrators identify which articles are most effective and allows for table cleanup jobs to manage performance by deleting older view records.",
+        "multi": false
+    },
+    {
+        "id": 12,
+        "question": "What are the three key attributes of every field? (Select 3)",
+        "options": [
+            "Value",
+            "Location",
+            "Field Name",
+            "ID",
+            "Field Label"
+        ],
+        "answer": [0, 2, 4],
+        "explanation": "Every field in ServiceNow is defined by its Label (what the user sees), its Name (the backend database name, e.g., short_description), and its Value (the actual data stored in that specific record).",
+        "multi": true
+    },
+    {
+        "id": 13,
+        "question": "Which of the following should you do before importing data into ServiceNow? (Select 3)",
+        "options": [
+            "Decide what to do with incomplete or erroneous data.",
+            "Determine which source data maps to which target fields.",
+            "Delete all the existing target table records to avoid conflicts.",
+            "Understand the data you plan to import."
+        ],
+        "answer": [0, 1, 3],
+        "explanation": "Preparation is key for a clean import. You must understand your source data, decide how to handle errors (skip or fix), and plan your mapping. Deleting existing records is not a standard requirement and could lead to data loss.",
+        "multi": true
+    },
+    {
+        "id": 14,
+        "question": "What are the different ways to render a catalogue item in Virtual Agent? (Select 4)",
+        "options": [
+            "Using a pop-up",
+            "Using a card",
+            "Using an iframe",
+            "Using an inline",
+            "Using a window",
+            "Using a conversation"
+        ],
+        "answer": [0, 3, 4, 5],
+        "explanation": "Virtual Agent topics can be designed to render items in different ways depending on the complexity of the form: Conversation (answering questions one-by-one), Inline (filling the form directly in the chat), Pop-up, or a separate Window linking to the Portal.",
+        "multi": true
+    },
+    {
+        "id": 15,
+        "question": "Which ServiceNow Security Center feature provides step-by-step guidance to assist in creating and maintaining your Instance Security Maturity level?",
+        "options": [
+            "Customer Actions",
+            "Best Practices",
+            "Metrics",
+            "Hardening"
+        ],
+        "answer": [1],
+        "explanation": "The Best Practices feature is the starting point for security configuration. It provides a structured, step-by-step guide to help organizations improve their security posture and track maturity over time.",
+        "multi": false
+    },
+    {
+        "id": 16,
+        "question": "What can be added as human-readable keywords to help with SEO? (Select 2)",
+        "options": [
+            "Page ID",
+            "Dynamic page variables",
+            "Static content",
+            "Page parameters",
+            "Sys ID"
+        ],
+        "answer": [1, 2],
+        "explanation": "To improve Search Engine Optimization (SEO), portal URLs can be customized with keywords. These can be Static (hardcoded words) or Dynamic (variables that pull data from the record, such as an article title).",
+        "multi": true
+    },
+    {
+        "id": 17,
+        "question": "Which of the following is a way to add an application to a ServiceNow instance for development? (Select 2)",
+        "options": [
+            "Use Studio to import an application from source control.",
+            "Use the Create Application module to create an application.",
+            "Use Application Cross-Scope Access to load an application.",
+            "Use the Guided App Creator to create an application.",
+            "Use the ServiceNow Store to load an application."
+        ],
+        "answer": [0, 3],
+        "explanation": "Development starts by either creating a new app via Guided App Creator or by importing an existing project into Studio from a Git repository (Source Control). Applications from the Store are for installation, not development.",
+        "multi": true
+    },
+    {
+        "id": 18,
+        "question": "How is the redacted data presented when an inbound email is received and processed?",
+        "options": [
+            "Randomised and recoverable by admins",
+            "Replaced and restricted",
+            "Masked and unrecoverable",
+            "Edited and available"
+        ],
+        "answer": [2],
+        "explanation": "When the 'Sensitive Data Redaction' plugin is active, PII (like credit card numbers) is masked in the sys_email table. Once redacted, this data cannot be recovered by any user, including administrators.",
+        "multi": false
+    },
+    {
+        "id": 19,
+        "question": "At what levels can User Criteria be used in Knowledge Management to control who can read and contribute? (Select 3)",
+        "options": [
+            "Knowledge Article",
+            "Knowledge Block",
+            "Knowledge Category",
+            "Knowledge Base"
+        ],
+        "answer": [0, 1, 3],
+        "explanation": "User Criteria provides granular security. It can be applied at the highest level (Knowledge Base), to specific Articles, or even to Knowledge Blocks (reusable content sections within articles). It is not applied at the Category level.",
+        "multi": true
+    },
+    {
+        "id": 20,
+        "question": "Which of the following are automatically captured in an update set? (Select 3)",
+        "options": [
+            "Schedules",
+            "Views",
+            "Roles",
+            "Fields",
+            "Tasks"
+        ],
+        "answer": [1, 2, 3],
+        "explanation": "Update sets capture configuration (process records), not data. This includes table fields, user roles, and form views. It does not capture data records like Tasks, or specific data-heavy configurations like Schedules and Users.",
+        "multi": true
+    }
+]

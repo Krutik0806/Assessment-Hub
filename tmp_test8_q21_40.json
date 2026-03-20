@@ -1,0 +1,276 @@
+[
+    {
+        "id": 21,
+        "question": "The VIP value for a user is set to true on the [sys_user] table. The user is listed as the Caller of an incident. Which of the following statements are true in a baseline platform configuration? (Select 2)",
+        "options": [
+            "The priority field calculation is adjusted to increase Priority by 1.",
+            "The user's name is shown in red in the Caller field.",
+            "The SLA workflow conditions for 'VIP' trigger additional notifications to the manager of the Assignment group.",
+            "A 'VIP' decoration is displayed next to the Caller field."
+        ],
+        "answer": [1, 3],
+        "explanation": "In ServiceNow, designating a user as a VIP is a visual cue for agents. When a VIP is selected as a Caller, their name automatically turns red, and a specific 'VIP' icon (decoration) appears next to the field in both the list and form views. Importantly, VIP status does not affect the Priority calculation or SLA workflows by default; any such changes would require custom configuration.",
+        "multi": true
+    },
+    {
+        "id": 22,
+        "question": "Which of the following definitions corresponds to Service Catalogue?",
+        "options": [
+            "A collection of one or more ordered items.",
+            "A customised interface used to build and submit an order.",
+            "Products placed in the shopping cart.",
+            "It contains a collection of orderable products and services."
+        ],
+        "answer": [3],
+        "explanation": "Service Catalogue: The central repository or collection of products and services available to users. Service Portal: The customized interface used to submit orders. Service Catalogue Request: The actual collection of one or more ordered items (the REQ). Requested Items (RITM): These represent the specific products placed in the shopping cart.",
+        "multi": false
+    },
+    {
+        "id": 23,
+        "question": "What ServiceNow product allows you to create request-fulfilment applications without writing code?",
+        "options": [
+            "Creator Studio",
+            "Guided Application Creator",
+            "ServiceNow Studio",
+            "App Engine Studio"
+        ],
+        "answer": [0],
+        "explanation": "Creator Studio is specifically designed for business process experts to build request-based apps using simple templates without any coding barriers. While App Engine Studio is also low-code, it is used for building more complex custom apps from scratch. ServiceNow Studio is an Integrated Development Environment (IDE) meant for professional developers.",
+        "multi": false
+    },
+    {
+        "id": 24,
+        "question": "Which of the following describes creating a field on a table with Form Designer?",
+        "options": [
+            "Click the New Field button in the form section and configure the field.",
+            "From the Field Types tab, drag the field type onto the form and configure the field.",
+            "From the Fields tab, drag the Fields type onto the form and configure the field.",
+            "From the Fields tab, drag the field onto the form and configure the field.",
+            "Double-click 'Insert a new row...' in the form to enter details for the new field."
+        ],
+        "answer": [1],
+        "explanation": "In the Form Designer, the Field Types tab contains all the types of fields you can create (String, Integer, Choice, etc.). Dragging one of these onto the form layout creates a brand new field in the underlying table. The Fields tab, by contrast, is used to add existing fields that are already on the table but not currently on the form.",
+        "multi": false
+    },
+    {
+        "id": 25,
+        "question": "Which of the following is a key difference between Reporting and Performance Analytics?",
+        "options": [
+            "Performance Analytics can show snapshots of data taken over time; Reports can only show the current snapshot of data.",
+            "Reports can be run on a scheduled basis; Performance Analytics cannot.",
+            "Performance Analytics data can be published to dashboards; Reports cannot.",
+            "Performance Analytics is a replacement for the legacy ServiceNow Reporting functionality.",
+            "Performance Analytics answers the question of 'Where are we today?'; Reports answer 'Where do we want to be?'.",
+            "Reports can generate accurate historical trends; Performance Analytics is limited in time.",
+            "Performance Analytics can show trends; Reports cannot."
+        ],
+        "answer": [0],
+        "explanation": "Reporting gives you a 'real-time' look at the data as it exists right now. Performance Analytics (PA) captures data at regular intervals (snapshots) to track how data changes over time. This allows PA to provide deep historical trend analysis and forecasting, answering 'What is happening over time?', whereas Reporting answers 'Where are we today?'.",
+        "multi": false
+    },
+    {
+        "id": 26,
+        "question": "A fulfiller has completed all tasks for one of the items in a request, and the tasks are set to Closed. What happens in the workflow?",
+        "options": [
+            "The requester is notified that the request is Complete.",
+            "The requested item moves to the next phase of fulfilment.",
+            "The requested item is automatically set to Closed Complete.",
+            "The request is automatically set to Closed Complete."
+        ],
+        "answer": [2],
+        "explanation": "There is a hierarchy in request fulfillment: Request (REQ) > Requested Item (RITM) > Catalog Task (SCTASK). When all the child tasks (SCTASKs) for a specific item are marked as Closed Complete, the workflow automatically transitions the parent Requested Item (RITM) to Closed Complete. Note that the top-level Request (REQ) does not close until all RITMs under it are finished.",
+        "multi": false
+    },
+    {
+        "id": 27,
+        "question": "Which of the following core tables is both a base and a parent table?",
+        "options": [
+            "Configuration Item [cmdb_ci]",
+            "Knowledge Base [kb_knowledge_base]",
+            "Visual Task Board [vtb_board]",
+            "Incident [incident]",
+            "Task [task]"
+        ],
+        "answer": [4],
+        "explanation": "A base table is a table that is at the very top of an inheritance chain (it doesn't extend anything else). A parent table is one that provides its fields to child tables. Task is a base table because it extends nothing, and it is a parent table because it is extended by incident, problem, change_request, and more. cmdb_ci is a parent table but is itself an extension of the Base Configuration Item table.",
+        "multi": false
+    },
+    {
+        "id": 28,
+        "question": "What happens if you select Publish when creating knowledge articles manually or by import?",
+        "options": [
+            "It triggers the publish workflow assigned to the knowledge base.",
+            "The articles are automatically moved to a Published state.",
+            "The articles are sent for review.",
+            "The articles are sent for approval."
+        ],
+        "answer": [0],
+        "explanation": "Selecting 'Publish' does not mean the article goes live immediately. Instead, it kicks off the workflow defined for that specific Knowledge Base. If the workflow is set to 'Instant Publish', it goes live. If it is set to 'Approval Publish', it enters a review state.",
+        "multi": false
+    },
+    {
+        "id": 29,
+        "question": "How can you access the Form Builder in ServiceNow? (Select 4)",
+        "options": [
+            "From Form Designer",
+            "From UI Builder",
+            "From Table Builder",
+            "From Related Links",
+            "From the forms on the Now Platform",
+            "From Catalog Builder"
+        ],
+        "answer": [1, 2, 3, 4],
+        "explanation": "Form Builder can be accessed through multiple entry points: Now Platform (Right-click the form header > Configure > Form Builder), Related Links (Found at the bottom of a table record), Table Builder (Under the 'Forms' tab), and UI Builder (By selecting a form component and clicking the 'Edit Form' button).",
+        "multi": true
+    },
+    {
+        "id": 30,
+        "question": "Which of the following can be used to create configuration items (CIs) in the CMDB? (Select 3)",
+        "options": [
+            "Creation via the change management process",
+            "Creation via service catalogue fulfilment processes",
+            "Creation via the incident management process",
+            "Creation triggered by asset management"
+        ],
+        "answer": [0, 1, 3],
+        "explanation": "CIs can be created through various lifecycle processes like Change Management (implementing new hardware), Service Catalogue (requesting a new laptop), and Asset Management (receiving stock). While Incident Management can reference a CI to report a fault, it is not a standard method for creating new records.",
+        "multi": true
+    },
+    {
+        "id": 31,
+        "question": "What are the three sections of an Access Control (ACL) record that must evaluate to true to grant access to a resource? (Select 3)",
+        "options": [
+            "Script",
+            "Condition",
+            "Requires Role",
+            "Advanced",
+            "Condition Script"
+        ],
+        "answer": [0, 1, 2],
+        "explanation": "For an ACL to grant access, it performs a triple-check. All three must be true: Requires Role (user must have at least one listed role), Condition (filters must be met), and Script (if 'Advanced' is checked, script must evaluate to true). 'Condition Script' is a distractor.",
+        "multi": true
+    },
+    {
+        "id": 32,
+        "question": "Who has access to create, edit or delete sorting criteria in Visual Task Boards (VTBs)?",
+        "options": [
+            "All board members",
+            "The owner of the board",
+            "Users with vtb_admin role",
+            "Primary and additional assignees of the board cards"
+        ],
+        "answer": [1],
+        "explanation": "While many users can view or be members of a VTB, the Owner (the person who created the board) has exclusive rights to manage the sorting criteria. Other members see these criteria as 'read-only.'",
+        "multi": false
+    },
+    {
+        "id": 33,
+        "question": "Who can contribute if no User Criteria are specified for 'Can Contribute' in a Knowledge Base?",
+        "options": [
+            "No one",
+            "Knowledge Base Managers",
+            "User Criteria Admins",
+            "All users"
+        ],
+        "answer": [1],
+        "explanation": "By default, if the 'Can Contribute' list is empty, the system relies on ownership and management roles. Knowledge Administrators, the Owner of the knowledge base, and Knowledge Managers maintain the ability to create and modify articles regardless of User Criteria settings.",
+        "multi": false
+    },
+    {
+        "id": 34,
+        "question": "Which of the following indicates the type of relationship for bi-directionally related tables, where the related records are visible from both tables in a related list?",
+        "options": [
+            "One to Many",
+            "Many to Many",
+            "Database View",
+            "Referenced",
+            "Parent/Child",
+            "MetricBase"
+        ],
+        "answer": [1],
+        "explanation": "A Many-to-Many (M2M) relationship allows multiple records in Table A to relate to multiple records in Table B via the [sys_m2m] table. Because it is bi-directional, you can see the related records as a 'Related List' on forms for both tables.",
+        "multi": false
+    },
+    {
+        "id": 35,
+        "question": "How can one user temporarily become another user for testing purposes?",
+        "options": [
+            "Open User Administration > Users, select a user, and click the Impersonate User related link.",
+            "Open User Administration > Impersonate User and select a user to impersonate.",
+            "Open the User menu and select the Elevate Roles menu item. Select a user to impersonate.",
+            "Open the User menu and select the Impersonate User menu item. Select a user to impersonate."
+        ],
+        "answer": [3],
+        "explanation": "The Impersonate User feature is located in the User Menu (top right corner of the banner). This allows administrators to see exactly what a specific user sees—including their specific menus and permissions—without needing their password.",
+        "multi": false
+    },
+    {
+        "id": 36,
+        "question": "Which portal allows you to discover catalogue items and record producers based on their topics and taxonomy?",
+        "options": [
+            "Service Workspace Portal",
+            "Knowledge Portal",
+            "Service Portal",
+            "Employee Center"
+        ],
+        "answer": [3],
+        "explanation": "The Employee Center uses Unified Taxonomy (topics and sub-topics) to organize content, making it easier for employees to find what they need based on the subject matter rather than which department owns the item.",
+        "multi": false
+    },
+    {
+        "id": 37,
+        "question": "What value does the Condition field in a Business Rule return if the field is blank?",
+        "options": [
+            "TRUE",
+            "FALSE",
+            "undefined",
+            "NULL",
+            "\"\""
+        ],
+        "answer": [0],
+        "explanation": "In ServiceNow logic, a blank condition is considered a 'pass'. If you leave the Condition field empty on a Business Rule, the system treats it as TRUE, meaning the action will execute every time the triggering event occurs.",
+        "multi": false
+    },
+    {
+        "id": 38,
+        "question": "Which of the following statements are true about Dashboards? (Select 2)",
+        "options": [
+            "All users can view all dashboards.",
+            "Applications are allowed to have only one Dashboard.",
+            "Dashboards can contain widgets and tabs.",
+            "Dashboards are configured using a drag and drop canvas.",
+            "Dashboards can have a maximum of four widgets."
+        ],
+        "answer": [2, 3],
+        "explanation": "Dashboards use a drag-and-drop interface for layout and can be organized into multiple tabs, each containing various widgets. Access is restricted by roles or specific sharing settings (not open to all users).",
+        "multi": true
+    },
+    {
+        "id": 39,
+        "question": "Which of the following business needs can be addressed by Flow Designer? (Select 3)",
+        "options": [
+            "To orchestrate business processes across services with little technical user knowledge.",
+            "To reduce technical debt, such as reducing scripting to simplify upgrades and deployments.",
+            "To enhance processes using a ServiceNow Instance that is running Jakarta or prior.",
+            "To redevelop existing logic already built using the ServiceNow workflow editor.",
+            "To integrate with 3rd party systems."
+        ],
+        "answer": [0, 1, 4],
+        "explanation": "Flow Designer is designed to be low-code and is powerful enough to integrate with external systems via IntegrationHub. It is not compatible with very old versions like Jakarta, and redefining old workflows without changes is usually not recommended.",
+        "multi": true
+    },
+    {
+        "id": 40,
+        "question": "Which of the following are the notification preferences that users can manage? (Select 4)",
+        "options": [
+            "Disable receipt of specific notifications.",
+            "Apply a schedule to a notification.",
+            "Enable/disable notifications.",
+            "Include/exclude attachments in notifications.",
+            "Add a new channel (email address, mobile device for push notifications, SMS, voice)."
+        ],
+        "answer": [0, 1, 2, 4],
+        "explanation": "Users can subscribe/unsubscribe to specific notifications, set schedules, toggle notifications on/off globally, and add new channels. However, the system-level decision of whether to include attachments is controlled by admins, not the end-user.",
+        "multi": true
+    }
+]

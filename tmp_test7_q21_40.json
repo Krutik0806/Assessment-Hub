@@ -1,0 +1,272 @@
+[
+    {
+        "id": 21,
+        "question": "What are the benefits of Flow Designer? (Select 3)",
+        "options": [
+            "Provides natural-language descriptions of flow logic",
+            "Promotes process automation by enabling subject matter experts to develop and share reusable actions",
+            "Provides multiple environments to build and visualise business processes",
+            "Provides configuration and runtime information to create, operate and troubleshoot flows from a single interface",
+            "Allows extending flow content by replacing workflows"
+        ],
+        "answer": [0, 1, 3],
+        "explanation": "Flow Designer provides a single interface combining configuration and runtime data for easier troubleshooting. It uses natural-language descriptions for non-technical users and allows subject matter experts to create reusable actions without scripting.",
+        "multi": true
+    },
+    {
+        "id": 22,
+        "question": "What is the recommended way to share a report?",
+        "options": [
+            "Email an attachment",
+            "Download as PDF",
+            "Publish to an instance URL",
+            "Select Share"
+        ],
+        "answer": [3],
+        "explanation": "The 'Share' option ensures recipients see live, up-to-date data when they run the report. PDF exports and email attachments create static snapshots that become outdated quickly.",
+        "multi": false
+    },
+    {
+        "id": 23,
+        "question": "What allows you to see more information on the same screen real estate when using Visual Task Boards?",
+        "options": [
+            "Compact Cards",
+            "Card Thumbnails",
+            "Minimise Tasks",
+            "Card Groups"
+        ],
+        "answer": [0],
+        "explanation": "Enabling 'Compact Cards' decreases lane width and reduces info shown on each card (hiding thumbnails etc.), allowing more cards and lanes to fit on screen at once.",
+        "multi": false
+    },
+    {
+        "id": 24,
+        "question": "What are the different levels of ServiceNow security before an end-user can perform CRUD operations on a table? (Select 3)",
+        "options": [
+            "Database Access",
+            "User Authentication",
+            "Anonymous Access",
+            "3rd Party Application Security",
+            "Application and Modules Access"
+        ],
+        "answer": [0, 1, 4],
+        "explanation": "ServiceNow uses a layered security model: User Authentication (login security), Application and Module Access (controlled via Roles), and Database Access (controlled via ACLs that restrict CRUD operations on specific tables and fields).",
+        "multi": true
+    },
+    {
+        "id": 25,
+        "question": "Where do you define user conditions to determine who can access catalogue items?",
+        "options": [
+            "User criteria [user_criteria]",
+            "Catalogue Client Scripts [catalog_script_client]",
+            "Catalogue UI Policies [catalog_ui_policy]",
+            "Service Catalogue Configuration / Properties [system_properties_servicecatalog_ui]"
+        ],
+        "answer": [0],
+        "explanation": "User Criteria defines conditions evaluated against user records (like department, location, or role) to determine who can see and order specific catalogue items or categories.",
+        "multi": false
+    },
+    {
+        "id": 26,
+        "question": "What aspects of the Service Catalog application can a Catalog Administrator manage? (Select 3)",
+        "options": [
+            "Categories",
+            "Business Rules",
+            "Catalog Items",
+            "Catalogs",
+            "Scripting functions"
+        ],
+        "answer": [0, 2, 3],
+        "explanation": "Users with the catalog_admin role can manage the catalogs themselves, the categories within them, and the individual catalog items. They generally do not manage technical scripting or system-wide business rules.",
+        "multi": true
+    },
+    {
+        "id": 27,
+        "question": "What model/standard across applications helps track life cycle stages and stage statuses for CIs effectively?",
+        "options": [
+            "Product Catalogue Data Model",
+            "CMDB Data Model",
+            "Common Service Data Model (CSDM)",
+            "Universal Task data model"
+        ],
+        "answer": [2],
+        "explanation": "The CSDM provides a standard set of fields and values for tracking CI life cycle stages consistently across the platform, helping map legacy fields to a unified standard for better reporting and management.",
+        "multi": false
+    },
+    {
+        "id": 28,
+        "question": "What plugin must be activated to onboard a large volume of external users to a custom application in your instance?",
+        "options": [
+            "Integrations - External Authentication Framework [com.glide.external.app]",
+            "External User Registration [sn_ext_usr_reg]",
+            "External User Self-Registration [com.snc.external_user_self_registration]",
+            "User Registration Request [com.snc.user_registration]"
+        ],
+        "answer": [2],
+        "explanation": "The External User Self-Registration plugin allows external users to register themselves for a ServiceNow application without manual administrator intervention, including identity verification and captcha support.",
+        "multi": false
+    },
+    {
+        "id": 29,
+        "question": "What wildcard character is used to search for values that contain a search term in a list?",
+        "options": [
+            "* (Asterisk)",
+            "% (Per cent sign)",
+            "! (Exclamation mark)",
+            "= (Equal sign)"
+        ],
+        "answer": [0],
+        "explanation": "In ServiceNow list searches, the asterisk (*) is the 'contains' operator. For example, searching *email returns records where 'email' appears anywhere in the string.",
+        "multi": false
+    },
+    {
+        "id": 30,
+        "question": "What is granted to non-administrators for them to develop applications?",
+        "options": [
+            "Access Control",
+            "The developer role",
+            "Delegated Development",
+            "The itil role"
+        ],
+        "answer": [2],
+        "explanation": "Delegated Development allows administrators to grant specific development and deployment permissions to non-admin users for a specific application, enabling them to build apps without full system administrator access.",
+        "multi": false
+    },
+    {
+        "id": 31,
+        "question": "What variable type do you use to allow requesting a catalogue item on behalf of another user or multiple users?",
+        "options": [
+            "Single Line Text",
+            "Requested For",
+            "Lookup Select Box",
+            "List Collector"
+        ],
+        "answer": [1],
+        "explanation": "The 'Requested For' variable enables the delegated request experience. It allows a user to specify a different recipient from the sys_user table. Enabling 'Also request for' allows adding multiple users to a single request.",
+        "multi": false
+    },
+    {
+        "id": 32,
+        "question": "What sorting options are available when searching for a knowledge article on the Knowledge portal? (Select 4)",
+        "options": [
+            "Newest",
+            "Relevancy",
+            "Alphabetical",
+            "Category",
+            "Rating",
+            "Views"
+        ],
+        "answer": [0, 1, 2, 5],
+        "explanation": "The Knowledge Result Sort widget provides four sorting methods: Relevancy (search term match), Views (number of article views), Newest (creation/update date), and Alphabetical (Short Description). Category and Rating are used for filtering, not sorting.",
+        "multi": true
+    },
+    {
+        "id": 33,
+        "question": "What is a CI? (Select 3)",
+        "options": [
+            "configuration_admin role",
+            "Configuration Item",
+            "Tangible entities (e.g. hardware, software, servers)",
+            "Intangible entities (e.g. business services, email)",
+            "Configuration Management Database"
+        ],
+        "answer": [1, 2, 3],
+        "explanation": "A Configuration Item (CI) is any component that needs to be managed to deliver an IT Service. This includes tangible items (routers, servers) and intangible items (business services, applications, database instances).",
+        "multi": true
+    },
+    {
+        "id": 34,
+        "question": "Which knowledge feedback option CANNOT be disabled at the knowledge base level?",
+        "options": [
+            "Commenting",
+            "Flagging",
+            "Rating",
+            "Marking as helpful",
+            "All of them can be disabled"
+        ],
+        "answer": [4],
+        "explanation": "All knowledge feedback features — Commenting, Flagging, Rating, and Mark as Helpful — can be independently disabled at the Knowledge Base level using 'Disable' fields on the Knowledge Base form.",
+        "multi": false
+    },
+    {
+        "id": 35,
+        "question": "Multiple Choice, Single Line Text, and Select Box are what type of elements in ServiceNow?",
+        "options": [
+            "Related Lists",
+            "Request Types",
+            "Variable Types",
+            "Order Guides"
+        ],
+        "answer": [2],
+        "explanation": "These are Variable Types used to define questions on a catalogue item. Multiple Choice creates radio buttons, Single Line Text creates a free-text field, and Select Box creates a dropdown list of predefined choices.",
+        "multi": false
+    },
+    {
+        "id": 36,
+        "question": "How can organisations ensure consistent security hygiene across their ServiceNow instances?",
+        "options": [
+            "By scheduling regular reviews of the Security Center with the security and leadership teams",
+            "By implementing all recommendations provided by the Security Center's Best Practices and Hardening features",
+            "By relying solely on the Security Center's automated scans to identify and address security vulnerabilities",
+            "By enabling comprehensive logging of all activity and regularly reviewing the logs",
+            "By outsourcing all security management tasks to a third-party security provider"
+        ],
+        "answer": [0],
+        "explanation": "Consistent security hygiene requires ongoing human evaluation and strategic review with leadership to adapt the instance's security posture to evolving threats. Automated tools are helpful but not sufficient alone.",
+        "multi": false
+    },
+    {
+        "id": 37,
+        "question": "What integration with Catalog Builder enables you to translate catalogue item content on the Catalog Builder dashboard?",
+        "options": [
+            "Globalisation Framework",
+            "Translation Framework",
+            "Internationalisation Framework",
+            "Localization Framework"
+        ],
+        "answer": [3],
+        "explanation": "When the Localization Framework plugin is installed, it integrates with Catalog Builder, allowing users to request translations or use the Comparison UI to translate catalogue item content into multiple languages directly from the dashboard.",
+        "multi": false
+    },
+    {
+        "id": 38,
+        "question": "What types of permissions can be configured in an access control rule? (Select 3)",
+        "options": [
+            "Conditions",
+            "Roles",
+            "A script that sets the 'answer' variable to true or false",
+            "Groups",
+            "Users"
+        ],
+        "answer": [0, 1, 2],
+        "explanation": "To pass an ACL, a user must meet all three requirements if configured: the Condition must evaluate to true, the Script must set answer = true, and the user must have one of the specified Roles.",
+        "multi": true
+    },
+    {
+        "id": 39,
+        "question": "What is the primary purpose of ServiceNow's Security Posture Dashboards?",
+        "options": [
+            "To provide a consolidated view for monitoring the security health of all your instances",
+            "To configure and manage user access controls and permissions within ServiceNow",
+            "To automatically remediate security vulnerabilities detected in your ServiceNow instances",
+            "To generate detailed reports for compliance audits and regulatory requirements"
+        ],
+        "answer": [0],
+        "explanation": "Security Posture Dashboards aggregate security KPIs across one or multiple instances, providing an 'at a glance' view of security health including user login protection, instance hardening, and data protection metrics.",
+        "multi": false
+    },
+    {
+        "id": 40,
+        "question": "Which of the following are captured in an update set? (Select 3)",
+        "options": [
+            "Published Flows",
+            "Business Rules",
+            "Modified CIs",
+            "New Data Records",
+            "Report Definitions"
+        ],
+        "answer": [0, 1, 4],
+        "explanation": "Update sets capture configuration changes: Business Rules, Client Scripts, Tables, Forms, Report Definitions, and Published Flows. They do NOT capture data records such as new users, groups, modified CIs, or tasks.",
+        "multi": true
+    }
+]

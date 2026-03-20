@@ -1,0 +1,269 @@
+[
+    {
+        "id": 1,
+        "question": "Where can you organise form sections and related lists into tabs in classic forms?",
+        "options": [
+            "User Menu > Preferences > Display",
+            "All > System UI > Forms",
+            "User Menu > Preferences > Accessibility",
+            "All > System UI > Related lists"
+        ],
+        "answer": [0],
+        "explanation": "In the Next Experience UI, you can toggle 'Tabbed forms' under User Menu > Preferences > Display. This organizes form sections and related lists into tabs, reducing scrolling and allowing more efficient navigation.",
+        "multi": false
+    },
+    {
+        "id": 2,
+        "question": "What type of Flow Designer Trigger is required to look up a record, update a field value, and request approval?",
+        "options": [
+            "Application-based",
+            "Schedule-based",
+            "Role-based",
+            "Record-based"
+        ],
+        "answer": [3],
+        "explanation": "A Record-based trigger fires when a record is created, updated, or both. This is the standard trigger type for processes like approvals and field updates tied to a specific record in a table.",
+        "multi": false
+    },
+    {
+        "id": 3,
+        "question": "What feature creates reusable components to run everyday tasks in Virtual Agent conversations?",
+        "options": [
+            "Chat re-route",
+            "Virtual transfer",
+            "Agent transfer",
+            "Topic blocks"
+        ],
+        "answer": [3],
+        "explanation": "Topic blocks are pre-built, reusable components that perform specific functions (like checking agent availability or generating search results). They simplify topic authoring by allowing reuse of standard procedures across different conversation topics.",
+        "multi": false
+    },
+    {
+        "id": 4,
+        "question": "How do you define an ACL rule to prevent user access unless the role, condition, and script requirements are all met?",
+        "options": [
+            "Deny-Unless decision type",
+            "UserIsAuthenticated security attribute",
+            "Read-only Protection policy",
+            "Query_match operation"
+        ],
+        "answer": [0],
+        "explanation": "Deny Access (Deny-Unless) proactively denies access to a resource unless every role, condition, and script requirement is satisfied. Deny-Unless ACLs are evaluated first and take priority over Allow-If rules.",
+        "multi": false
+    },
+    {
+        "id": 5,
+        "question": "What dictionary attribute do you use to list all the columns you want visible on a reference field's drop-down list?",
+        "options": [
+            "ref_ac_columns_search",
+            "ref_ac_order_by",
+            "ref_auto_completer",
+            "ref_ac_columns"
+        ],
+        "answer": [3],
+        "explanation": "The ref_ac_columns attribute specifies which columns from the reference table should be displayed in the auto-completion drop-down list. Column names should be separated by a semicolon.",
+        "multi": false
+    },
+    {
+        "id": 6,
+        "question": "What allows users to see a time-stamped history of all actions taken within a record?",
+        "options": [
+            "Activity Stream",
+            "Form Activity",
+            "Form History",
+            "Favourites"
+        ],
+        "answer": [0],
+        "explanation": "The Activity Stream provides a chronological, time-stamped list of entries including journal fields like comments and work notes, offering a clear audit trail of actions taken on a record.",
+        "multi": false
+    },
+    {
+        "id": 7,
+        "question": "Which of the following roles CANNOT be delegated? (Select 2)",
+        "options": [
+            "admin",
+            "itil",
+            "user_admin",
+            "role_delegator"
+        ],
+        "answer": [0, 3],
+        "explanation": "By default, highly sensitive roles like admin, public, and nobody cannot be delegated. Additionally, a user with the role_delegator role cannot delegate that specific role to other group members.",
+        "multi": true
+    },
+    {
+        "id": 8,
+        "question": "What field attributes can a UI Policy Action change on a form? (Select 3)",
+        "options": [
+            "Prevent cell editing",
+            "Visible / Hidden",
+            "Mandatory",
+            "Read-only",
+            "Change colour"
+        ],
+        "answer": [1, 2, 3],
+        "explanation": "UI Policy Actions dynamically change field behavior on a form. The three standard attributes they control are: Mandatory (required to submit), Visible/Hidden (show or hide the field), and Read-only (prevent editing).",
+        "multi": true
+    },
+    {
+        "id": 9,
+        "question": "What is the best way to share a knowledge article with another user?",
+        "options": [
+            "A permalink",
+            "Taking a screenshot",
+            "Sharing the keywords",
+            "Copying and pasting the text"
+        ],
+        "answer": [0],
+        "explanation": "Permalinks provide a direct URL to the latest version of a knowledge article, ensuring the recipient sees the most current information within the Service Portal interface.",
+        "multi": false
+    },
+    {
+        "id": 10,
+        "question": "What coalesce configuration in the import process treats all imported rows as new records and does not update existing records?",
+        "options": [
+            "Single-field coalesce",
+            "No coalesce",
+            "Conditional coalesce",
+            "Multi-field coalesce"
+        ],
+        "answer": [1],
+        "explanation": "If No coalesce is defined, the system does not check for existing matching records and simply treats every imported row as a brand-new record, inserting it without updating anything.",
+        "multi": false
+    },
+    {
+        "id": 11,
+        "question": "What field type on a form has a clickable icon that provides a preview of the associated record?",
+        "options": [
+            "Preview",
+            "Database",
+            "Pop-up",
+            "Reference",
+            "Function",
+            "Lookup",
+            "Clickthrough"
+        ],
+        "answer": [3],
+        "explanation": "A Reference field stores a link to a record in another table (e.g., 'Caller' on Incident refers to the User table). When populated, a reference icon appears; clicking it opens a read-only preview of the referenced record without leaving the current page.",
+        "multi": false
+    },
+    {
+        "id": 12,
+        "question": "What can you do using the CMDB Data Manager? (Select 3)",
+        "options": [
+            "Manage retirement definitions and exclusion lists",
+            "Monitor the overall health and performance of the CMDB",
+            "Perform regular data backups for the CMDB",
+            "Create new Configuration Item (CI) classes in the CMDB",
+            "Administer and manage policies and tasks",
+            "Review and approve or reject assigned tasks"
+        ],
+        "answer": [0, 4, 5],
+        "explanation": "CMDB Data Manager is a policy-driven framework for bulk CI lifecycle management. It allows you to manage retirement definitions and exclusion lists, administer policies and tasks, and review/approve/reject assigned lifecycle tasks within CMDB Workspace.",
+        "multi": true
+    },
+    {
+        "id": 13,
+        "question": "What report type requires access to the underlying data to view it?",
+        "options": [
+            "Bar chart",
+            "Donut chart",
+            "List report",
+            "Pie chart"
+        ],
+        "answer": [2],
+        "explanation": "Graphic reports (Bar, Donut, Pie) present aggregate data and are generally visible to shared users without access to underlying records. A List report displays individual record data directly, so the viewer must have appropriate ACL permissions to see the records.",
+        "multi": false
+    },
+    {
+        "id": 14,
+        "question": "What results are displayed when searching for the keyword 'service' in the Filter field? (Select 2)",
+        "options": [
+            "Any module with a name containing 'service'",
+            "Only applications, sections and modules with names containing 'service'",
+            "All modules and sections within the 'Service Desk' application",
+            "Only applications with a name containing 'service'"
+        ],
+        "answer": [0, 2],
+        "explanation": "The Filter Navigator displays any module whose name matches the keyword. If an application name matches (e.g., 'Service Desk'), all its underlying modules and sections are displayed even if those modules don't individually contain the keyword.",
+        "multi": true
+    },
+    {
+        "id": 15,
+        "question": "Where can you find information about new and important features for applications in your instance, including features from the latest ServiceNow release?",
+        "options": [
+            "Release Center",
+            "Resource Center",
+            "Help Center",
+            "Customer Success Center"
+        ],
+        "answer": [2],
+        "explanation": "The Help Center includes a 'What's New' tab showing new and updated features since the last release. A blue dot on the Help Center icon indicates new content is available for the user to review.",
+        "multi": false
+    },
+    {
+        "id": 16,
+        "question": "Which of the following are true statements about platform scripting? (Select 3)",
+        "options": [
+            "Data Policy can be run as a UI policy client-side",
+            "UI Actions can execute both client-side and server-side",
+            "Client scripts can only execute on the browser but not when a database lookup is needed",
+            "Business rules are not real-time and do not monitor fields on a form"
+        ],
+        "answer": [0, 1, 3],
+        "explanation": "Business Rules run on the server when records are queried or modified — not in real-time on the form. UI Actions are versatile and can handle both browser-side clicks and server-side processing. Data Policies can be set to 'Use as UI Policy on client' to enforce data consistency in the browser.",
+        "multi": true
+    },
+    {
+        "id": 17,
+        "question": "Which of the following are valid statements about Flow Designer? (Select 3)",
+        "options": [
+            "Integrates with third-party systems",
+            "Requires scripting experience",
+            "Saves time",
+            "Provides automation tools"
+        ],
+        "answer": [0, 2, 3],
+        "explanation": "Flow Designer is a no-code interface used to automate business logic. Key benefits include saving development time, providing a library of automation tools, and integrating with external systems via Integration Hub spokes — without requiring scripting expertise.",
+        "multi": true
+    },
+    {
+        "id": 18,
+        "question": "Which of the following tabs are used to configure an email notification? (Select 3)",
+        "options": [
+            "Which email template",
+            "What the subject is",
+            "What it will contain",
+            "Who will receive",
+            "When to send"
+        ],
+        "answer": [2, 3, 4],
+        "explanation": "The Notification form has three primary configuration tabs: When to send (defines triggers/conditions), Who will receive (defines recipients), and What it will contain (defines subject line and message body).",
+        "multi": true
+    },
+    {
+        "id": 19,
+        "question": "What phase of the Report Designer allows you to choose the title, colours, and chart properties?",
+        "options": [
+            "Type",
+            "Style",
+            "Data",
+            "Configure"
+        ],
+        "answer": [1],
+        "explanation": "The Report Designer has four phases: Data (select source), Type (select visualization format), Configure (grouping/calculations), and Style (customize titles, colors, and chart-specific properties).",
+        "multi": false
+    },
+    {
+        "id": 20,
+        "question": "What is a transform map in ServiceNow?",
+        "options": [
+            "A map used to store the history of incident records",
+            "A map used to add data to encrypted fields",
+            "A map used to trigger Business Rules before data is queued in an outbound Web Service",
+            "A map to determine relationships between fields in an Import Set and fields in an existing table"
+        ],
+        "answer": [3],
+        "explanation": "A Transform Map is a set of field maps that guides movement of data from an Import Set table (source) to a permanent ServiceNow table (target). It determines exactly which source field maps to which target field during the import process.",
+        "multi": false
+    }
+]

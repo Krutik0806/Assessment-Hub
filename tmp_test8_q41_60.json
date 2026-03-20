@@ -1,0 +1,273 @@
+[
+    {
+        "id": 41,
+        "question": "What do you use to control access to features and capabilities in ServiceNow applications and modules?",
+        "options": [
+            "Company",
+            "Group",
+            "Role",
+            "Organisation",
+            "Department"
+        ],
+        "answer": [2],
+        "explanation": "Roles are the primary mechanism for controlling access. You assign roles to applications and modules; then, any user or group assigned that role is granted access. Roles can also contain other roles (inheritance), allowing for a hierarchical security structure. While you often assign roles to Groups for easier management, the Role itself is what the system checks to authorize access.",
+        "multi": false
+    },
+    {
+        "id": 42,
+        "question": "Which of the following is true about the CMDB Data Manager? (Select 3)",
+        "options": [
+            "It is a policy-driven framework for managing CI life cycle operations.",
+            "It is a wizard-like tool that provides a comprehensive solution for managing CIs.",
+            "It can create policies that govern CI life cycle stages such as retirement and deletion.",
+            "It is a framework that supports multiple configuration strategies."
+        ],
+        "answer": [0, 1, 2],
+        "explanation": "The CMDB Data Manager helps maintain a healthy CMDB by automating the CI lifecycle. It uses a wizard-like interface to create policies that handle tasks like archiving, retiring, or deleting CIs in bulk. This ensures that the CMDB remains efficient and follows Common Service Data Model (CSDM) standards.",
+        "multi": true
+    },
+    {
+        "id": 43,
+        "question": "What are the three reasons for using ServiceNow Mobile apps? (Select 3)",
+        "options": [
+            "No authentication is required to access the data",
+            "Push notifications for instant access to critical information",
+            "A global search to find people, services, items, and articles",
+            "Allows multiple logins to an instance",
+            "Ability to submit, view, and update requests, issues, and tasks"
+        ],
+        "answer": [1, 2, 4],
+        "explanation": "ServiceNow mobile apps (like Now Mobile and Agent) are designed for productivity on the go. They provide Push Notifications so you don't miss urgent updates, Global Search to find information quickly, and the full ability to manage the lifecycle of tasks directly from a mobile device. Authentication is always required to ensure data security.",
+        "multi": true
+    },
+    {
+        "id": 44,
+        "question": "What minimum role is required to subscribe to or unsubscribe from a Configuration Item (CI)?",
+        "options": [
+            "cmdb_read",
+            "itil_admin",
+            "itil",
+            "ecmdb_admin"
+        ],
+        "answer": [0],
+        "explanation": "To subscribe to a CI (to receive notifications about its changes), a user only needs the cmdb_read role. While more powerful roles like itil or itil_admin also include this permission, cmdb_read is the absolute minimum required to perform this specific action.",
+        "multi": false
+    },
+    {
+        "id": 45,
+        "question": "Where can fulfillers navigate to find catalogue tasks assigned to them and their groups to fulfil requests? (Select 2)",
+        "options": [
+            "All > Service Desk > My Groups Work",
+            "All > Service Catalog > My Work",
+            "All > Service Catalog > My Groups Work",
+            "All > Service Desk > My Work"
+        ],
+        "answer": [0, 3],
+        "explanation": "The Service Desk application provides a centralized location for users to manage their daily tasks. 'My Work' contains tasks assigned specifically to the individual user. 'My Groups Work' contains tasks assigned to a group the user belongs to, but not yet assigned to an individual.",
+        "multi": true
+    },
+    {
+        "id": 46,
+        "question": "Which field data type adds a report to a form?",
+        "options": [
+            "Percent Complete",
+            "Link",
+            "PDF",
+            "Chart",
+            "Pivot"
+        ],
+        "answer": [3],
+        "explanation": "To embed a visual report directly onto a record form (like showing a trend line on a Change Request), you use the Chart data type. This allows you to display Bar, Pie, or Time Series charts. Note that some report types, like List or Pivot, are not supported for display within a form field.",
+        "multi": false
+    },
+    {
+        "id": 47,
+        "question": "What application enables you to understand user web and mobile experiences by visualising your metrics and interactions through an interactive dashboard?",
+        "options": [
+            "Performance Analytics",
+            "User Experience Analytics",
+            "Predictive Intelligence",
+            "Self-Service Analytics"
+        ],
+        "answer": [1],
+        "explanation": "User Experience Analytics provides deep insights into how users interact with the Service Portal and mobile apps. It tracks metrics like active users, session lengths, and click patterns (e.g., when a user views a specific article), allowing owners to optimize the user interface based on actual behavior.",
+        "multi": false
+    },
+    {
+        "id": 48,
+        "question": "What are the three different request methods in the Service Catalogue? (Select 3)",
+        "options": [
+            "Submit",
+            "Order",
+            "Save",
+            "Wish List",
+            "Request"
+        ],
+        "answer": [0, 1, 4],
+        "explanation": "These methods define how the final step of a catalog purchase looks: Order (shows confirmation box, allows delivery info updates), Request (shows confirmation but hides delivery info), Submit (most streamlined; hides both confirmation box and delivery info).",
+        "multi": true
+    },
+    {
+        "id": 49,
+        "question": "What is the purpose of Embedded Help on the ServiceNow platform? (Select 4)",
+        "options": [
+            "Provide help if the user's preferred language is English",
+            "Coach users on using a custom application",
+            "Provide specific written or video-based instructions for a custom application",
+            "Display content based on query parameter values",
+            "Display content based on user role"
+        ],
+        "answer": [1, 2, 3, 4],
+        "explanation": "Embedded Help provides context-sensitive assistance. It can be tailored based on the User's Role or Query Parameters. Organizations use it to provide videos or written coaching specifically for their unique custom applications. Notably, it supports multiple languages—it is not restricted to English.",
+        "multi": true
+    },
+    {
+        "id": 50,
+        "question": "Which of the following is the shared responsibility of the customer, ServiceNow, and colocation provider, according to the Shared Responsibility Model?",
+        "options": [
+            "Privacy compliance",
+            "Data encryption",
+            "Regulatory and legal compliance",
+            "Penetration testing"
+        ],
+        "answer": [2],
+        "explanation": "In the Shared Responsibility Model, security and compliance are split. While the customer owns their data and ServiceNow owns the cloud software, Regulatory and legal compliance is a shared burden. All parties must meet their respective legal requirements to ensure the entire ecosystem remains compliant.",
+        "multi": false
+    },
+    {
+        "id": 51,
+        "question": "Under which tab within the email notification configuration can you identify if a record insert or update triggers a notification?",
+        "options": [
+            "When to send",
+            "What it will contain",
+            "What Digest will contain",
+            "Who will receive"
+        ],
+        "answer": [0],
+        "explanation": "The Notification form is divided into four main functional areas. To define the trigger—whether it’s a record being inserted, updated, or a specific event fired—you must use the 'When to send' tab. 'Who will receive' defines the recipients, and 'What it will contain' defines the subject and body.",
+        "multi": false
+    },
+    {
+        "id": 52,
+        "question": "How is it possible for a non-administrator to develop and deploy applications on the Now Platform?",
+        "options": [
+            "Use delegated development and deployment application.",
+            "It is not possible to develop or deploy applications in ServiceNow.",
+            "Ask the administrators to do it since only administrators have this level of access.",
+            "It is not necessary for a non-administrator to develop or deploy applications."
+        ],
+        "answer": [0],
+        "explanation": "Delegated Development allows System Administrators to grant specific development permissions to non-admin users at the application level. This means a user can be given the power to create tables, scripts, or forms for a specific app without having full system-wide administrative access (the admin role).",
+        "multi": false
+    },
+    {
+        "id": 53,
+        "question": "Which of the following are possible outcomes when coalescing detects a match between a record in the staging table and a record in the target table? (Select 2)",
+        "options": [
+            "Overwrite the record in the target table with the source data.",
+            "Halt the import and ask the user what to do.",
+            "Create duplicate records.",
+            "Keep the record already in the target table.",
+            "Stop the import and delete the previously imported records."
+        ],
+        "answer": [0, 3],
+        "explanation": "Coalescing is the process of matching import data to existing records to prevent duplicates. When a match is found, the system can either update (overwrite) the existing record with the new data, or it can be configured to ignore the incoming data and keep the existing record as is.",
+        "multi": true
+    },
+    {
+        "id": 54,
+        "question": "Which field on a Configuration Item (CI) record is recommended for routing Incidents to the appropriate group to resolve CI-related incidents quickly?",
+        "options": [
+            "Managed By Group",
+            "Assignment Group",
+            "Approval Group",
+            "Support Group",
+            "Change Group"
+        ],
+        "answer": [3],
+        "explanation": "While a CI can have many groups associated with it, the Support Group is specifically intended for the team responsible for troubleshooting and fixing issues related to that CI. When an Incident is created for a CI, the system can automatically route it to this group.",
+        "multi": false
+    },
+    {
+        "id": 55,
+        "question": "Which of the following operations is a record-type access control list that restricts report access based on a role?",
+        "options": [
+            "report_view",
+            "report_admin",
+            "report_access",
+            "report_on"
+        ],
+        "answer": [0],
+        "explanation": "The report_view ACL is a special type of Access Control that specifically restricts who can see data within a report. Even if a user can see a table in a list view, a report_view ACL can prevent them from seeing that same data when it is visualized in a pie chart or bar graph unless they have the required role.",
+        "multi": false
+    },
+    {
+        "id": 56,
+        "question": "Which of the following is an example of a CI Class switch?",
+        "options": [
+            "A Server record that was upgraded from the Server [cmdb_ci_server] class to the Windows Server [cmdb_ci_win_server] class.",
+            "A CI from the Windows Server [cmdb_ci_win_server] class is switched off.",
+            "A CI is reclassified from the Linux Server [cmdb_ci_linux_server] class to the Windows Server [cmdb_ci_win_server] class.",
+            "A CI is moved from the Windows Server [cmdb_ci_win_server] class to the Server [cmdb_ci_server] class."
+        ],
+        "answer": [2],
+        "explanation": "Reclassification falls into three categories: Switch (Moving a CI between two classes that are on the same level, e.g., Linux Server to Windows Server), Upgrade (Moving a CI from a parent class to a more specific child class), and Downgrade (Moving a CI from a child class back to a more general parent class).",
+        "multi": false
+    },
+    {
+        "id": 57,
+        "question": "Which of the following are the data visualisation formats in ServiceNow? (Select 3)",
+        "options": [
+            "Form Charts",
+            "Reports",
+            "Databases",
+            "Dashboards",
+            "Tables"
+        ],
+        "answer": [0, 1, 3],
+        "explanation": "Visualizations transform raw data into actionable info. The platform supports: Reports (Standalone visualizations of data), Dashboards (Collections of reports and widgets), Form Charts (Reports embedded directly onto a record form), and On-demand charts.",
+        "multi": true
+    },
+    {
+        "id": 58,
+        "question": "What represents a standard and shared set of service-related definitions across the products and platform that will provide prescriptive guidance on service modelling within the CMDB?",
+        "options": [
+            "Configuration Management System (CMS)",
+            "Configuration Item (CI)",
+            "Configuration Management Database (CMDB)",
+            "Common Services Data Model (CSDM)"
+        ],
+        "answer": [3],
+        "explanation": "The CSDM is not a piece of software, but a framework/blueprint. It provides a standard set of definitions and relationships for how you should model your services and CIs. Following CSDM ensures that your data works correctly with all ServiceNow products.",
+        "multi": false
+    },
+    {
+        "id": 59,
+        "question": "What does a column in the list interface correspond to in a ServiceNow instance?",
+        "options": [
+            "A table",
+            "A reference",
+            "A record",
+            "An attribute",
+            "A field",
+            "An index"
+        ],
+        "answer": [4],
+        "explanation": "Using the spreadsheet analogy for the ServiceNow database structure: Table = The entire sheet. Record (Row) = An individual row in the sheet. Field (Column) = A specific column/category of data.",
+        "multi": false
+    },
+    {
+        "id": 60,
+        "question": "What are the components of the Now Platform Core UI interface? (Select 3)",
+        "options": [
+            "Content frame",
+            "Workspace",
+            "Sidebar",
+            "Application navigator",
+            "Banner frame"
+        ],
+        "answer": [0, 3, 4],
+        "explanation": "The Core UI (UI16) consists of three main areas: Banner Frame (The top bar containing the logo, user menu, and global search), Application Navigator (The left-side pane used to find modules and applications), and Content Frame (The main central area where lists, forms, and homepages are displayed).",
+        "multi": true
+    }
+]

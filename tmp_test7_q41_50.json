@@ -1,0 +1,138 @@
+[
+    {
+        "id": 41,
+        "question": "Which icon allows you to access resources such as ServiceNow documentation and user guide?",
+        "options": [
+            "Gear icon",
+            "Lock icon",
+            "Magnifier icon",
+            "Funnel icon",
+            "Book icon",
+            "Question mark icon"
+        ],
+        "answer": [5],
+        "explanation": "The question mark icon in the header provides access to the system user guide and external documentation. The user guide allows organizations to create specific help documentation, while the base system displays help documents for general navigation.",
+        "multi": false
+    },
+    {
+        "id": 42,
+        "question": "What IT challenges can be solved with the CMDB? (Select 3)",
+        "options": [
+            "Consolidate disparate CI data into a single Configuration Management Database",
+            "Regularly maintain complex data for accuracy",
+            "Make sense of data to drive decisions and services",
+            "Store well-defined relationships",
+            "Capture known Configuration Items (CIs)"
+        ],
+        "answer": [0, 1, 2],
+        "explanation": "The CMDB solves challenges by consolidating data from various sources into one place, providing tools to maintain that data's accuracy over time, and turning raw infrastructure data into actionable insights for decision-making.",
+        "multi": true
+    },
+    {
+        "id": 43,
+        "question": "What are the main ways to create a Platform Analytics dashboard? (Select 2)",
+        "options": [
+            "Technical editor / UI Builder",
+            "PA widget forms",
+            "Report Designer",
+            "In-line editor"
+        ],
+        "answer": [0, 3],
+        "explanation": "Platform Analytics dashboards are created using the in-line editor (drag-and-drop for most users) or the technical editor/UI Builder (for developers needing advanced customization and data binding).",
+        "multi": true
+    },
+    {
+        "id": 44,
+        "question": "Where do ServiceNow client-side scripts execute?",
+        "options": [
+            "Application Server",
+            "Internet",
+            "Web Browser",
+            "ServiceNow Database"
+        ],
+        "answer": [2],
+        "explanation": "Client-side scripts (Client Scripts and UI Policies) run within the user's web browser. They execute JavaScript locally to react to events like form loads or field changes without waiting for a server response.",
+        "multi": false
+    },
+    {
+        "id": 45,
+        "question": "An ACL rule grants users access to an object if they meet all required permissions. Which of the following must be satisfied? (Select 3)",
+        "options": [
+            "Either the matching table level or field level ACL must evaluate to true",
+            "The script must evaluate to true or return an answer variable with the value of true",
+            "The condition must evaluate to true",
+            "The user must have one of the roles in the required roles list (empty list = evaluates to true)"
+        ],
+        "answer": [1, 2, 3],
+        "explanation": "For an ACL to grant access, three requirements must be met: the Condition must evaluate to true, the Script (if present) must return true, and the user must have one of the required Roles (an empty role list always evaluates to true).",
+        "multi": true
+    },
+    {
+        "id": 46,
+        "question": "Which table does the Change Request [change_request] extend?",
+        "options": [
+            "Task [task]",
+            "Problem [problem]",
+            "Request [sc_request]",
+            "Incident [incident]"
+        ],
+        "answer": [0],
+        "explanation": "The Task table is the base class for core ITSM applications. Incident, Problem, and Change Request all extend Task, sharing common fields like 'Short description', 'Assigned to', and 'State'.",
+        "multi": false
+    },
+    {
+        "id": 47,
+        "question": "Administrators and developers can create tables that do not exist in the base system to store application data. What are these tables called?",
+        "options": [
+            "Remote tables",
+            "Related tables",
+            "Extended tables",
+            "Target tables",
+            "Child tables",
+            "Custom tables",
+            "Core tables"
+        ],
+        "answer": [5],
+        "explanation": "Custom tables are created by users to support specific business needs or custom applications and do not come as part of the ServiceNow base system. Core tables are provided by ServiceNow out of the box.",
+        "multi": false
+    },
+    {
+        "id": 48,
+        "question": "What role is required to toggle the template bar and apply global templates to forms?",
+        "options": [
+            "template_admin",
+            "template_editor",
+            "No special role required",
+            "form_admin"
+        ],
+        "answer": [2],
+        "explanation": "Any user can access the template bar at the bottom of a form and apply available templates. However, creating or editing global templates typically requires specific admin roles like template_admin.",
+        "multi": false
+    },
+    {
+        "id": 49,
+        "question": "Which of the following best defines an application service?",
+        "options": [
+            "It supports multiple configuration strategies",
+            "An application service monitors services in an organisation",
+            "It is a set of interconnected applications and hosts configured to offer a service to an organisation",
+            "It provides standard fields and values for tracking life-cycle stages"
+        ],
+        "answer": [2],
+        "explanation": "An application service is a logical representation of a deployed application environment (e.g., the production instance of a website). It groups the CIs (servers, databases, software) that work together to provide a specific business service.",
+        "multi": false
+    },
+    {
+        "id": 50,
+        "question": "Which form view is displayed when clicking on the reference icon of a field in a form?",
+        "options": [
+            "sys_popup",
+            "VTB",
+            "Self Service",
+            "Service Portal"
+        ],
+        "answer": [0],
+        "explanation": "Clicking the reference info icon uses the sys_popup view of the target table to determine which fields to show in the preview window. If no sys_popup view is defined, the system defaults to the 'Default' view.",
+        "multi": false
+    }
+]

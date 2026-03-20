@@ -1,0 +1,267 @@
+[
+    {
+        "id": 1,
+        "question": "Which of the following is a CMDB-based framework that supports multiple configuration strategies?",
+        "options": [
+            "KPI Composer",
+            "Project Portfolio Management",
+            "Common Service Data Model",
+            "Virtual Agent"
+        ],
+        "answer": [2],
+        "explanation": "The ServiceNow Common Service Data Model (CSDM) is a CMDB-based framework that provides a standard and consistent set of terms and definitions for all ServiceNow products. It serves as the blueprint for how service-related data should be structured within the Configuration Management Database (CMDB). By using CSDM, organizations can align their IT strategy with business outcomes, ensuring that data flows correctly across various modules like ITSM, ITOM, and APM.",
+        "multi": false
+    },
+    {
+        "id": 2,
+        "question": "How can system administrators speed up loading large lists?",
+        "options": [
+            "By archiving or deleting old data",
+            "By removing the duplicate and redundant data",
+            "By removing the calculation of the total number of records",
+            "By breaking the large lists into smaller lists"
+        ],
+        "answer": [2],
+        "explanation": "Calculating the total number of records in a very large table (pagination count) is resource-intensive and can significantly slow down page load times. System administrators can improve performance by navigating to Configure > List Control and selecting the 'Remove pagination count' checkbox. This stops the database from performing a full table scan to count every row, allowing the list to render much faster.",
+        "multi": false
+    },
+    {
+        "id": 3,
+        "question": "A customer has onboarded their IT department into ServiceNow and provided them with the same system roles as the HR department. One of the employees found sensitive data to which they shouldn't have had access. Who is responsible for this breach?",
+        "options": [
+            "Customer",
+            "ServiceNow",
+            "Employee",
+            "Data centre provider"
+        ],
+        "answer": [0],
+        "explanation": "Under the Shared Responsibility Model, ServiceNow is responsible for the security of the cloud (infrastructure, physical security), while the customer is responsible for security in the cloud. This includes access management, role assignment, and Access Control Lists (ACLs). Since the customer misconfigured the roles by giving IT employees HR-level access, the customer is held responsible for the resulting data breach.",
+        "multi": false
+    },
+    {
+        "id": 4,
+        "question": "Which role can switch their form view?",
+        "options": [
+            "personalize_form",
+            "view_changer",
+            "service_viewer",
+            "task_editor"
+        ],
+        "answer": [1],
+        "explanation": "The view_changer role specifically grants a user the ability to switch between different form views (e.g., switching from 'Default View' to 'Mobile' or 'SLA' view). `personalize_form` allows a user to hide or show fields for themselves. `task_editor` allows editing of protected task fields. `service_viewer` provides read access to services.",
+        "multi": false
+    },
+    {
+        "id": 5,
+        "question": "What is mandatory to select when importing Microsoft Word documents as knowledge articles?",
+        "options": [
+            "Knowledge Base",
+            "Short Description",
+            "Category",
+            "Publish"
+        ],
+        "answer": [0],
+        "explanation": "When importing a Word document to create a knowledge article, ServiceNow must know where to store the content. Selecting a Knowledge Base is mandatory because permissions, workflows, and ownership are defined at the Knowledge Base level. While a Category is helpful for organization and a Short Description is usually pulled from the filename, the Knowledge Base is the required container for the article to exist.",
+        "multi": false
+    },
+    {
+        "id": 6,
+        "question": "The Now Platform is an example of which cloud computing model?",
+        "options": [
+            "Application Platform-as-a-Service (aPaaS)",
+            "Infrastructure-as-a-Service (IaaS)",
+            "Software-as-a-Service (SaaS)",
+            "Platform-as-a-Service (PaaS)"
+        ],
+        "answer": [0],
+        "explanation": "While ServiceNow is often consumed as SaaS (Software-as-a-Service) for its out-of-the-box apps, the Now Platform itself is an aPaaS. This means it provides a development environment, database infrastructure, and automated engine to help organizations build, run, and manage custom applications without the complexity of maintaining the underlying hardware or software layers.",
+        "multi": false
+    },
+    {
+        "id": 7,
+        "question": "Which reporting feature is described by the following? \"Clicking on a report section displays a subset of the report's data in a new report.\"",
+        "options": [
+            "Sharing",
+            "On-demand report",
+            "Drilldown",
+            "Dashboard"
+        ],
+        "answer": [2],
+        "explanation": "Drilldown is a feature that allows users to move from a high-level overview to more detailed data. For example, if you click on the 'Critical' slice of a Priority pie chart, a drilldown can open a new list or chart showing only those critical incidents. It is important to note that drilldowns are only available for data in the same table as the parent report and are not supported by certain report types like histograms or calendars.",
+        "multi": false
+    },
+    {
+        "id": 8,
+        "question": "How can you integrate third-party data into the Configuration Management Database without compromising its integrity?",
+        "options": [
+            "By using the CI Class Manager",
+            "By using the CMDB Data Manager",
+            "By using the CSDM",
+            "By using the IntegrationHub ETL"
+        ],
+        "answer": [3],
+        "explanation": "IntegrationHub ETL (Extract, Transform, Load) provides a guided, user-friendly interface to import data. It ensures integrity by using the Identification and Reconciliation Engine (IRE). The IRE prevents duplicate CIs (Configuration Items) from being created and ensures that only authorized data sources can update specific CI attributes, keeping the CMDB clean and reliable.",
+        "multi": false
+    },
+    {
+        "id": 9,
+        "question": "When using Form Designer, which of the following icons are presented on each field? (Select 3)",
+        "options": [
+            "Remove icon",
+            "Edit icon",
+            "Field icon",
+            "Handle icon",
+            "Reference icon"
+        ],
+        "answer": [0, 1, 3],
+        "explanation": "In the ServiceNow Form Designer, every field added to the form layout displays three specific icons: Handle icon (Used to drag and drop the field to reorder it), Edit icon or Gear (Used to open the field's properties like label, name, mandatory, read-only), and Remove icon or X (Used to delete the field from the form layout).",
+        "multi": true
+    },
+    {
+        "id": 10,
+        "question": "Which Common Service Data Model (CSDM) domain does Business Capability reside in?",
+        "options": [
+            "Design",
+            "Physical",
+            "CMDB",
+            "Sell/Consume"
+        ],
+        "answer": [0],
+        "explanation": "Business Capability resides in the Design domain of the CSDM. The Design domain is used for the planning and design of digital products and services. Objects in this domain (like Business Capabilities and Information Objects) are typically non-operational, meaning they represent 'what' the business does rather than the 'how' or the live technical infrastructure. This domain is primarily used by Enterprise Architects.",
+        "multi": false
+    },
+    {
+        "id": 11,
+        "question": "How can you quickly reference the most frequently used articles in the Service Portal?",
+        "options": [
+            "By creating a shortcut link for them",
+            "By rating them or marking them as helpful",
+            "By marking them as favorites",
+            "By flagging them"
+        ],
+        "answer": [2],
+        "explanation": "Marking articles as favorites allows quick access via the My Favorites menu in the Service Portal header. This is the fastest built-in way to revisit frequently used knowledge articles without searching again.",
+        "multi": false
+    },
+    {
+        "id": 12,
+        "question": "What data type in a survey metric has the field validation option to validate email, IP address, phone number or URL?",
+        "options": [
+            "Template",
+            "String",
+            "Number",
+            "Reference"
+        ],
+        "answer": [1],
+        "explanation": "The String data type supports field validation using predefined validators like: Email, IP Address (IPv4/IPv6), Phone Number (E.164), and URL. This helps ensure correct input formats in surveys.",
+        "multi": false
+    },
+    {
+        "id": 13,
+        "question": "As a catalogue admin, you are asked to dynamically populate Manager's name on a catalogue item when there is a (new) value for the 'Requested for' field. Where do you define the relationship between the two questions without scripting?",
+        "options": [
+            "Service Catalog Wizards",
+            "Service Designer",
+            "Catalog Builder",
+            "Service Catalog Entries",
+            "Catalog Item Templates"
+        ],
+        "answer": [2],
+        "explanation": "In Catalog Builder, you can configure Auto-populate relationships between variables. For example: When Requested for changes → Manager auto-fills. This is done declaratively (no scripting required).",
+        "multi": false
+    },
+    {
+        "id": 14,
+        "question": "What can administrators use in the Service Catalog to simplify the complex multi-form input-taking experience?",
+        "options": [
+            "Service Catalog Wizards",
+            "Catalog Builder",
+            "Custom actions",
+            "Declarative actions"
+        ],
+        "answer": [0],
+        "explanation": "Service Catalog Wizards provide a step-by-step guided experience, making complex multi-form inputs easier for users by breaking them into manageable steps.",
+        "multi": false
+    },
+    {
+        "id": 15,
+        "question": "What types of records are NOT captured in an update set by default? (Select 2)",
+        "options": [
+            "Access Control rules",
+            "Homepages",
+            "Tables",
+            "Business Rules",
+            "Content pages"
+        ],
+        "answer": [1, 4],
+        "explanation": "Homepages and Content pages are not automatically included in update sets. They must be manually added/unloaded before migration. Other items like Business Rules, Tables, and ACLs are captured automatically.",
+        "multi": true
+    },
+    {
+        "id": 16,
+        "question": "What Core UI data and analytics artifacts are migrated to Platform Analytics? (Select 4)",
+        "options": [
+            "Interactive filters",
+            "Performance Analytics widgets",
+            "Schema maps",
+            "Database views",
+            "Reports",
+            "Dashboards"
+        ],
+        "answer": [0, 1, 4, 5],
+        "explanation": "During migration to Platform Analytics, the following are moved: Dashboards, Reports, Interactive Filters, and PA Widgets. Schema maps and database views are not part of this migration.",
+        "multi": true
+    },
+    {
+        "id": 17,
+        "question": "How can Application Collaboration help when creating applications within the Now Platform App Engine?",
+        "options": [
+            "Delegated developers can use source control features",
+            "Non-administrators can develop and deploy applications",
+            "Collaborator permissions can be managed",
+            "Administrators are allowed to delete applications"
+        ],
+        "answer": [2],
+        "explanation": "Application Collaboration allows admins to assign roles and permissions, and control who can develop, modify, or deploy apps. This ensures controlled development across teams.",
+        "multi": false
+    },
+    {
+        "id": 18,
+        "question": "Which of the following can you do when creating a service catalogue variable? (Select 3)",
+        "options": [
+            "Make a question choice inactive",
+            "Make a variable read-only or hide it while defining the variable",
+            "Make a question choice reusable among other questions in the same catalogue item",
+            "Make a group of Checkbox variables mandatory in the Service Portal"
+        ],
+        "answer": [0, 1, 3],
+        "explanation": "You can disable choices, hide fields, or make them read-only. You can also enforce mandatory checkbox groups. However, a choice cannot be directly reused across multiple questions without a custom design like a template or reference field.",
+        "multi": true
+    },
+    {
+        "id": 19,
+        "question": "You can automatically generate chat summarizations for conversations that are transferred between requesters, virtual agents, and live agents. Which ServiceNow product enables you to summarise a chat conversation?",
+        "options": [
+            "Sidebar chat",
+            "Agent Assist",
+            "Connect chat",
+            "Now Assist"
+        ],
+        "answer": [3],
+        "explanation": "Now Assist uses AI/LLM capabilities to generate chat summaries, help agents quickly understand conversations, and reduce handling time and improve efficiency.",
+        "multi": false
+    },
+    {
+        "id": 20,
+        "question": "What action is recommended when you want to perform system maintenance?",
+        "options": [
+            "Mark logged in users inactive",
+            "Terminate logged in users’ sessions",
+            "Lockout logged in users",
+            "Impersonate logged in users"
+        ],
+        "answer": [1],
+        "explanation": "Terminating sessions ensures no active user activity happens during maintenance. It logs users out safely at their next interaction, which avoids conflicts or data inconsistencies during system updates.",
+        "multi": false
+    }
+]

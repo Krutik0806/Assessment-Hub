@@ -7504,6 +7504,971 @@ export const TESTS = {
             }
 ]
     }
+,
+    10: {
+        name: "Practice Test 10",
+        total: 60,
+        questions: [
+            {
+                        "id": 1,
+                        "question": "Which score indicates the level of adherence of your ServiceNow instance security settings to recommended best practices?",
+                        "options": [
+                                    "Risk security score",
+                                    "Complementary security score",
+                                    "Hardening compliance score",
+                                    "Compliant risk score"
+                        ],
+                        "answer": [
+                                    2
+                        ],
+                        "explanation": "The Hardening compliance score measures how well your instance security configurations align with ServiceNow recommended best practices. It evaluates security properties and provides insights through score trends, allowing administrators to identify gaps and improve the overall security posture of the instance.",
+                        "multi": false
+            },
+            {
+                        "id": 2,
+                        "question": "Which of the following can you do using the Catalog Builder? (Select 3)",
+                        "options": [
+                                    "Configure the default value for a question in Catalog Builder",
+                                    "Add, remove or update multiple images of a catalogue item",
+                                    "Configure the Catalog Builder so catalogue item editors can enter custom details",
+                                    "Set the minimum and maximum number of items for an order",
+                                    "Transfer catalogue items published through Catalog Builder using exclusive update sets",
+                                    "Administer tables and forms visually from a single user interface"
+                        ],
+                        "answer": [
+                                    0,
+                                    2,
+                                    4
+                        ],
+                        "explanation": "Catalog Builder is a guided, low-code tool for creating and managing catalog items. It allows setting default values for questions, configuring the editor experience, and automatically generating exclusive update sets for safe transfer between instances. It does not manage tables/forms or advanced order constraints.",
+                        "multi": true
+            },
+            {
+                        "id": 3,
+                        "question": "What are the advantages of a ticketing integration between a ServiceNow instance and a third-party system? (Select 3)",
+                        "options": [
+                                    "Tracking ticket activity for accurate reporting",
+                                    "Transforming data for more uniform processing",
+                                    "No requirement for a unique key between systems",
+                                    "Synchronising the systems so that notifications can be triggered"
+                        ],
+                        "answer": [
+                                    0,
+                                    1,
+                                    3
+                        ],
+                        "explanation": "Ticketing integrations enable data synchronization (keeps both systems updated), data transformation (ensures compatibility), and activity tracking (improves reporting and auditability). A unique key (like ticket number) is still required.",
+                        "multi": true
+            },
+            {
+                        "id": 4,
+                        "question": "What do you use to understand changes made for users, groups, roles, and ACLs, such as information about who has modified what, where and when?",
+                        "options": [
+                                    "Identity Center",
+                                    "Identity and Access Audit",
+                                    "Instance Security Center",
+                                    "Access Analyzer"
+                        ],
+                        "answer": [
+                                    1
+                        ],
+                        "explanation": "Identity and Access Audit provides tracking of who changed what and when, visibility into changes in users, roles, groups, and ACLs, and support for security audits and compliance.",
+                        "multi": false
+            },
+            {
+                        "id": 5,
+                        "question": "Which of the following field types have a one-to-many relationship? (Select 3)",
+                        "options": [
+                                    "Choice Field",
+                                    "Name-Value Pairs",
+                                    "Glide List",
+                                    "Reference fields",
+                                    "Document ID fields"
+                        ],
+                        "answer": [
+                                    2,
+                                    3,
+                                    4
+                        ],
+                        "explanation": "These field types represent relationships: Reference field (one record linked to another table), Glide List (multiple records from another table), and Document ID (dynamic reference to any table). Choice fields and name-value pairs do not create relational links.",
+                        "multi": true
+            },
+            {
+                        "id": 6,
+                        "question": "Where can you set a value or a message for a question in Catalog Builder based on a set of conditions?",
+                        "options": [
+                                    "Settings",
+                                    "Preview",
+                                    "Dynamic behavior",
+                                    "Details"
+                        ],
+                        "answer": [
+                                    2
+                        ],
+                        "explanation": "Dynamic behavior in Catalog Builder allows setting field values automatically, showing messages/help text, and applying conditional logic without scripting. It is equivalent to UI Policies but in a guided builder interface.",
+                        "multi": false
+            },
+            {
+                        "id": 7,
+                        "question": "What setting on the List Control page can speed up loading large lists?",
+                        "options": [
+                                    "Omit if empty",
+                                    "Remove pagination count",
+                                    "Omit filters",
+                                    "Hierarchical lists"
+                        ],
+                        "answer": [
+                                    1
+                        ],
+                        "explanation": "Counting total records in large tables is expensive. Disabling pagination count skips total record calculation and improves list loading performance significantly.",
+                        "multi": false
+            },
+            {
+                        "id": 8,
+                        "question": "Notifications in the Now Platform occur through which of the following methods? (Select 3)",
+                        "options": [
+                                    "SMS",
+                                    "Email",
+                                    "Workplace Chat",
+                                    "Meeting Invitation",
+                                    "Virtual Agent"
+                        ],
+                        "answer": [
+                                    0,
+                                    1,
+                                    3
+                        ],
+                        "explanation": "ServiceNow supports notifications via Email (primary channel), SMS (converted from email if configured), and Meeting invitations (calendar-based notifications).",
+                        "multi": true
+            },
+            {
+                        "id": 9,
+                        "question": "What feature is added for tasks to give users safer and more secure access to the reports on the dashboards?",
+                        "options": [
+                                    "UI action to auto-generate reports",
+                                    "UI policy actions",
+                                    "report_view access control lists",
+                                    "report_user role",
+                                    "Elevate role option"
+                        ],
+                        "answer": [
+                                    2
+                        ],
+                        "explanation": "The report_view ACL controls who can view reports, ensures users only see data they are authorized for, and enhances dashboard security by restricting report access.",
+                        "multi": false
+            },
+            {
+                        "id": 10,
+                        "question": "What role is required to create record producers to allow users to raise issues directly from the Service Catalogue?",
+                        "options": [
+                                    "catalog_item_designer",
+                                    "itil_admin",
+                                    "incident_manager",
+                                    "catalog_admin"
+                        ],
+                        "answer": [
+                                    3
+                        ],
+                        "explanation": "The catalog_admin role manages catalog items and record producers and allows creation of forms for users to submit requests/issues.",
+                        "multi": false
+            },
+            {
+                        "id": 11,
+                        "question": "Which of the following is true about assigning a task? (Select 2)",
+                        "options": [
+                                    "Tasks are automatically routed to an assignment group",
+                                    "Tasks created through email are routed to the Service Desk",
+                                    "Assigned to value is limited to the selected assignment group",
+                                    "Upon assignment, all group members receive an email"
+                        ],
+                        "answer": [
+                                    2,
+                                    3
+                        ],
+                        "explanation": "Users in 'Assigned to' must belong to the selected assignment group, and notifications are sent to group members on assignment. Tasks are NOT automatically routed unless assignment rules are configured.",
+                        "multi": true
+            },
+            {
+                        "id": 12,
+                        "question": "At what point is the resolution SLA escalated to the task assignee\u2019s manager for the first time?",
+                        "options": [
+                                    "At 50% time elapsed",
+                                    "At 100% time elapsed",
+                                    "At 75% time elapsed",
+                                    "Never"
+                        ],
+                        "answer": [
+                                    2
+                        ],
+                        "explanation": "Default SLA notifications: 50% \u2192 notify assignee, 75% \u2192 notify assignee + manager (first escalation), 100% \u2192 breach notification.",
+                        "multi": false
+            },
+            {
+                        "id": 13,
+                        "question": "How does ServiceNow process an inbound email with a watermark of an existing record?",
+                        "options": [
+                                    "Ignores email",
+                                    "Creates child record",
+                                    "Overwrites all values",
+                                    "Updates existing task"
+                        ],
+                        "answer": [
+                                    3
+                        ],
+                        "explanation": "Watermark links email to an existing record. Inbound email actions identify the record via watermark and update it using defined script/logic. If no watermark, a new record is created.",
+                        "multi": false
+            },
+            {
+                        "id": 14,
+                        "question": "What can you do in the SLA Timeline for a task? (Select 3)",
+                        "options": [
+                                    "Send notifications",
+                                    "Identify why a task update triggered a stage",
+                                    "View SLA/OLA progress",
+                                    "View related task updates"
+                        ],
+                        "answer": [
+                                    1,
+                                    2,
+                                    3
+                        ],
+                        "explanation": "SLA Timeline provides full lifecycle visibility, trigger analysis (why SLA changed stage), tracking across SLAs and OLAs, and related updates insight. It is analytical, not action-based.",
+                        "multi": true
+            },
+            {
+                        "id": 15,
+                        "question": "Which application allows you to compare reports against report_view and read ACLs?",
+                        "options": [
+                                    "Security Jump Start",
+                                    "Reporting Statistics",
+                                    "Anonymous Report Center",
+                                    "Report Security",
+                                    "ACL Assessment for Reports"
+                        ],
+                        "answer": [
+                                    4
+                        ],
+                        "explanation": "This tool evaluates report_view vs read ACL conflicts, identifies users who cannot access reports, and helps fix access/security mismatches.",
+                        "multi": false
+            },
+            {
+                        "id": 16,
+                        "question": "Which UI action updates a record and stays on the same page?",
+                        "options": [
+                                    "Update",
+                                    "Insert",
+                                    "Save",
+                                    "Submit"
+                        ],
+                        "answer": [
+                                    2
+                        ],
+                        "explanation": "Save \u2192 updates record and stays. Update \u2192 updates and reloads to previous screen. Insert \u2192 creates new record. Submit \u2192 saves new record and exits.",
+                        "multi": false
+            },
+            {
+                        "id": 17,
+                        "question": "Lists provide context menus at three different levels. What are they? (Select 3)",
+                        "options": [
+                                    "List description menu",
+                                    "List column context menu",
+                                    "List filter context menu",
+                                    "List title menu",
+                                    "List fields context menu"
+                        ],
+                        "answer": [
+                                    1,
+                                    3,
+                                    4
+                        ],
+                        "explanation": "Three levels: List title menu \u2192 overall list actions, Column context menu \u2192 column operations, Field context menu \u2192 field-specific actions.",
+                        "multi": true
+            },
+            {
+                        "id": 18,
+                        "question": "What is the default portal for new (ZBoot) instances?",
+                        "options": [
+                                    "Instance Security Center",
+                                    "Knowledge Portal",
+                                    "Employee Center",
+                                    "Service Workspace Portal"
+                        ],
+                        "answer": [
+                                    2
+                        ],
+                        "explanation": "For new instances, the default portal is Employee Center. Older instances used Service Portal. Employee Center provides a modern, unified user experience.",
+                        "multi": false
+            },
+            {
+                        "id": 19,
+                        "question": "What application allows you to create or edit a catalogue item using a guided experience?",
+                        "options": [
+                                    "Process Automation Designer",
+                                    "Maintain Items",
+                                    "Catalog Builder",
+                                    "Flow Designer"
+                        ],
+                        "answer": [
+                                    2
+                        ],
+                        "explanation": "Catalog Builder provides a guided UI for catalog creation, supports restrictions, templates, and validations, and is designed for low-code/no-code users.",
+                        "multi": false
+            },
+            {
+                        "id": 20,
+                        "question": "What can you leverage to eliminate scripting for a catalogue item or variable set?",
+                        "options": [
+                                    "Verification Rules",
+                                    "Assignment Lookup Rules",
+                                    "Business Rules",
+                                    "Data Lookup Rules"
+                        ],
+                        "answer": [
+                                    3
+                        ],
+                        "explanation": "Data Lookup Rules automatically set field values based on conditions and replace scripting logic. They are used heavily in Service Catalog to simplify configurations.",
+                        "multi": false
+            },
+            {
+                        "id": 21,
+                        "question": "Which of the following can be configured by all users in the Next Experience instances?",
+                        "options": [
+                                    "AI Search",
+                                    "Personalised Start Page",
+                                    "Admin menu",
+                                    "Next Experience Readiness Checker",
+                                    "Custom menus"
+                        ],
+                        "answer": [
+                                    1
+                        ],
+                        "explanation": "All users (not just admins) can configure their personalised start page using user preferences. This allows them to choose which page loads on login in the Next Experience UI. Other options require administrative privileges.",
+                        "multi": false
+            },
+            {
+                        "id": 22,
+                        "question": "What variable type do you use to allow uploading an attachment from a question in a catalogue item?",
+                        "options": [
+                                    "Attachment",
+                                    "URL",
+                                    "Reference",
+                                    "HTML"
+                        ],
+                        "answer": [
+                                    0
+                        ],
+                        "explanation": "The Attachment variable type enables users to upload files directly within a catalog item form. It supports upload/download/delete actions and file restrictions (size and type).",
+                        "multi": false
+            },
+            {
+                        "id": 23,
+                        "question": "To provide added security on the platform, no user can have both explicit roles. What are the two explicit roles? (Select 2)",
+                        "options": [
+                                    "snc_external",
+                                    "sn_si_special_access",
+                                    "sn_si_external",
+                                    "snc_internal"
+                        ],
+                        "answer": [
+                                    0,
+                                    3
+                        ],
+                        "explanation": "ServiceNow enforces separation between snc_internal (internal users) and snc_external (external users). A user cannot have both roles simultaneously to prevent security conflicts.",
+                        "multi": true
+            },
+            {
+                        "id": 24,
+                        "question": "What are the benefits of using Multisource CMDB? (Select 3)",
+                        "options": [
+                                    "Revert CMDB data integration from a specific discovery source",
+                                    "Control CI updates at the discovery source and CI attribute level",
+                                    "Complicate data management",
+                                    "Visualise the source of attribute values"
+                        ],
+                        "answer": [
+                                    0,
+                                    1,
+                                    3
+                        ],
+                        "explanation": "Multisource CMDB allows granular control over CI attributes per source, visualization of data origin, and the ability to revert or exclude unreliable sources.",
+                        "multi": true
+            },
+            {
+                        "id": 25,
+                        "question": "Which feature enables you to maintain a unified content categorisation across different content types?",
+                        "options": [
+                                    "User Criteria",
+                                    "Taxonomy",
+                                    "Social Q&A",
+                                    "Record Producer",
+                                    "Knowledge Block"
+                        ],
+                        "answer": [
+                                    1
+                        ],
+                        "explanation": "Taxonomy provides a unified categorization system across knowledge articles, catalog items, and community posts using hierarchical topics.",
+                        "multi": false
+            },
+            {
+                        "id": 26,
+                        "question": "Which functions can you perform using the HTML editor in knowledge articles? (Select 4)",
+                        "options": [
+                                    "Find and replace text",
+                                    "Insert a basic table of contents",
+                                    "Include HTML content",
+                                    "Insert or edit a code snippet",
+                                    "Translate selected text"
+                        ],
+                        "answer": [
+                                    0,
+                                    1,
+                                    2,
+                                    3
+                        ],
+                        "explanation": "The HTML editor supports text editing (find/replace), adding structured content (tables, TOC), embedding HTML, and code snippets. Translation is not a native editor feature.",
+                        "multi": true
+            },
+            {
+                        "id": 27,
+                        "question": "What is the single location for all the import sets and concurrent import sets for a scheduled data import chain?",
+                        "options": [
+                                    "Transform History",
+                                    "Data Sources",
+                                    "Import Log",
+                                    "Execution Contexts"
+                        ],
+                        "answer": [
+                                    3
+                        ],
+                        "explanation": "Execution Contexts provide a centralized view of scheduled imports, concurrent import sets, and execution hierarchy to monitor and analyze import processes.",
+                        "multi": false
+            },
+            {
+                        "id": 28,
+                        "question": "Administrators can create custom menus to personalise users\u2019 access in Unified Navigation. How is access configured?",
+                        "options": [
+                                    "By group",
+                                    "By role",
+                                    "By department",
+                                    "By user",
+                                    "By location"
+                        ],
+                        "answer": [
+                                    1
+                        ],
+                        "explanation": "Access to custom menus in Unified Navigation is controlled using visible and hidden roles to ensure role-based access control and personalization.",
+                        "multi": false
+            },
+            {
+                        "id": 29,
+                        "question": "What does Lane Filter in Visual Task Board enable you to create for cards with empty values?",
+                        "options": [
+                                    "A separate board",
+                                    "A new filter",
+                                    "A new card",
+                                    "A separate lane"
+                        ],
+                        "answer": [
+                                    3
+                        ],
+                        "explanation": "Lane filters allow grouping cards with empty/null values and displaying them in a separate lane, such as tasks without assignees.",
+                        "multi": false
+            },
+            {
+                        "id": 30,
+                        "question": "Which of the following are the features of delegated development and deployment? (Select 3)",
+                        "options": [
+                                    "Allow delegated developers to delete applications",
+                                    "Release the test app to other servers",
+                                    "Application collaboration",
+                                    "Assign source control permissions"
+                        ],
+                        "answer": [
+                                    0,
+                                    2,
+                                    3
+                        ],
+                        "explanation": "Delegated development enables application collaboration, assigning source control permissions, and allowing scoped deletion based on specific permissions.",
+                        "multi": true
+            },
+            {
+                        "id": 31,
+                        "question": "Which of the following is supported while working with or ordering catalogue items in the Service Portal or the Employee Center?",
+                        "options": [
+                                    "Conditionally hide attachments",
+                                    "Drag or copy attachments",
+                                    "Upload password-protected attachments",
+                                    "Open all attachments in the browser"
+                        ],
+                        "answer": [
+                                    1
+                        ],
+                        "explanation": "You can drag or copy one or more files into the 'Add attachments' window while working with or ordering catalogue items in the Service Portal or Employee Center. Drag-and-drop can be disabled via UI properties, but attachments can still be uploaded manually.",
+                        "multi": false
+            },
+            {
+                        "id": 32,
+                        "question": "You can add knowledge article URLs to your sitemap to improve content indexing by public search engines. What do you configure to achieve this for the Knowledge Portal?",
+                        "options": [
+                                    "Connect Service Portal Widgets",
+                                    "Next Experience UI for knowledge articles",
+                                    "Sitemap Generator record",
+                                    "Contextual Search - Service Portal",
+                                    "Service Portal Analytics"
+                        ],
+                        "answer": [
+                                    2
+                        ],
+                        "explanation": "By configuring a Sitemap Generator record, you can include Knowledge article URLs in the XML sitemap, enabling search engines to crawl and index portal content more effectively.",
+                        "multi": false
+            },
+            {
+                        "id": 33,
+                        "question": "You are editing a published catalogue item in Catalog Builder, which automatically moves it to the Draft state. What action allows you to delete or revert the new changes to the previous Published state?",
+                        "options": [
+                                    "Re-publish",
+                                    "Revert to Published",
+                                    "Discard draft",
+                                    "Update state"
+                        ],
+                        "answer": [
+                                    2
+                        ],
+                        "explanation": "Using the 'Discard draft' option removes the draft version and restores the item to its previously published state without affecting the live version.",
+                        "multi": false
+            },
+            {
+                        "id": 34,
+                        "question": "You can consolidate Playbooks, Flow Designer, Action Designer, Integration Hub integrations, and Decision Builder into one design environment. What application allows you to build and manage playbooks, flows, subflows, actions, and decisions from a shared access point?",
+                        "options": [
+                                    "Service Creator",
+                                    "Workflow Editor",
+                                    "Creator Studio",
+                                    "Workflow Studio"
+                        ],
+                        "answer": [
+                                    3
+                        ],
+                        "explanation": "Workflow Studio provides a unified interface to design, configure, and monitor workflows. It combines multiple tools such as Flow Designer, Playbooks, Action Designer, and Decision Builder into a single environment.",
+                        "multi": false
+            },
+            {
+                        "id": 35,
+                        "question": "Using the flow diagramming view, you can create and view flows as diagrams and see the paths a flow can follow. Where do you go to install the Flow Diagramming application?",
+                        "options": [
+                                    "ServiceNow Marketplace",
+                                    "Developer Site",
+                                    "Now Assist",
+                                    "ServiceNow Store",
+                                    "Now Create"
+                        ],
+                        "answer": [
+                                    3
+                        ],
+                        "explanation": "The Flow Diagramming application is installed from the ServiceNow Store. It enables visual representation of flows, helping users understand execution paths and relationships.",
+                        "multi": false
+            },
+            {
+                        "id": 36,
+                        "question": "What framework helps you consistently use standard values across applications and effectively track assets through their life-cycle transitions?",
+                        "options": [
+                                    "ITIL",
+                                    "CSDM",
+                                    "ITSM",
+                                    "CMDB"
+                        ],
+                        "answer": [
+                                    1
+                        ],
+                        "explanation": "The Common Service Data Model (CSDM) is a framework that provides standardized fields and values to track the lifecycle stages and statuses of CIs across applications.",
+                        "multi": false
+            },
+            {
+                        "id": 37,
+                        "question": "What options are available to workspace users when communicating via email in a Workspace? (Select 2)",
+                        "options": [
+                                    "Add email addresses into recipient fields",
+                                    "Track the delivery status of sent emails",
+                                    "Schedule emails for later delivery",
+                                    "Auto-save email drafts"
+                        ],
+                        "answer": [
+                                    0,
+                                    3
+                        ],
+                        "explanation": "Workspace users can add or copy-paste email addresses into recipient fields, and email drafts are automatically saved after a short interval. Tracking delivery status and scheduling emails are not supported here.",
+                        "multi": true
+            },
+            {
+                        "id": 38,
+                        "question": "What form view is displayed when a user clicks on a reference icon on a task form?",
+                        "options": [
+                                    "Service Portal",
+                                    "Sys_popup",
+                                    "Metrics",
+                                    "Self Service"
+                        ],
+                        "answer": [
+                                    1
+                        ],
+                        "explanation": "When a user clicks on a reference icon (preview icon), ServiceNow displays a read-only preview of the referenced record using the sys_popup view. If no sys_popup view is defined, it defaults to the standard form view.",
+                        "multi": false
+            },
+            {
+                        "id": 39,
+                        "question": "What platform feature, combined with field normalisation, does CMDB use to automatically check a CI's uniqueness?",
+                        "options": [
+                                    "ServiceNow Import Sets",
+                                    "ServiceNow Discovery",
+                                    "ServiceNow Service Mapping",
+                                    "Identification and Reconciliation Engine (IRE)"
+                        ],
+                        "answer": [
+                                    3
+                        ],
+                        "explanation": "The CMDB uses the Identification and Reconciliation Engine (IRE) along with field normalization to check uniqueness. IRE applies identification rules to match incoming data with existing CI records to prevent duplicate entries.",
+                        "multi": false
+            },
+            {
+                        "id": 40,
+                        "question": "Which section on the catalog item variable form enables you to add instructions or help text?",
+                        "options": [
+                                    "Availability",
+                                    "Question",
+                                    "Type Specifications",
+                                    "Annotation"
+                        ],
+                        "answer": [
+                                    3
+                        ],
+                        "explanation": "The Annotation section in the catalog item variable form is specifically designed to provide additional guidance. It includes fields like Help text, Instructions, Help tag, and options like Show help.",
+                        "multi": false
+            },
+            {
+                        "id": 41,
+                        "question": "Under which Report Designer tab can you define the report grouping?",
+                        "options": [
+                                    "Style",
+                                    "Type",
+                                    "Configure",
+                                    "Data"
+                        ],
+                        "answer": [
+                                    2
+                        ],
+                        "explanation": "The Configure tab is where you define the report grouping (Group by options). The Style tab is for colours, title, and chart properties. The Type tab is for selecting the visualisation format. The Data tab is for entering the Report name, Source type, table, or data source.",
+                        "multi": false
+            },
+            {
+                        "id": 42,
+                        "question": "What do you use to set values for the mandatory fields that are not in the import spreadsheet? For example, when data is imported into the Choice table for Categories and Subcategories.",
+                        "options": [
+                                    "Map",
+                                    "Coalesce",
+                                    "Target field",
+                                    "Source script"
+                        ],
+                        "answer": [
+                                    3
+                        ],
+                        "explanation": "Source script is used to set values for mandatory fields not present in the import spreadsheet. For instance, when mapping categories and subcategories, you can conditionally set values without relying entirely on source fields.",
+                        "multi": false
+            },
+            {
+                        "id": 43,
+                        "question": "Where can users author cross-enterprise workflows and create a single, unified process on the Now Platform?",
+                        "options": [
+                                    "Workflow Studio Playbooks",
+                                    "Process Flow",
+                                    "Flow Designer",
+                                    "Virtual Task Boards"
+                        ],
+                        "answer": [
+                                    0
+                        ],
+                        "explanation": "Workflow Studio Playbooks (previously Process Automation Designer) enables process owners to author cross-enterprise workflows and create a single, unified process by connecting flows, subflows, and actions into a digitized task board.",
+                        "multi": false
+            },
+            {
+                        "id": 44,
+                        "question": "You can test a flow, subflow or action in the background and run it with sample data. What is bypassed in the Flow Designer to allow testing?",
+                        "options": [
+                                    "The actions that are not part of the main flow",
+                                    "Flow trigger conditions",
+                                    "The sample data you provide",
+                                    "The subflows"
+                        ],
+                        "answer": [
+                                    1
+                        ],
+                        "explanation": "Flow trigger conditions are bypassed in Flow Designer to allow background testing using sample data, causing the system to act as if the trigger was met natively.",
+                        "multi": false
+            },
+            {
+                        "id": 45,
+                        "question": "What actions can you take with Flow Designer? (Select 3)",
+                        "options": [
+                                    "Define multiple flows with the same trigger conditions on a table",
+                                    "Look up and delete multiple existing records as a single action",
+                                    "Test a flow, subflow, or action in the background",
+                                    "Duplicate an action or subflow within a flow"
+                        ],
+                        "answer": [
+                                    1,
+                                    2,
+                                    3
+                        ],
+                        "explanation": "Flow Designer lets you perform bulk deletes, test in the background, and duplicate flow components. Defining multiple flows with identical triggers should be avoided to prevent execution conflicts.",
+                        "multi": true
+            },
+            {
+                        "id": 46,
+                        "question": "Configuration Hub allows you to track delta changes, over-allocated subscriptions, customisations, and slow execution on the product home page by selecting a product family. Where do you navigate to access Configuration Hub? (Select 2)",
+                        "options": [
+                                    "All > Admin Center > Configuration Hub",
+                                    "All > Now Experience Framework > Configuration Hub",
+                                    "Admin > Configuration Hub",
+                                    "Workspaces > Configuration Hub"
+                        ],
+                        "answer": [
+                                    0,
+                                    2
+                        ],
+                        "explanation": "Configuration Hub can be accessed via left navigation (All > Admin Center > Configuration Hub) or the Admin tab (Admin > Configuration Hub).",
+                        "multi": true
+            },
+            {
+                        "id": 47,
+                        "question": "What do you call a single row in a table or list?",
+                        "options": [
+                                    "Item",
+                                    "Record",
+                                    "Field",
+                                    "Class",
+                                    "Application",
+                                    "Entry",
+                                    "Data"
+                        ],
+                        "answer": [
+                                    1
+                        ],
+                        "explanation": "A table is a collection of records. Each record corresponds to a row in a table, and each field on a record corresponds to a column.",
+                        "multi": false
+            },
+            {
+                        "id": 48,
+                        "question": "Which of the following is NOT a group type in the base instance?",
+                        "options": [
+                                    "itil",
+                                    "incident",
+                                    "catalog",
+                                    "survey"
+                        ],
+                        "answer": [
+                                    1
+                        ],
+                        "explanation": "Incident is NOT a default group type. Out-of-the-box group types are catalog, itil, and survey.",
+                        "multi": false
+            },
+            {
+                        "id": 49,
+                        "question": "What can you do with the Workflow Studio Playbooks? (Select 3)",
+                        "options": [
+                                    "Guide agents and fulfillers through complicated playbooks from start to finish",
+                                    "Organise playbook activities in a digitised task board or diagram interface",
+                                    "Connect multiple flows and actions into an end-to-end business workflow",
+                                    "Replace existing Flow Designer flows, subflows, or actions to automate process activities"
+                        ],
+                        "answer": [
+                                    0,
+                                    1,
+                                    2
+                        ],
+                        "explanation": "Workflow Studio Playbooks organize and connect process activities systematically. They reuse (not replace) existing Flow Designer flows and actions.",
+                        "multi": true
+            },
+            {
+                        "id": 50,
+                        "question": "What can be configured for questions in Catalog UI Policy Actions without the need to script? (Select 2)",
+                        "options": [
+                                    "Set field messages",
+                                    "Set values",
+                                    "Set field types",
+                                    "Set access roles",
+                                    "Set text styles"
+                        ],
+                        "answer": [
+                                    0,
+                                    1
+                        ],
+                        "explanation": "Catalog UI Policy Actions allow you to conditionally 'Set field messages' and 'Set values' for catalog questions without scripting.",
+                        "multi": true
+            },
+            {
+                        "id": 51,
+                        "question": "What rules work with existing Access Control rules (ACLs) to deny access to tables and records that do not match subject attributes?",
+                        "options": [
+                                    "Data privacy",
+                                    "Data separation",
+                                    "Data filtration",
+                                    "Data classification"
+                        ],
+                        "answer": [
+                                    2
+                        ],
+                        "explanation": "Data filtration acts alongside ACLs to deny access to tables/records mismatched with subject attributes. It runs before ACL evaluation.",
+                        "multi": false
+            },
+            {
+                        "id": 52,
+                        "question": "Based on the Shared Responsibility Model, who is responsible for securing the configuration of the instances, authentication and authorisation, and data encryption at rest?",
+                        "options": [
+                                    "Network provider (third-party)",
+                                    "Data controller (customer)",
+                                    "Data processor (ServiceNow)",
+                                    "Data centre provider (colocation)"
+                        ],
+                        "answer": [
+                                    1
+                        ],
+                        "explanation": "Under the Shared Responsibility Model, the data controller (customer) is responsible for securing instance configurations, access via authentication, and data encryption choices at rest.",
+                        "multi": false
+            },
+            {
+                        "id": 53,
+                        "question": "What can agents do with the Sidebar feature in the Next Experience UI? (Select 2)",
+                        "options": [
+                                    "Have real-time collaboration with others from a Workspace interaction-based record",
+                                    "Broadcast a text message or initiate a conference call with other agents",
+                                    "Communicate with the caller/requester directly",
+                                    "Integrate with other Workspaces to display related records",
+                                    "Create, open and search for discussions about their work"
+                        ],
+                        "answer": [
+                                    0,
+                                    4
+                        ],
+                        "explanation": "Sidebar enables real-time collaboration among agents resolving tasks and allows users to create/search for discussions in their workspaces.",
+                        "multi": true
+            },
+            {
+                        "id": 54,
+                        "question": "What are some of the benefits often recognised by branding your instance? (Select 3)",
+                        "options": [
+                                    "Create a shared identity",
+                                    "Gain user trust",
+                                    "Accelerate adoption rates",
+                                    "Share comprehensive assignment rules",
+                                    "Reduce service desk calls"
+                        ],
+                        "answer": [
+                                    0,
+                                    1,
+                                    2
+                        ],
+                        "explanation": "Branding fosters a shared identity, increases user trust by aligning with corporate visuals, and accelerates platform adoption rates.",
+                        "multi": true
+            },
+            {
+                        "id": 55,
+                        "question": "When migrating to Platform Analytics, some visualisations, aspects of visualisations, and filters are migrated in compatibility mode. How are these artifacts inserted in the migrated dashboard?",
+                        "options": [
+                                    "As a hyperlink to the Core UI dashboard",
+                                    "As embedded content (iframes)",
+                                    "In a new dashboard tab",
+                                    "As screenshots/images"
+                        ],
+                        "answer": [
+                                    1
+                        ],
+                        "explanation": "All custom content blocks and non-Analytics widgets migrate in compatibility mode, appearing as embedded content (iframes) on the new dashboard.",
+                        "multi": false
+            },
+            {
+                        "id": 56,
+                        "question": "What authentication method is used as a Single Sign-On (SSO) identity provider (IdP) to allow users to log in to ServiceNow using their social identity provider, like Google and Okta?",
+                        "options": [
+                                    "LDAP",
+                                    "Digest Authentication",
+                                    "SAML 2.0",
+                                    "OpenID Connect"
+                        ],
+                        "answer": [
+                                    3
+                        ],
+                        "explanation": "OpenID Connect (OIDC) provides modern SSO integrations for both B2C (Google) and B2B (Okta) social identity providers.",
+                        "multi": false
+            },
+            {
+                        "id": 57,
+                        "question": "Search engine optimisation (SEO) helps portal users find the necessary information and engage more with your portal. Adding SEO information to your public portal pages improves how external search engines index and rank pages to make them more findable. What information can you add to Service Portal pages to improve SEO? (Select 3)",
+                        "options": [
+                                    "Images instead of long texts",
+                                    "Human readable keywords to page URLs",
+                                    "Dynamic titles to portal pages",
+                                    "Meta tags to public pages",
+                                    "Access restrictions to public pages"
+                        ],
+                        "answer": [
+                                    1,
+                                    2,
+                                    3
+                        ],
+                        "explanation": "SEO optimization natively supports Human readable keywords to URLs, dynamic titles to portal pages, and robust Meta tags for public pages.",
+                        "multi": true
+            },
+            {
+                        "id": 58,
+                        "question": "What do you configure for catalogue items or record producers in Catalog Builder to make them discoverable on Employee Center?",
+                        "options": [
+                                    "Short Description and Description",
+                                    "Variables and Variable Sets",
+                                    "Topics and Taxonomy",
+                                    "Catalogues and Categories"
+                        ],
+                        "answer": [
+                                    2
+                        ],
+                        "explanation": "Topics and Taxonomy provide hierarchical categorizations making resources discoverable across the unified Employee Center.",
+                        "multi": false
+            },
+            {
+                        "id": 59,
+                        "question": "What feature allows you to use simple natural language queries in a search string to query for a set of CIs in the CMDB?",
+                        "options": [
+                                    "Contextual Search",
+                                    "CMDB Data Manager",
+                                    "Conditional Search",
+                                    "Intelligent Search",
+                                    "Multisource CMDB"
+                        ],
+                        "answer": [
+                                    3
+                        ],
+                        "explanation": "Intelligent Search allows admins to draft complex search intents intuitively using conversational natural language query (NLQ) constructs.",
+                        "multi": false
+            },
+            {
+                        "id": 60,
+                        "question": "What details can you find in the import set record after running an import? (Select 3)",
+                        "options": [
+                                    "Import Set Rows",
+                                    "Import Log",
+                                    "Import Maps",
+                                    "Import Set Runs",
+                                    "Concurrent Import Sets",
+                                    "Import Set API"
+                        ],
+                        "answer": [
+                                    0,
+                                    1,
+                                    3
+                        ],
+                        "explanation": "After processing imports, admins review the robust tabs: Import Set Rows, Import Log, and Import Set Runs to identify process flow and row states.",
+                        "multi": true
+            }
+]
+    }
 };
 
 

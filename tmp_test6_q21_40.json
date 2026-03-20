@@ -1,0 +1,269 @@
+[
+    {
+        "id": 21,
+        "question": "What information can be found on the details page of an application or plugin within the Application Manager? (Select 3)",
+        "options": [
+            "Release notes",
+            "Key features",
+            "Customer reviews",
+            "Pricing details",
+            "Compatibility"
+        ],
+        "answer": [0, 1, 4],
+        "explanation": "The Application Manager details page displays release notes, key features, and compatibility info, along with a summary, current state, and technical dependencies. Specific pricing details and customer reviews are not shown on this page.",
+        "multi": true
+    },
+    {
+        "id": 22,
+        "question": "What type of Visual Task Board CANNOT be built from a record list?",
+        "options": [
+            "Guided",
+            "Flexible",
+            "Data Driven",
+            "Freeform"
+        ],
+        "answer": [3],
+        "explanation": "A Freeform board is not based on a record list — task records must be added manually. Guided and Flexible boards are built directly from existing record lists.",
+        "multi": false
+    },
+    {
+        "id": 23,
+        "question": "Which ServiceNow product enables you to integrate with 3rd party applications without scripting?",
+        "options": [
+            "Flow Designer",
+            "Service Portal",
+            "Visual Task Boards",
+            "Integration Hub"
+        ],
+        "answer": [3],
+        "explanation": "Integration Hub provides prebuilt spokes (triggers and actions) that connect ServiceNow to external systems like Slack or Microsoft Teams without writing code.",
+        "multi": false
+    },
+    {
+        "id": 24,
+        "question": "What are the three main tables in the CMDB? (Select 3)",
+        "options": [
+            "CMDB Baseline [cmdb_baseline]",
+            "CI Relationship [cmdb_rel_ci]",
+            "Base Configuration Item [cmdb]",
+            "Configuration Item [cmdb_ci]",
+            "CMDB Properties [cmdb_properties]"
+        ],
+        "answer": [1, 2, 3],
+        "explanation": "The three core CMDB tables are: cmdb (base table for non-IT CIs), cmdb_ci (Base Configuration Item — IT-related classes descend from here), and cmdb_rel_ci (defines relationships between CIs).",
+        "multi": true
+    },
+    {
+        "id": 25,
+        "question": "Why do organisations fail to complete implementation or realise business value from the CMDB? (Select 3)",
+        "options": [
+            "Too many non-IT Configuration Items",
+            "Inconsistent data quality",
+            "Unknown Configuration Items",
+            "Ill-defined relationships among Configuration Items"
+        ],
+        "answer": [1, 2, 3],
+        "explanation": "The primary challenges are: inconsistent data quality (unreliable records), unknown CIs (undiscovered assets), and ill-defined relationships (poorly mapped dependencies). Without accurate data and clear mapping, the CMDB cannot provide business value.",
+        "multi": true
+    },
+    {
+        "id": 26,
+        "question": "What form action updates an existing record and keeps the form open?",
+        "options": [
+            "Update",
+            "Insert",
+            "Save",
+            "Insert and Stay"
+        ],
+        "answer": [2],
+        "explanation": "Save updates the record and keeps the user on the current form. Update saves changes and returns to the previous list view. Insert creates a new record, and Insert and Stay creates a new record while keeping the form open.",
+        "multi": false
+    },
+    {
+        "id": 27,
+        "question": "Which search feature can you use to narrow down search results in ServiceNow?",
+        "options": [
+            "Platform Locators",
+            "Context Finder",
+            "Wildcard Characters",
+            "Containers"
+        ],
+        "answer": [2],
+        "explanation": "Wildcard characters refine search results. The percent sign (%) acts as a single-character wildcard and the asterisk (*) as a multi-character wildcard to narrow down search results within lists.",
+        "multi": false
+    },
+    {
+        "id": 28,
+        "question": "What do Application Services represent from an Application Portfolio Management (APM) perspective?",
+        "options": [
+            "Servers",
+            "Installed Instances",
+            "Configuration Items",
+            "Production Instances"
+        ],
+        "answer": [1],
+        "explanation": "From an APM perspective, an Application Service represents an installed instance of a business application (e.g., Dev, Test, or Production environments) — a set of interconnected apps and hosts configured to offer a specific service.",
+        "multi": false
+    },
+    {
+        "id": 29,
+        "question": "Which option allows you to update existing Target Table records when importing data from an import set?",
+        "options": [
+            "Transform",
+            "Coalesce",
+            "Unique",
+            "Mandatory"
+        ],
+        "answer": [1],
+        "explanation": "Coalescing a field tells the import engine to check for existing records with matching values. If a match is found, the record is updated; if no match is found, a new record is created.",
+        "multi": false
+    },
+    {
+        "id": 30,
+        "question": "What needs to be configured to create a new form view?",
+        "options": [
+            "Form Layout",
+            "List Layout",
+            "List Design",
+            "Related List"
+        ],
+        "answer": [0],
+        "explanation": "To create a new view, use Form Layout or Form Design. Both tools allow you to define which fields appear on a form and organize them into views for different user roles or processes.",
+        "multi": false
+    },
+    {
+        "id": 31,
+        "question": "Which of the following run scripts client-side? (Select 2)",
+        "options": [
+            "UI Policy",
+            "Client Script",
+            "Business Rule",
+            "Script Include"
+        ],
+        "answer": [0, 1],
+        "explanation": "UI Policies and Client Scripts run in the user's browser (client-side) and are used to change form behavior like making fields mandatory or visible. Business Rules and Script Includes run on the server.",
+        "multi": true
+    },
+    {
+        "id": 32,
+        "question": "Which Now Platform feature allows you to send notifications directly to Slack and Microsoft Teams users?",
+        "options": [
+            "Virtual Agent",
+            "Sidebar",
+            "Connect Chat",
+            "Now Notifications",
+            "ChatGPT"
+        ],
+        "answer": [0],
+        "explanation": "Virtual Agent can send direct messages and notifications to Slack and Microsoft Teams. Users must link their third-party accounts to the ServiceNow instance for this to work.",
+        "multi": false
+    },
+    {
+        "id": 33,
+        "question": "Which user authentication method authenticates credentials against an external Identity Provider (IdP) with a matching user account in ServiceNow?",
+        "options": [
+            "Digest Token",
+            "External Single Sign-on (SSO)",
+            "Local database",
+            "Multi-factor authentication"
+        ],
+        "answer": [1],
+        "explanation": "External SSO authenticates credentials against an external Identity Provider (IdP). Local database uses records stored directly in ServiceNow, and Digest Token uses an encrypted digest of the username/password.",
+        "multi": false
+    },
+    {
+        "id": 34,
+        "question": "Which of the following is the definition of a role in ServiceNow?",
+        "options": [
+            "An actor in user stories",
+            "A collection of permissions",
+            "A set of user access policies",
+            "A set of access control rules",
+            "A persona in workflows"
+        ],
+        "answer": [1],
+        "explanation": "A role is a collection of permissions that allows users to perform specific actions or access modules. Roles can contain other roles, and granting a role to a group automatically applies those permissions to all users in that group.",
+        "multi": false
+    },
+    {
+        "id": 35,
+        "question": "You need to go back to review a record you just looked at recently. What is the quickest way to navigate back to the same record?",
+        "options": [
+            "Impersonate another user",
+            "Expand every application in the All applications tab",
+            "Navigate back to its corresponding list",
+            "Select the record from the History tab"
+        ],
+        "answer": [3],
+        "explanation": "The History tab (clock icon in the navigation bar) stores recently accessed records and lists in chronological order, making it the fastest way to return to a recent item.",
+        "multi": false
+    },
+    {
+        "id": 36,
+        "question": "Where in the import process is the relationship between import set fields and ServiceNow table fields defined?",
+        "options": [
+            "Target tables",
+            "Transform map",
+            "Import set table",
+            "External data sources",
+            "Database view"
+        ],
+        "answer": [1],
+        "explanation": "A Transform Map acts as the bridge between the Import Set (source) and the ServiceNow table (target). It defines exactly how data from source fields should map to target fields.",
+        "multi": false
+    },
+    {
+        "id": 37,
+        "question": "Now Assist for CMDB brings generative AI to CMDB. What skills does this application provide? (Select 2)",
+        "options": [
+            "Add relationships",
+            "CSDM alignment",
+            "Manage duplicate CIs",
+            "Retire CIs",
+            "CI summarisation"
+        ],
+        "answer": [2, 4],
+        "explanation": "Now Assist for CMDB provides two GenAI skills: CI summarisation (summarizes CI details including class, discovery info, and related incidents) and Manage duplicate CIs (guides users through the de-duplication remediation process).",
+        "multi": true
+    },
+    {
+        "id": 38,
+        "question": "In what order are access controls evaluated?",
+        "options": [
+            "Table-level and Field-level are evaluated together simultaneously",
+            "First at the Table-level (most specific to most general), then at the Field-level (most specific to most general)",
+            "First at the Field-level (most specific to most general), then at the Table-level (most specific to most general)",
+            "Table-level and Field-level are evaluated separately and independently"
+        ],
+        "answer": [1],
+        "explanation": "ServiceNow first checks if the user has table-level access (from most specific to most general rule). If granted, it then evaluates field-level permissions in the same order (most specific to most general).",
+        "multi": false
+    },
+    {
+        "id": 39,
+        "question": "What can be set up to auto-assign all new Hardware category Incidents to a particular group? (Select 3)",
+        "options": [
+            "Assignment rules",
+            "Data lookup rules",
+            "UI Actions",
+            "Access Controls",
+            "Business rules"
+        ],
+        "answer": [0, 1, 4],
+        "explanation": "Assignment rules are the standard way to route tasks. Data lookup rules can set assignment groups based on field values. Business rules offer the most flexibility and can override other logic depending on their execution order.",
+        "multi": true
+    },
+    {
+        "id": 40,
+        "question": "What is the main function of the ServiceNow Security Center (SCC)?",
+        "options": [
+            "To orchestrate security patching and updates",
+            "To control and improve security for managing data access",
+            "To provide security operations and command centre",
+            "To assess the instance's security posture using live metrics"
+        ],
+        "answer": [3],
+        "explanation": "The Security Center (Hardening, Scanner, and Metrics tools) helps admins monitor the security health of their instance, identify misconfigurations, and maintain a strong security posture via real-time data.",
+        "multi": false
+    }
+]

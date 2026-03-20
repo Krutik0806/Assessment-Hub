@@ -1,0 +1,269 @@
+[
+    {
+        "id": 1,
+        "question": "What filter condition allows you to report on incidents created from the 'Create Incident' record producer where the value for the 'Urgency' question is '2-Medium'?",
+        "options": [
+            "Apply a filter condition: 'Questions.Create Incident.Urgency is 2-Medium.'",
+            "Apply a related list filter condition: 'Urgency is 2-Medium.'",
+            "Apply additional group by on 'Questions': 'Create Incident.Urgency'.",
+            "Apply a filter condition: 'Urgency is 2-Medium.'"
+        ],
+        "answer": [0],
+        "explanation": "Record producer variables are stored under the Questions table and must be accessed using dot-walking: Questions.<Record Producer Name>.<Variable Name>. Normal fields like Urgency are different — you must use the Questions. prefix to filter on record producer variable values.",
+        "multi": false
+    },
+    {
+        "id": 2,
+        "question": "Which are valid report-sharing options? (Select 4)",
+        "options": [
+            "Add to dashboard",
+            "Clone",
+            "Schedule",
+            "Export to PDF",
+            "Take a screenshot",
+            "Publish"
+        ],
+        "answer": [0, 2, 3, 5],
+        "explanation": "Valid platform-supported sharing methods are: Add to dashboard, Schedule (email delivery), Export to PDF, and Publish (make publicly accessible). Clone duplicates a report but is not a sharing feature, and screenshots are a manual workaround, not a system feature.",
+        "multi": true
+    },
+    {
+        "id": 3,
+        "question": "Which feature allows users to manage the notifications they receive?",
+        "options": [
+            "ServiceNow Mobile",
+            "Now on Now",
+            "Subscriptions",
+            "Platform Chat"
+        ],
+        "answer": [2],
+        "explanation": "Subscriptions allow users to subscribe or unsubscribe to specific notifications, giving them control over what updates and alerts they receive from the platform.",
+        "multi": false
+    },
+    {
+        "id": 4,
+        "question": "What protects applications by restricting access to files and data?",
+        "options": [
+            "Access Control (ACL)",
+            "Application Scope",
+            "Admin role",
+            "Delegated Development"
+        ],
+        "answer": [1],
+        "explanation": "Application Scope creates a boundary that isolates an app's data and resources, preventing cross-application interference. ACLs control user-level access, while Scope controls application-level boundaries.",
+        "multi": false
+    },
+    {
+        "id": 5,
+        "question": "Filter conditions in a list view are also referred to as:",
+        "options": [
+            "Column Headings",
+            "Title Bars",
+            "Field Values",
+            "Breadcrumbs"
+        ],
+        "answer": [3],
+        "explanation": "In ServiceNow, the filter conditions applied to a list are displayed as Breadcrumbs at the top of the list, showing what filters are currently active.",
+        "multi": false
+    },
+    {
+        "id": 6,
+        "question": "What is the recommended way to combine Incident and SLA data for reporting?",
+        "options": [
+            "One-to-Many relationship",
+            "Many-to-Many relationship",
+            "Database Views",
+            "Table Extensions"
+        ],
+        "answer": [2],
+        "explanation": "Database Views allow combining data from multiple related tables (Incident and Task SLA) into a single virtual table for reporting. The incident_sla join view is used specifically for this purpose.",
+        "multi": false
+    },
+    {
+        "id": 7,
+        "question": "Identify which tables are parent, base, or child in the CMDB hierarchy? (Select 4)",
+        "options": [
+            "Service table is a Child table",
+            "Base Configuration Item is a Base table",
+            "Base Configuration Item is a Parent table",
+            "Configuration Item is a Parent table",
+            "Service table is a Base table"
+        ],
+        "answer": [0, 1, 2, 3],
+        "explanation": "CMDB hierarchy: cmdb (base) -> cmdb_ci (Base Configuration Item, acts as both base and parent) -> cmdb_ci_service (Service, child). A table can be both a parent (to tables below it) and a child (to tables above it).",
+        "multi": true
+    },
+    {
+        "id": 8,
+        "question": "What updates dynamic application services automatically?",
+        "options": [
+            "Operational status changes",
+            "CI relationship changes",
+            "CI reclassification",
+            "Unmatched CI detection"
+        ],
+        "answer": [1],
+        "explanation": "Dynamic application services are defined by CI relationships in cmdb_rel_ci. When relationships change (CIs added, removed, or re-linked), the dynamic service membership updates automatically.",
+        "multi": false
+    },
+    {
+        "id": 9,
+        "question": "Which field type displays records from another table for selection?",
+        "options": [
+            "Choice",
+            "Reference",
+            "Attachments",
+            "String"
+        ],
+        "answer": [1],
+        "explanation": "A Reference field points to records in another table, allowing users to search and select a related record (e.g., selecting a User or CI from another table).",
+        "multi": false
+    },
+    {
+        "id": 10,
+        "question": "Which modules can be used to create a table? (Select 2)",
+        "options": [
+            "Tables",
+            "Schema Map",
+            "Tables & Columns",
+            "Studio",
+            "Data Dictionary"
+        ],
+        "answer": [0, 2],
+        "explanation": "Tables can be created via the 'Tables' module or the 'Tables & Columns' module under System Definition. Both provide the interface to define new tables in ServiceNow.",
+        "multi": true
+    },
+    {
+        "id": 11,
+        "question": "Which role is required to create or update ACL rules?",
+        "options": [
+            "admin",
+            "itil_admin",
+            "security_admin",
+            "acl_manager"
+        ],
+        "answer": [2],
+        "explanation": "The security_admin role must be elevated to in order to create or modify ACL rules. Admin alone cannot create or modify ACLs without this elevated role.",
+        "multi": false
+    },
+    {
+        "id": 12,
+        "question": "What feature replaces traditional ServiceNow reporting for modern dashboards?",
+        "options": [
+            "Process Mining",
+            "UX Analytics",
+            "Data Visualizations",
+            "PA Widgets"
+        ],
+        "answer": [2],
+        "explanation": "Data Visualizations (available in Platform Analytics / Next Experience) replace older Core UI reports and dashboards with modern, interactive visualizations.",
+        "multi": false
+    },
+    {
+        "id": 13,
+        "question": "What is the CMDB?",
+        "options": [
+            "A ticketing system for incidents",
+            "A database storing configuration records for infrastructure components",
+            "A workflow engine for IT processes",
+            "A reporting tool for IT metrics"
+        ],
+        "answer": [1],
+        "explanation": "The Configuration Management Database (CMDB) stores configuration records (CIs) for all infrastructure components required to deliver IT services.",
+        "multi": false
+    },
+    {
+        "id": 14,
+        "question": "Where in email notification setup do you choose which fields to include in the message?",
+        "options": [
+            "When to send",
+            "Who will receive",
+            "What it will contain > Select variables",
+            "Advanced conditions"
+        ],
+        "answer": [2],
+        "explanation": "In the 'What it will contain' section of a notification, you use 'Select variables' to choose which field values and data should appear in the email body.",
+        "multi": false
+    },
+    {
+        "id": 15,
+        "question": "What are the main UI sections of the ServiceNow platform interface? (Select 3)",
+        "options": [
+            "Banner frame",
+            "Footer frame",
+            "Content frame",
+            "Application navigator",
+            "Sidebar panel"
+        ],
+        "answer": [0, 2, 3],
+        "explanation": "The ServiceNow UI has three main sections: the Banner frame (top bar with branding and user menu), the Application navigator (left-side menu), and the Content frame (main area displaying records and lists).",
+        "multi": true
+    },
+    {
+        "id": 16,
+        "question": "Ways to group list records by State? (Select 3)",
+        "options": [
+            "List context menu",
+            "Column context menu",
+            "Natural language filter",
+            "Form header menu",
+            "Export to Excel"
+        ],
+        "answer": [0, 1, 2],
+        "explanation": "You can group list records by State using: the List context menu (hamburger icon), right-clicking the column header (Column context menu), or typing a group-by condition in the Natural language filter bar.",
+        "multi": true
+    },
+    {
+        "id": 17,
+        "question": "What risks are avoided by keeping security contacts updated? (Select 3)",
+        "options": [
+            "Delay in critical communication",
+            "Increased licensing costs",
+            "Missing time-sensitive alerts",
+            "Inability to handle security issues promptly",
+            "Loss of audit logs"
+        ],
+        "answer": [0, 2, 3],
+        "explanation": "Keeping security contacts current ensures critical communications reach the right people without delay, time-sensitive alerts are not missed, and security issues can be handled promptly.",
+        "multi": true
+    },
+    {
+        "id": 18,
+        "question": "How is a Service Catalog organized?",
+        "options": [
+            "By workflows and approvals",
+            "By categories and subcategories",
+            "By user roles and permissions",
+            "By SLA priorities"
+        ],
+        "answer": [1],
+        "explanation": "The Service Catalog is organized using Categories and Subcategories, which group related catalog items together to help users find and request services more easily.",
+        "multi": false
+    },
+    {
+        "id": 19,
+        "question": "Where in notification setup do you make a notification subscribable by users?",
+        "options": [
+            "When to send",
+            "Who will receive",
+            "What it will contain",
+            "Advanced conditions"
+        ],
+        "answer": [1],
+        "explanation": "In the 'Who will receive' section of a notification, there is a checkbox to make the notification subscribable, allowing users to opt-in or opt-out of receiving it.",
+        "multi": false
+    },
+    {
+        "id": 20,
+        "question": "Which catalog component is used to group multiple catalog items into a single request?",
+        "options": [
+            "Variable Set",
+            "Catalog Category",
+            "Order Guide",
+            "Execution Plan"
+        ],
+        "answer": [2],
+        "explanation": "An Order Guide groups multiple catalog items together so users can order several related items in a single request. It is ideal for onboarding scenarios (e.g., new employee hardware and software setup).",
+        "multi": false
+    }
+]

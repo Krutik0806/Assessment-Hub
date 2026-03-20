@@ -1,0 +1,269 @@
+[
+    {
+        "id": 41,
+        "question": "Which of the following are the steps to Easy Import? (Select 3)",
+        "options": [
+            "Download Excel Template",
+            "Download Import Data",
+            "Finalise Import",
+            "Upload Import Data",
+            "Preview Excel Template"
+        ],
+        "answer": [0, 2, 3],
+        "explanation": "Easy Import is a guided way to bring external data (like Excel) into ServiceNow. Steps: Download Excel Template \u2192 ensures correct structure, Fill the template, Upload Import Data, Preview Import (optional), Finalise Import \u2192 commits data into target table.",
+        "multi": true
+    },
+    {
+        "id": 42,
+        "question": "How can you access Performance Analytics functionality on new instances?",
+        "options": [
+            "User Experience Analytics",
+            "Self-Service Analytics",
+            "Predictive Intelligence",
+            "Platform Analytics Administration"
+        ],
+        "answer": [3],
+        "explanation": "In newer versions (or after migration to Platform Analytics), Performance Analytics is no longer directly visible in the navigation. It is accessed under Platform Analytics Administration. This centralizes Indicators, Breakdowns, Data collection, and Scheduling.",
+        "multi": false
+    },
+    {
+        "id": 43,
+        "question": "Which aggregation shows variation from the average?",
+        "options": [
+            "Standard deviation",
+            "Average",
+            "Count Distinct",
+            "Sum"
+        ],
+        "answer": [0],
+        "explanation": "Average (mean) is the central value. Standard deviation measures how far values spread from the average. Example: If resolution times vary a lot, standard deviation is high; if similar, it's low. This is used heavily in reporting and analytics.",
+        "multi": false
+    },
+    {
+        "id": 44,
+        "question": "How can you modify data pill values in Flow Designer without scripting?",
+        "options": [
+            "Flow error handler",
+            "Transform functions",
+            "Install plugins",
+            "Duplicate query parameters",
+            "Data pill formatter"
+        ],
+        "answer": [1],
+        "explanation": "Transform functions in Flow Designer allow you to modify data pills (inputs/outputs) and perform operations like string manipulation (trim, lowercase), math calculations, date/time conversions, and data sanitization without scripting.",
+        "multi": false
+    },
+    {
+        "id": 45,
+        "question": "Which content type is NOT tracked in the History menu?",
+        "options": [
+            "Records",
+            "Homepages",
+            "Lists",
+            "UI pages"
+        ],
+        "answer": [3],
+        "explanation": "The History menu tracks records, lists, and forms. It does NOT track UI Pages and Custom interfaces because they are not standard navigational records.",
+        "multi": false
+    },
+    {
+        "id": 46,
+        "question": "Which visualization types allow multiple data sources of same type in UI Builder? (Select 2)",
+        "options": [
+            "Single Score",
+            "Bars",
+            "Time Series",
+            "Pie and donuts"
+        ],
+        "answer": [1, 2],
+        "explanation": "Time Series (compare trends over time) and Bar charts (compare categories across datasets) support combining multiple datasets. Single Score and Pie only support one dataset.",
+        "multi": true
+    },
+    {
+        "id": 47,
+        "question": "Which is NOT a database setting in Application Access?",
+        "options": [
+            "Can create",
+            "Can read",
+            "Can update",
+            "Can delete",
+            "Can write"
+        ],
+        "answer": [4],
+        "explanation": "Application Access settings include Can create, Can read, Can update, and Can delete. 'Can write' is not a valid option. 'Write' is used in ACLs, not Application Access.",
+        "multi": false
+    },
+    {
+        "id": 48,
+        "question": "Which item displays articles with highest % of helpful users?",
+        "options": [
+            "Featured",
+            "Most Helpful",
+            "Most Viewed",
+            "Most Useful"
+        ],
+        "answer": [3],
+        "explanation": "Knowledge portal widgets: Most Viewed (highest views), Most Helpful (raw helpful votes), and Most Useful (% of users who marked helpful). Most Useful is the best quality indicator.",
+        "multi": false
+    },
+    {
+        "id": 49,
+        "question": "What tests ensure CMDB works after upgrades?",
+        "options": [
+            "Quick start tests",
+            "Database duplication tests",
+            "Integration tests",
+            "Simulation tests"
+        ],
+        "answer": [0],
+        "explanation": "Quick start tests validate CMDB health after upgrades and deployments. Provided via CMDB ATF plugin, they ensure relationships remain intact and data consistency is maintained.",
+        "multi": false
+    },
+    {
+        "id": 50,
+        "question": "What editor is used for formatting knowledge articles?",
+        "options": [
+            "HTML",
+            "CSS",
+            "JavaScript",
+            "Plain"
+        ],
+        "answer": [0],
+        "explanation": "Knowledge articles use the TinyMCE HTML editor, which allows formatting, tables, code snippets, media embedding, and find/replace.",
+        "multi": false
+    },
+    {
+        "id": 51,
+        "question": "Which describe Tasks? (Select 3)",
+        "options": [
+            "Minimise human error",
+            "Only performed once",
+            "Faster resolution",
+            "Repeatable processes"
+        ],
+        "answer": [0, 2, 3],
+        "explanation": "Tasks in ServiceNow are repeatable processes that reduce human error (via automation and standardization) and improve resolution speed. 'Performed once' is incorrect.",
+        "multi": true
+    },
+    {
+        "id": 52,
+        "question": "What notification type informs about article expiry?",
+        "options": [
+            "Self-service notifications",
+            "SMS",
+            "Email notifications",
+            "Virtual Agent"
+        ],
+        "answer": [2],
+        "explanation": "ServiceNow sends scheduled email alerts for expiring knowledge articles. It is controlled via the property glide.knowman.enable_article_expiry_notification. This is used for proactive content management.",
+        "multi": false
+    },
+    {
+        "id": 53,
+        "question": "Where can form templates be applied?",
+        "options": [
+            "Template editor",
+            "Toggle template views",
+            "Template creator",
+            "Template bar"
+        ],
+        "answer": [3],
+        "explanation": "The Template Bar appears at the bottom of the form. It allows you to apply, save, and manage templates, offering a quick way to reuse form data patterns.",
+        "multi": false
+    },
+    {
+        "id": 54,
+        "question": "Which UI policy actions apply to catalog variables? (Select 3)",
+        "options": [
+            "Mandatory",
+            "Masked",
+            "Visible",
+            "Read only"
+        ],
+        "answer": [0, 2, 3],
+        "explanation": "Catalog UI Policies control variable behavior: Mandatory (must fill), Visible (show/hide), and Read-only (disable editing). Masked is not a UI policy action (it's a field type behavior).",
+        "multi": true
+    },
+    {
+        "id": 55,
+        "question": "What do you call an existing base system table?",
+        "options": [
+            "Parent table",
+            "Source table",
+            "Extended table",
+            "Base table",
+            "Core table",
+            "Related table"
+        ],
+        "answer": [4],
+        "explanation": "Core tables are pre-built tables in ServiceNow (Examples: Incident, Problem, Task). They are the opposite of custom tables (which have a u_ prefix).",
+        "multi": false
+    },
+    {
+        "id": 56,
+        "question": "Where do you add a field in Form Designer?",
+        "options": [
+            "Form Settings",
+            "Field Formatter",
+            "Form Views",
+            "Field Navigator"
+        ],
+        "answer": [3],
+        "explanation": "The Field Navigator in Form Designer shows available fields and lets you add fields to a form or create new fields. It's the main area for form customization.",
+        "multi": false
+    },
+    {
+        "id": 57,
+        "question": "What is used to send SMS in Flow Designer?",
+        "options": [
+            "Action",
+            "Subflow",
+            "Flow",
+            "Trigger"
+        ],
+        "answer": [0],
+        "explanation": "In Flow Designer, SMS is sent using a Send SMS Action. A Flow starts with a Trigger and performs tasks via Actions.",
+        "multi": false
+    },
+    {
+        "id": 58,
+        "question": "Which component helps find modules by keyword?",
+        "options": [
+            "Favorites",
+            "Filter",
+            "Help Sidebar",
+            "Global search",
+            "Database view"
+        ],
+        "answer": [1],
+        "explanation": "The Navigator Filter, located in the left navigation, searches Applications and Modules natively. This is faster than a global search for navigation purposes.",
+        "multi": false
+    },
+    {
+        "id": 59,
+        "question": "How is business duration calculated after task closure?",
+        "options": [
+            "Planned start/end",
+            "Created/closed",
+            "Planned duration",
+            "Actual start/end"
+        ],
+        "answer": [3],
+        "explanation": "Business duration is calculated using actual execution time (Actual start and Actual end), not planned values. This ensures accurate and real performance tracking.",
+        "multi": false
+    },
+    {
+        "id": 60,
+        "question": "How do you verify CMDB after upgrades with customizations?",
+        "options": [
+            "Override tests via scripting",
+            "Copy & configure quick start tests",
+            "Use OOTB tests",
+            "Customize OOTB tests",
+            "Use CMDB Health"
+        ],
+        "answer": [1],
+        "explanation": "For a customized CMDB, you should copy and configure quick start tests to validate the specific customizations and scenarios related to your environment.",
+        "multi": false
+    }
+]

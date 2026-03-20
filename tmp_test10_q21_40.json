@@ -1,0 +1,268 @@
+[
+    {
+        "id": 21,
+        "question": "Which of the following can be configured by all users in the Next Experience instances?",
+        "options": [
+            "AI Search",
+            "Personalised Start Page",
+            "Admin menu",
+            "Next Experience Readiness Checker",
+            "Custom menus"
+        ],
+        "answer": [1],
+        "explanation": "All users (not just admins) can configure their personalised start page using user preferences. This allows them to choose which page loads on login in the Next Experience UI. Other options require administrative privileges.",
+        "multi": false
+    },
+    {
+        "id": 22,
+        "question": "What variable type do you use to allow uploading an attachment from a question in a catalogue item?",
+        "options": [
+            "Attachment",
+            "URL",
+            "Reference",
+            "HTML"
+        ],
+        "answer": [0],
+        "explanation": "The Attachment variable type enables users to upload files directly within a catalog item form. It supports upload/download/delete actions and file restrictions (size and type).",
+        "multi": false
+    },
+    {
+        "id": 23,
+        "question": "To provide added security on the platform, no user can have both explicit roles. What are the two explicit roles? (Select 2)",
+        "options": [
+            "snc_external",
+            "sn_si_special_access",
+            "sn_si_external",
+            "snc_internal"
+        ],
+        "answer": [0, 3],
+        "explanation": "ServiceNow enforces separation between snc_internal (internal users) and snc_external (external users). A user cannot have both roles simultaneously to prevent security conflicts.",
+        "multi": true
+    },
+    {
+        "id": 24,
+        "question": "What are the benefits of using Multisource CMDB? (Select 3)",
+        "options": [
+            "Revert CMDB data integration from a specific discovery source",
+            "Control CI updates at the discovery source and CI attribute level",
+            "Complicate data management",
+            "Visualise the source of attribute values"
+        ],
+        "answer": [0, 1, 3],
+        "explanation": "Multisource CMDB allows granular control over CI attributes per source, visualization of data origin, and the ability to revert or exclude unreliable sources.",
+        "multi": true
+    },
+    {
+        "id": 25,
+        "question": "Which feature enables you to maintain a unified content categorisation across different content types?",
+        "options": [
+            "User Criteria",
+            "Taxonomy",
+            "Social Q&A",
+            "Record Producer",
+            "Knowledge Block"
+        ],
+        "answer": [1],
+        "explanation": "Taxonomy provides a unified categorization system across knowledge articles, catalog items, and community posts using hierarchical topics.",
+        "multi": false
+    },
+    {
+        "id": 26,
+        "question": "Which functions can you perform using the HTML editor in knowledge articles? (Select 4)",
+        "options": [
+            "Find and replace text",
+            "Insert a basic table of contents",
+            "Include HTML content",
+            "Insert or edit a code snippet",
+            "Translate selected text"
+        ],
+        "answer": [0, 1, 2, 3],
+        "explanation": "The HTML editor supports text editing (find/replace), adding structured content (tables, TOC), embedding HTML, and code snippets. Translation is not a native editor feature.",
+        "multi": true
+    },
+    {
+        "id": 27,
+        "question": "What is the single location for all the import sets and concurrent import sets for a scheduled data import chain?",
+        "options": [
+            "Transform History",
+            "Data Sources",
+            "Import Log",
+            "Execution Contexts"
+        ],
+        "answer": [3],
+        "explanation": "Execution Contexts provide a centralized view of scheduled imports, concurrent import sets, and execution hierarchy to monitor and analyze import processes.",
+        "multi": false
+    },
+    {
+        "id": 28,
+        "question": "Administrators can create custom menus to personalise users\u2019 access in Unified Navigation. How is access configured?",
+        "options": [
+            "By group",
+            "By role",
+            "By department",
+            "By user",
+            "By location"
+        ],
+        "answer": [1],
+        "explanation": "Access to custom menus in Unified Navigation is controlled using visible and hidden roles to ensure role-based access control and personalization.",
+        "multi": false
+    },
+    {
+        "id": 29,
+        "question": "What does Lane Filter in Visual Task Board enable you to create for cards with empty values?",
+        "options": [
+            "A separate board",
+            "A new filter",
+            "A new card",
+            "A separate lane"
+        ],
+        "answer": [3],
+        "explanation": "Lane filters allow grouping cards with empty/null values and displaying them in a separate lane, such as tasks without assignees.",
+        "multi": false
+    },
+    {
+        "id": 30,
+        "question": "Which of the following are the features of delegated development and deployment? (Select 3)",
+        "options": [
+            "Allow delegated developers to delete applications",
+            "Release the test app to other servers",
+            "Application collaboration",
+            "Assign source control permissions"
+        ],
+        "answer": [0, 2, 3],
+        "explanation": "Delegated development enables application collaboration, assigning source control permissions, and allowing scoped deletion based on specific permissions.",
+        "multi": true
+    },
+    {
+        "id": 31,
+        "question": "Which of the following is supported while working with or ordering catalogue items in the Service Portal or the Employee Center?",
+        "options": [
+            "Conditionally hide attachments",
+            "Drag or copy attachments",
+            "Upload password-protected attachments",
+            "Open all attachments in the browser"
+        ],
+        "answer": [1],
+        "explanation": "You can drag or copy one or more files into the 'Add attachments' window while working with or ordering catalogue items in the Service Portal or Employee Center. Drag-and-drop can be disabled via UI properties, but attachments can still be uploaded manually.",
+        "multi": false
+    },
+    {
+        "id": 32,
+        "question": "You can add knowledge article URLs to your sitemap to improve content indexing by public search engines. What do you configure to achieve this for the Knowledge Portal?",
+        "options": [
+            "Connect Service Portal Widgets",
+            "Next Experience UI for knowledge articles",
+            "Sitemap Generator record",
+            "Contextual Search - Service Portal",
+            "Service Portal Analytics"
+        ],
+        "answer": [2],
+        "explanation": "By configuring a Sitemap Generator record, you can include Knowledge article URLs in the XML sitemap, enabling search engines to crawl and index portal content more effectively.",
+        "multi": false
+    },
+    {
+        "id": 33,
+        "question": "You are editing a published catalogue item in Catalog Builder, which automatically moves it to the Draft state. What action allows you to delete or revert the new changes to the previous Published state?",
+        "options": [
+            "Re-publish",
+            "Revert to Published",
+            "Discard draft",
+            "Update state"
+        ],
+        "answer": [2],
+        "explanation": "Using the 'Discard draft' option removes the draft version and restores the item to its previously published state without affecting the live version.",
+        "multi": false
+    },
+    {
+        "id": 34,
+        "question": "You can consolidate Playbooks, Flow Designer, Action Designer, Integration Hub integrations, and Decision Builder into one design environment. What application allows you to build and manage playbooks, flows, subflows, actions, and decisions from a shared access point?",
+        "options": [
+            "Service Creator",
+            "Workflow Editor",
+            "Creator Studio",
+            "Workflow Studio"
+        ],
+        "answer": [3],
+        "explanation": "Workflow Studio provides a unified interface to design, configure, and monitor workflows. It combines multiple tools such as Flow Designer, Playbooks, Action Designer, and Decision Builder into a single environment.",
+        "multi": false
+    },
+    {
+        "id": 35,
+        "question": "Using the flow diagramming view, you can create and view flows as diagrams and see the paths a flow can follow. Where do you go to install the Flow Diagramming application?",
+        "options": [
+            "ServiceNow Marketplace",
+            "Developer Site",
+            "Now Assist",
+            "ServiceNow Store",
+            "Now Create"
+        ],
+        "answer": [3],
+        "explanation": "The Flow Diagramming application is installed from the ServiceNow Store. It enables visual representation of flows, helping users understand execution paths and relationships.",
+        "multi": false
+    },
+    {
+        "id": 36,
+        "question": "What framework helps you consistently use standard values across applications and effectively track assets through their life-cycle transitions?",
+        "options": [
+            "ITIL",
+            "CSDM",
+            "ITSM",
+            "CMDB"
+        ],
+        "answer": [1],
+        "explanation": "The Common Service Data Model (CSDM) is a framework that provides standardized fields and values to track the lifecycle stages and statuses of CIs across applications.",
+        "multi": false
+    },
+    {
+        "id": 37,
+        "question": "What options are available to workspace users when communicating via email in a Workspace? (Select 2)",
+        "options": [
+            "Add email addresses into recipient fields",
+            "Track the delivery status of sent emails",
+            "Schedule emails for later delivery",
+            "Auto-save email drafts"
+        ],
+        "answer": [0, 3],
+        "explanation": "Workspace users can add or copy-paste email addresses into recipient fields, and email drafts are automatically saved after a short interval. Tracking delivery status and scheduling emails are not supported here.",
+        "multi": true
+    },
+    {
+        "id": 38,
+        "question": "What form view is displayed when a user clicks on a reference icon on a task form?",
+        "options": [
+            "Service Portal",
+            "Sys_popup",
+            "Metrics",
+            "Self Service"
+        ],
+        "answer": [1],
+        "explanation": "When a user clicks on a reference icon (preview icon), ServiceNow displays a read-only preview of the referenced record using the sys_popup view. If no sys_popup view is defined, it defaults to the standard form view.",
+        "multi": false
+    },
+    {
+        "id": 39,
+        "question": "What platform feature, combined with field normalisation, does CMDB use to automatically check a CI's uniqueness?",
+        "options": [
+            "ServiceNow Import Sets",
+            "ServiceNow Discovery",
+            "ServiceNow Service Mapping",
+            "Identification and Reconciliation Engine (IRE)"
+        ],
+        "answer": [3],
+        "explanation": "The CMDB uses the Identification and Reconciliation Engine (IRE) along with field normalization to check uniqueness. IRE applies identification rules to match incoming data with existing CI records to prevent duplicate entries.",
+        "multi": false
+    },
+    {
+        "id": 40,
+        "question": "Which section on the catalog item variable form enables you to add instructions or help text?",
+        "options": [
+            "Availability",
+            "Question",
+            "Type Specifications",
+            "Annotation"
+        ],
+        "answer": [3],
+        "explanation": "The Annotation section in the catalog item variable form is specifically designed to provide additional guidance. It includes fields like Help text, Instructions, Help tag, and options like Show help.",
+        "multi": false
+    }
+]
