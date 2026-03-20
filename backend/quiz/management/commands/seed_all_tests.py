@@ -81,7 +81,7 @@ class Command(BaseCommand):
 
         pkg, _ = Package.objects.get_or_create(name='PU SN', defaults={'description': 'ServiceNow CSA Practice Tests', 'is_active': True})
 
-        test_map = [(i, f'test{i}', f'Practice Test {i}') for i in range(1, 9)]
+        test_map = [(i, f'test{i}', f'Practice Test {i}') for i in range(1, 10)]
 
         for test_num, slug, name in test_map:
             test, _ = Test.objects.get_or_create(slug=slug, defaults={'name': name, 'package': pkg, 'order': test_num})

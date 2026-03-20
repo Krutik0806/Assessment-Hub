@@ -6558,6 +6558,952 @@ export const TESTS = {
             }
 ]
     }
+,
+    9: {
+        name: "Practice Test 9",
+        total: 60,
+        questions: [
+            {
+                        "id": 1,
+                        "question": "Which of the following is a CMDB-based framework that supports multiple configuration strategies?",
+                        "options": [
+                                    "KPI Composer",
+                                    "Project Portfolio Management",
+                                    "Common Service Data Model",
+                                    "Virtual Agent"
+                        ],
+                        "answer": [
+                                    2
+                        ],
+                        "explanation": "The ServiceNow Common Service Data Model (CSDM) is a CMDB-based framework that provides a standard and consistent set of terms and definitions for all ServiceNow products. It serves as the blueprint for how service-related data should be structured within the Configuration Management Database (CMDB). By using CSDM, organizations can align their IT strategy with business outcomes, ensuring that data flows correctly across various modules like ITSM, ITOM, and APM.",
+                        "multi": false
+            },
+            {
+                        "id": 2,
+                        "question": "How can system administrators speed up loading large lists?",
+                        "options": [
+                                    "By archiving or deleting old data",
+                                    "By removing the duplicate and redundant data",
+                                    "By removing the calculation of the total number of records",
+                                    "By breaking the large lists into smaller lists"
+                        ],
+                        "answer": [
+                                    2
+                        ],
+                        "explanation": "Calculating the total number of records in a very large table (pagination count) is resource-intensive and can significantly slow down page load times. System administrators can improve performance by navigating to Configure > List Control and selecting the 'Remove pagination count' checkbox. This stops the database from performing a full table scan to count every row, allowing the list to render much faster.",
+                        "multi": false
+            },
+            {
+                        "id": 3,
+                        "question": "A customer has onboarded their IT department into ServiceNow and provided them with the same system roles as the HR department. One of the employees found sensitive data to which they shouldn't have had access. Who is responsible for this breach?",
+                        "options": [
+                                    "Customer",
+                                    "ServiceNow",
+                                    "Employee",
+                                    "Data centre provider"
+                        ],
+                        "answer": [
+                                    0
+                        ],
+                        "explanation": "Under the Shared Responsibility Model, ServiceNow is responsible for the security of the cloud (infrastructure, physical security), while the customer is responsible for security in the cloud. This includes access management, role assignment, and Access Control Lists (ACLs). Since the customer misconfigured the roles by giving IT employees HR-level access, the customer is held responsible for the resulting data breach.",
+                        "multi": false
+            },
+            {
+                        "id": 4,
+                        "question": "Which role can switch their form view?",
+                        "options": [
+                                    "personalize_form",
+                                    "view_changer",
+                                    "service_viewer",
+                                    "task_editor"
+                        ],
+                        "answer": [
+                                    1
+                        ],
+                        "explanation": "The view_changer role specifically grants a user the ability to switch between different form views (e.g., switching from 'Default View' to 'Mobile' or 'SLA' view). `personalize_form` allows a user to hide or show fields for themselves. `task_editor` allows editing of protected task fields. `service_viewer` provides read access to services.",
+                        "multi": false
+            },
+            {
+                        "id": 5,
+                        "question": "What is mandatory to select when importing Microsoft Word documents as knowledge articles?",
+                        "options": [
+                                    "Knowledge Base",
+                                    "Short Description",
+                                    "Category",
+                                    "Publish"
+                        ],
+                        "answer": [
+                                    0
+                        ],
+                        "explanation": "When importing a Word document to create a knowledge article, ServiceNow must know where to store the content. Selecting a Knowledge Base is mandatory because permissions, workflows, and ownership are defined at the Knowledge Base level. While a Category is helpful for organization and a Short Description is usually pulled from the filename, the Knowledge Base is the required container for the article to exist.",
+                        "multi": false
+            },
+            {
+                        "id": 6,
+                        "question": "The Now Platform is an example of which cloud computing model?",
+                        "options": [
+                                    "Application Platform-as-a-Service (aPaaS)",
+                                    "Infrastructure-as-a-Service (IaaS)",
+                                    "Software-as-a-Service (SaaS)",
+                                    "Platform-as-a-Service (PaaS)"
+                        ],
+                        "answer": [
+                                    0
+                        ],
+                        "explanation": "While ServiceNow is often consumed as SaaS (Software-as-a-Service) for its out-of-the-box apps, the Now Platform itself is an aPaaS. This means it provides a development environment, database infrastructure, and automated engine to help organizations build, run, and manage custom applications without the complexity of maintaining the underlying hardware or software layers.",
+                        "multi": false
+            },
+            {
+                        "id": 7,
+                        "question": "Which reporting feature is described by the following? \"Clicking on a report section displays a subset of the report's data in a new report.\"",
+                        "options": [
+                                    "Sharing",
+                                    "On-demand report",
+                                    "Drilldown",
+                                    "Dashboard"
+                        ],
+                        "answer": [
+                                    2
+                        ],
+                        "explanation": "Drilldown is a feature that allows users to move from a high-level overview to more detailed data. For example, if you click on the 'Critical' slice of a Priority pie chart, a drilldown can open a new list or chart showing only those critical incidents. It is important to note that drilldowns are only available for data in the same table as the parent report and are not supported by certain report types like histograms or calendars.",
+                        "multi": false
+            },
+            {
+                        "id": 8,
+                        "question": "How can you integrate third-party data into the Configuration Management Database without compromising its integrity?",
+                        "options": [
+                                    "By using the CI Class Manager",
+                                    "By using the CMDB Data Manager",
+                                    "By using the CSDM",
+                                    "By using the IntegrationHub ETL"
+                        ],
+                        "answer": [
+                                    3
+                        ],
+                        "explanation": "IntegrationHub ETL (Extract, Transform, Load) provides a guided, user-friendly interface to import data. It ensures integrity by using the Identification and Reconciliation Engine (IRE). The IRE prevents duplicate CIs (Configuration Items) from being created and ensures that only authorized data sources can update specific CI attributes, keeping the CMDB clean and reliable.",
+                        "multi": false
+            },
+            {
+                        "id": 9,
+                        "question": "When using Form Designer, which of the following icons are presented on each field? (Select 3)",
+                        "options": [
+                                    "Remove icon",
+                                    "Edit icon",
+                                    "Field icon",
+                                    "Handle icon",
+                                    "Reference icon"
+                        ],
+                        "answer": [
+                                    0,
+                                    1,
+                                    3
+                        ],
+                        "explanation": "In the ServiceNow Form Designer, every field added to the form layout displays three specific icons: Handle icon (Used to drag and drop the field to reorder it), Edit icon or Gear (Used to open the field's properties like label, name, mandatory, read-only), and Remove icon or X (Used to delete the field from the form layout).",
+                        "multi": true
+            },
+            {
+                        "id": 10,
+                        "question": "Which Common Service Data Model (CSDM) domain does Business Capability reside in?",
+                        "options": [
+                                    "Design",
+                                    "Physical",
+                                    "CMDB",
+                                    "Sell/Consume"
+                        ],
+                        "answer": [
+                                    0
+                        ],
+                        "explanation": "Business Capability resides in the Design domain of the CSDM. The Design domain is used for the planning and design of digital products and services. Objects in this domain (like Business Capabilities and Information Objects) are typically non-operational, meaning they represent 'what' the business does rather than the 'how' or the live technical infrastructure. This domain is primarily used by Enterprise Architects.",
+                        "multi": false
+            },
+            {
+                        "id": 11,
+                        "question": "How can you quickly reference the most frequently used articles in the Service Portal?",
+                        "options": [
+                                    "By creating a shortcut link for them",
+                                    "By rating them or marking them as helpful",
+                                    "By marking them as favorites",
+                                    "By flagging them"
+                        ],
+                        "answer": [
+                                    2
+                        ],
+                        "explanation": "Marking articles as favorites allows quick access via the My Favorites menu in the Service Portal header. This is the fastest built-in way to revisit frequently used knowledge articles without searching again.",
+                        "multi": false
+            },
+            {
+                        "id": 12,
+                        "question": "What data type in a survey metric has the field validation option to validate email, IP address, phone number or URL?",
+                        "options": [
+                                    "Template",
+                                    "String",
+                                    "Number",
+                                    "Reference"
+                        ],
+                        "answer": [
+                                    1
+                        ],
+                        "explanation": "The String data type supports field validation using predefined validators like: Email, IP Address (IPv4/IPv6), Phone Number (E.164), and URL. This helps ensure correct input formats in surveys.",
+                        "multi": false
+            },
+            {
+                        "id": 13,
+                        "question": "As a catalogue admin, you are asked to dynamically populate Manager's name on a catalogue item when there is a (new) value for the 'Requested for' field. Where do you define the relationship between the two questions without scripting?",
+                        "options": [
+                                    "Service Catalog Wizards",
+                                    "Service Designer",
+                                    "Catalog Builder",
+                                    "Service Catalog Entries",
+                                    "Catalog Item Templates"
+                        ],
+                        "answer": [
+                                    2
+                        ],
+                        "explanation": "In Catalog Builder, you can configure Auto-populate relationships between variables. For example: When Requested for changes \u2192 Manager auto-fills. This is done declaratively (no scripting required).",
+                        "multi": false
+            },
+            {
+                        "id": 14,
+                        "question": "What can administrators use in the Service Catalog to simplify the complex multi-form input-taking experience?",
+                        "options": [
+                                    "Service Catalog Wizards",
+                                    "Catalog Builder",
+                                    "Custom actions",
+                                    "Declarative actions"
+                        ],
+                        "answer": [
+                                    0
+                        ],
+                        "explanation": "Service Catalog Wizards provide a step-by-step guided experience, making complex multi-form inputs easier for users by breaking them into manageable steps.",
+                        "multi": false
+            },
+            {
+                        "id": 15,
+                        "question": "What types of records are NOT captured in an update set by default? (Select 2)",
+                        "options": [
+                                    "Access Control rules",
+                                    "Homepages",
+                                    "Tables",
+                                    "Business Rules",
+                                    "Content pages"
+                        ],
+                        "answer": [
+                                    1,
+                                    4
+                        ],
+                        "explanation": "Homepages and Content pages are not automatically included in update sets. They must be manually added/unloaded before migration. Other items like Business Rules, Tables, and ACLs are captured automatically.",
+                        "multi": true
+            },
+            {
+                        "id": 16,
+                        "question": "What Core UI data and analytics artifacts are migrated to Platform Analytics? (Select 4)",
+                        "options": [
+                                    "Interactive filters",
+                                    "Performance Analytics widgets",
+                                    "Schema maps",
+                                    "Database views",
+                                    "Reports",
+                                    "Dashboards"
+                        ],
+                        "answer": [
+                                    0,
+                                    1,
+                                    4,
+                                    5
+                        ],
+                        "explanation": "During migration to Platform Analytics, the following are moved: Dashboards, Reports, Interactive Filters, and PA Widgets. Schema maps and database views are not part of this migration.",
+                        "multi": true
+            },
+            {
+                        "id": 17,
+                        "question": "How can Application Collaboration help when creating applications within the Now Platform App Engine?",
+                        "options": [
+                                    "Delegated developers can use source control features",
+                                    "Non-administrators can develop and deploy applications",
+                                    "Collaborator permissions can be managed",
+                                    "Administrators are allowed to delete applications"
+                        ],
+                        "answer": [
+                                    2
+                        ],
+                        "explanation": "Application Collaboration allows admins to assign roles and permissions, and control who can develop, modify, or deploy apps. This ensures controlled development across teams.",
+                        "multi": false
+            },
+            {
+                        "id": 18,
+                        "question": "Which of the following can you do when creating a service catalogue variable? (Select 3)",
+                        "options": [
+                                    "Make a question choice inactive",
+                                    "Make a variable read-only or hide it while defining the variable",
+                                    "Make a question choice reusable among other questions in the same catalogue item",
+                                    "Make a group of Checkbox variables mandatory in the Service Portal"
+                        ],
+                        "answer": [
+                                    0,
+                                    1,
+                                    3
+                        ],
+                        "explanation": "You can disable choices, hide fields, or make them read-only. You can also enforce mandatory checkbox groups. However, a choice cannot be directly reused across multiple questions without a custom design like a template or reference field.",
+                        "multi": true
+            },
+            {
+                        "id": 19,
+                        "question": "You can automatically generate chat summarizations for conversations that are transferred between requesters, virtual agents, and live agents. Which ServiceNow product enables you to summarise a chat conversation?",
+                        "options": [
+                                    "Sidebar chat",
+                                    "Agent Assist",
+                                    "Connect chat",
+                                    "Now Assist"
+                        ],
+                        "answer": [
+                                    3
+                        ],
+                        "explanation": "Now Assist uses AI/LLM capabilities to generate chat summaries, help agents quickly understand conversations, and reduce handling time and improve efficiency.",
+                        "multi": false
+            },
+            {
+                        "id": 20,
+                        "question": "What action is recommended when you want to perform system maintenance?",
+                        "options": [
+                                    "Mark logged in users inactive",
+                                    "Terminate logged in users\u2019 sessions",
+                                    "Lockout logged in users",
+                                    "Impersonate logged in users"
+                        ],
+                        "answer": [
+                                    1
+                        ],
+                        "explanation": "Terminating sessions ensures no active user activity happens during maintenance. It logs users out safely at their next interaction, which avoids conflicts or data inconsistencies during system updates.",
+                        "multi": false
+            },
+            {
+                        "id": 21,
+                        "question": "When a CI is set to retire, dependent CIs management data processes attempt to cascade-update all the CIs depending on that CI to retire. What table are the dependent CIs added to when a parent CI is set to retire?",
+                        "options": [
+                                    "cmdb_dependent_ci_class_exclusion",
+                                    "cmdb_dependent_ci_extra_rels_config",
+                                    "cmdb_related_entry",
+                                    "cmdb_ci_related_retire",
+                                    "cmdb_dependent_ci_ledger"
+                        ],
+                        "answer": [
+                                    4
+                        ],
+                        "explanation": "When a CI enters End of Life, dependent CIs are tracked in the cmdb_dependent_ci_ledger table. This table stores CIs pending retirement as part of CMDB lifecycle management and cleanup processes.",
+                        "multi": false
+            },
+            {
+                        "id": 22,
+                        "question": "Which ServiceNow tool allows you to receive prompt notifications for specific security events, such as user lockouts or insecure actions?",
+                        "options": [
+                                    "Security posture dashboards",
+                                    "Security metrics",
+                                    "Security scanner",
+                                    "Security event notifications"
+                        ],
+                        "answer": [
+                                    3
+                        ],
+                        "explanation": "This tool enables real-time alerts for security events, monitoring actions like impersonation or lockouts, and configurable notification policies.",
+                        "multi": false
+            },
+            {
+                        "id": 23,
+                        "question": "Which option enables you to sort Visual Task Boards using criteria you create?",
+                        "options": [
+                                    "Load Filter",
+                                    "Edit Filter & Sort",
+                                    "Interactive Filter",
+                                    "Breakdown Element"
+                        ],
+                        "answer": [
+                                    1
+                        ],
+                        "explanation": "Using Edit Filter & Sort, you can define custom sorting criteria, group cards (e.g., by priority), and apply sorting to both Freeform and Data-driven boards.",
+                        "multi": false
+            },
+            {
+                        "id": 24,
+                        "question": "What are the two types of inbound email actions? (Select 2)",
+                        "options": [
+                                    "Send an email back to the source that triggered the action",
+                                    "Template the inbound email response",
+                                    "Forward the inbound email to the intended user",
+                                    "Set a value for a field in the target table"
+                        ],
+                        "answer": [
+                                    0,
+                                    3
+                        ],
+                        "explanation": "Inbound email actions perform Record actions (update/create records) and Email replies (respond back to sender).",
+                        "multi": true
+            },
+            {
+                        "id": 25,
+                        "question": "What Flow Designer benefit corresponds to extending flow content by subscribing to Integration Hub or installing spokes?",
+                        "options": [
+                                    "Repeatable",
+                                    "Robust",
+                                    "Scalable",
+                                    "Centralised"
+                        ],
+                        "answer": [
+                                    2
+                        ],
+                        "explanation": "Scalability refers to extending functionality by adding spokes, integrating external systems, and expanding automation capabilities.",
+                        "multi": false
+            },
+            {
+                        "id": 26,
+                        "question": "What variable type can be only used once in a catalogue item?",
+                        "options": [
+                                    "Requested For",
+                                    "Masked",
+                                    "Rich Text Label",
+                                    "Macro"
+                        ],
+                        "answer": [
+                                    0
+                        ],
+                        "explanation": "A catalog item can have only one 'Requested For' variable, as it defines the target user of the request.",
+                        "multi": false
+            },
+            {
+                        "id": 27,
+                        "question": "How do you embed report visualisations in the body of scheduled report emails?",
+                        "options": [
+                                    "Include them as attachments",
+                                    "Drag and drop images to the body section",
+                                    "Insert the report links",
+                                    "Select Embedded PNG"
+                        ],
+                        "answer": [
+                                    3
+                        ],
+                        "explanation": "Choosing Embedded PNG inserts the report visualization directly into the email body instead of attaching it.",
+                        "multi": false
+            },
+            {
+                        "id": 28,
+                        "question": "What is a stakeholder\u2019s role in implementing and maintaining the CMDB?",
+                        "options": [
+                                    "Identify necessary reports showing CI health",
+                                    "Determine specific CI information required to support capabilities and build organisational buy-in",
+                                    "Create a go-forward strategy",
+                                    "Import CI data"
+                        ],
+                        "answer": [
+                                    1
+                        ],
+                        "explanation": "Stakeholders define what data is needed, ensure alignment with business goals, and help gain organizational support.",
+                        "multi": false
+            },
+            {
+                        "id": 29,
+                        "question": "What records can AI generate in ServiceNow via the Now Assist skills? (Select 2)",
+                        "options": [
+                                    "User records",
+                                    "Catalogue items",
+                                    "Knowledge articles",
+                                    "Configuration items"
+                        ],
+                        "answer": [
+                                    1,
+                                    2
+                        ],
+                        "explanation": "Now Assist can generate catalog items and draft knowledge articles. It does not create users or CIs.",
+                        "multi": true
+            },
+            {
+                        "id": 30,
+                        "question": "Where do you navigate on the platform to filter system notifications by category and search within them? (Select 2)",
+                        "options": [
+                                    "All > System Notification > Email > Notification Filters",
+                                    "Admin > Subscription Management > Settings",
+                                    "All > System Notification > Email > Notification Categories",
+                                    "All > Self-Service > My Notification Preferences > Advanced Preferences",
+                                    "User Profile > Preferences > Notifications > Advanced Preferences"
+                        ],
+                        "answer": [
+                                    3,
+                                    4
+                        ],
+                        "explanation": "Advanced Preferences allow filtering notifications, searching, and customizing delivery settings.",
+                        "multi": true
+            },
+            {
+                        "id": 31,
+                        "question": "How do you delete related records from the archive log and archive (ar_) tables?",
+                        "options": [
+                                    "Delete archive record log entries",
+                                    "Create archive destroy rules",
+                                    "Re-archive restored records",
+                                    "Restore archived records"
+                        ],
+                        "answer": [
+                                    1
+                        ],
+                        "explanation": "Archive destroy rules define deletion conditions and automatically remove archived data via batch processes.",
+                        "multi": false
+            },
+            {
+                        "id": 32,
+                        "question": "How can you show keyboard shortcuts for the page you are viewing in a modal?",
+                        "options": [
+                                    "Select \"Show help\" icon",
+                                    "Press Ctrl + / (Windows) or Cmd + / (Mac)",
+                                    "Use profile keyboard shortcuts",
+                                    "Press F1"
+                        ],
+                        "answer": [
+                                    1
+                        ],
+                        "explanation": "This shortcut opens a modal showing available keyboard shortcuts for the current page.",
+                        "multi": false
+            },
+            {
+                        "id": 33,
+                        "question": "How can you measure and track article views, page views, and searches performed by unauthenticated users?",
+                        "options": [
+                                    "Remove user criteria",
+                                    "Report number of articles",
+                                    "Collect knowledge usage metrics",
+                                    "Retire articles"
+                        ],
+                        "answer": [
+                                    2
+                        ],
+                        "explanation": "Knowledge usage metrics track article views, page visits, and search activity (including unauthenticated users).",
+                        "multi": false
+            },
+            {
+                        "id": 34,
+                        "question": "Which group types are provided in the base system? (Select 3)",
+                        "options": [
+                                    "approval",
+                                    "survey",
+                                    "itil",
+                                    "catalog",
+                                    "notification"
+                        ],
+                        "answer": [
+                                    1,
+                                    2,
+                                    3
+                        ],
+                        "explanation": "Default group types include ITIL, Catalog, and Survey.",
+                        "multi": true
+            },
+            {
+                        "id": 35,
+                        "question": "How do users know what form view they see when accessing a record?",
+                        "options": [
+                                    "Open Form Designer",
+                                    "Only one view exists",
+                                    "It is displayed next to or by hovering over the record\u2019s display name in the form header",
+                                    "Use Additional Actions menu",
+                                    "View annotations"
+                        ],
+                        "answer": [
+                                    2
+                        ],
+                        "explanation": "The current view is visible next to the record name, or on hover in the form header.",
+                        "multi": false
+            },
+            {
+                        "id": 36,
+                        "question": "Which menu allows users to perform quick reports, configure lists, and export data?",
+                        "options": [
+                                    "Record Context Menu",
+                                    "Column Context Menu",
+                                    "List Context Menu",
+                                    "Value Context Menu"
+                        ],
+                        "answer": [
+                                    1
+                        ],
+                        "explanation": "Accessed by right-clicking a column header, it allows quick reports, sorting/grouping, and exporting.",
+                        "multi": false
+            },
+            {
+                        "id": 37,
+                        "question": "Where do you navigate to quickly find tables, configurations, and metadata for any application?",
+                        "options": [
+                                    "Analytics Hub",
+                                    "Integration Hub",
+                                    "Manager Hub",
+                                    "Configuration Hub",
+                                    "RPA Hub"
+                        ],
+                        "answer": [
+                                    3
+                        ],
+                        "explanation": "Configuration Hub provides centralized access to app data, including tables, metadata, and configs all in one place.",
+                        "multi": false
+            },
+            {
+                        "id": 38,
+                        "question": "Where do you navigate to access the Catalog Builder?",
+                        "options": [
+                                    "All > Service Catalog > Catalog Builder",
+                                    "All > Self Service > Catalog Builder",
+                                    "All > Service Catalog Wizards > Catalog Builder",
+                                    "All > Service Catalog > Catalogue Definitions > Catalog Builder"
+                        ],
+                        "answer": [
+                                    0
+                        ],
+                        "explanation": "The Catalog Builder is accessed via All > Service Catalog > Catalog Builder.",
+                        "multi": false
+            },
+            {
+                        "id": 39,
+                        "question": "What is the auto-populated prefix for a custom table in the global application?",
+                        "options": [
+                                    "z_",
+                                    "x_",
+                                    "c_",
+                                    "u_"
+                        ],
+                        "answer": [
+                                    3
+                        ],
+                        "explanation": "Custom tables in the global scope are automatically prefixed with u_.",
+                        "multi": false
+            },
+            {
+                        "id": 40,
+                        "question": "Which statements are true about Data Policies? (Select 3)",
+                        "options": [
+                                    "Dependent on how record is updated",
+                                    "Have a condition as trigger",
+                                    "Script-free server-side files",
+                                    "Can take different actions when condition is true/false"
+                        ],
+                        "answer": [
+                                    1,
+                                    2,
+                                    3
+                        ],
+                        "explanation": "Data Policies enforce data consistency, are server-side and script-free, use conditions, and apply actions based on their evaluation.",
+                        "multi": true
+            },
+            {
+                        "id": 41,
+                        "question": "Which of the following are the steps to Easy Import? (Select 3)",
+                        "options": [
+                                    "Download Excel Template",
+                                    "Download Import Data",
+                                    "Finalise Import",
+                                    "Upload Import Data",
+                                    "Preview Excel Template"
+                        ],
+                        "answer": [
+                                    0,
+                                    2,
+                                    3
+                        ],
+                        "explanation": "Easy Import is a guided way to bring external data (like Excel) into ServiceNow. Steps: Download Excel Template \u2192 ensures correct structure, Fill the template, Upload Import Data, Preview Import (optional), Finalise Import \u2192 commits data into target table.",
+                        "multi": true
+            },
+            {
+                        "id": 42,
+                        "question": "How can you access Performance Analytics functionality on new instances?",
+                        "options": [
+                                    "User Experience Analytics",
+                                    "Self-Service Analytics",
+                                    "Predictive Intelligence",
+                                    "Platform Analytics Administration"
+                        ],
+                        "answer": [
+                                    3
+                        ],
+                        "explanation": "In newer versions (or after migration to Platform Analytics), Performance Analytics is no longer directly visible in the navigation. It is accessed under Platform Analytics Administration. This centralizes Indicators, Breakdowns, Data collection, and Scheduling.",
+                        "multi": false
+            },
+            {
+                        "id": 43,
+                        "question": "Which aggregation shows variation from the average?",
+                        "options": [
+                                    "Standard deviation",
+                                    "Average",
+                                    "Count Distinct",
+                                    "Sum"
+                        ],
+                        "answer": [
+                                    0
+                        ],
+                        "explanation": "Average (mean) is the central value. Standard deviation measures how far values spread from the average. Example: If resolution times vary a lot, standard deviation is high; if similar, it's low. This is used heavily in reporting and analytics.",
+                        "multi": false
+            },
+            {
+                        "id": 44,
+                        "question": "How can you modify data pill values in Flow Designer without scripting?",
+                        "options": [
+                                    "Flow error handler",
+                                    "Transform functions",
+                                    "Install plugins",
+                                    "Duplicate query parameters",
+                                    "Data pill formatter"
+                        ],
+                        "answer": [
+                                    1
+                        ],
+                        "explanation": "Transform functions in Flow Designer allow you to modify data pills (inputs/outputs) and perform operations like string manipulation (trim, lowercase), math calculations, date/time conversions, and data sanitization without scripting.",
+                        "multi": false
+            },
+            {
+                        "id": 45,
+                        "question": "Which content type is NOT tracked in the History menu?",
+                        "options": [
+                                    "Records",
+                                    "Homepages",
+                                    "Lists",
+                                    "UI pages"
+                        ],
+                        "answer": [
+                                    3
+                        ],
+                        "explanation": "The History menu tracks records, lists, and forms. It does NOT track UI Pages and Custom interfaces because they are not standard navigational records.",
+                        "multi": false
+            },
+            {
+                        "id": 46,
+                        "question": "Which visualization types allow multiple data sources of same type in UI Builder? (Select 2)",
+                        "options": [
+                                    "Single Score",
+                                    "Bars",
+                                    "Time Series",
+                                    "Pie and donuts"
+                        ],
+                        "answer": [
+                                    1,
+                                    2
+                        ],
+                        "explanation": "Time Series (compare trends over time) and Bar charts (compare categories across datasets) support combining multiple datasets. Single Score and Pie only support one dataset.",
+                        "multi": true
+            },
+            {
+                        "id": 47,
+                        "question": "Which is NOT a database setting in Application Access?",
+                        "options": [
+                                    "Can create",
+                                    "Can read",
+                                    "Can update",
+                                    "Can delete",
+                                    "Can write"
+                        ],
+                        "answer": [
+                                    4
+                        ],
+                        "explanation": "Application Access settings include Can create, Can read, Can update, and Can delete. 'Can write' is not a valid option. 'Write' is used in ACLs, not Application Access.",
+                        "multi": false
+            },
+            {
+                        "id": 48,
+                        "question": "Which item displays articles with highest % of helpful users?",
+                        "options": [
+                                    "Featured",
+                                    "Most Helpful",
+                                    "Most Viewed",
+                                    "Most Useful"
+                        ],
+                        "answer": [
+                                    3
+                        ],
+                        "explanation": "Knowledge portal widgets: Most Viewed (highest views), Most Helpful (raw helpful votes), and Most Useful (% of users who marked helpful). Most Useful is the best quality indicator.",
+                        "multi": false
+            },
+            {
+                        "id": 49,
+                        "question": "What tests ensure CMDB works after upgrades?",
+                        "options": [
+                                    "Quick start tests",
+                                    "Database duplication tests",
+                                    "Integration tests",
+                                    "Simulation tests"
+                        ],
+                        "answer": [
+                                    0
+                        ],
+                        "explanation": "Quick start tests validate CMDB health after upgrades and deployments. Provided via CMDB ATF plugin, they ensure relationships remain intact and data consistency is maintained.",
+                        "multi": false
+            },
+            {
+                        "id": 50,
+                        "question": "What editor is used for formatting knowledge articles?",
+                        "options": [
+                                    "HTML",
+                                    "CSS",
+                                    "JavaScript",
+                                    "Plain"
+                        ],
+                        "answer": [
+                                    0
+                        ],
+                        "explanation": "Knowledge articles use the TinyMCE HTML editor, which allows formatting, tables, code snippets, media embedding, and find/replace.",
+                        "multi": false
+            },
+            {
+                        "id": 51,
+                        "question": "Which describe Tasks? (Select 3)",
+                        "options": [
+                                    "Minimise human error",
+                                    "Only performed once",
+                                    "Faster resolution",
+                                    "Repeatable processes"
+                        ],
+                        "answer": [
+                                    0,
+                                    2,
+                                    3
+                        ],
+                        "explanation": "Tasks in ServiceNow are repeatable processes that reduce human error (via automation and standardization) and improve resolution speed. 'Performed once' is incorrect.",
+                        "multi": true
+            },
+            {
+                        "id": 52,
+                        "question": "What notification type informs about article expiry?",
+                        "options": [
+                                    "Self-service notifications",
+                                    "SMS",
+                                    "Email notifications",
+                                    "Virtual Agent"
+                        ],
+                        "answer": [
+                                    2
+                        ],
+                        "explanation": "ServiceNow sends scheduled email alerts for expiring knowledge articles. It is controlled via the property glide.knowman.enable_article_expiry_notification. This is used for proactive content management.",
+                        "multi": false
+            },
+            {
+                        "id": 53,
+                        "question": "Where can form templates be applied?",
+                        "options": [
+                                    "Template editor",
+                                    "Toggle template views",
+                                    "Template creator",
+                                    "Template bar"
+                        ],
+                        "answer": [
+                                    3
+                        ],
+                        "explanation": "The Template Bar appears at the bottom of the form. It allows you to apply, save, and manage templates, offering a quick way to reuse form data patterns.",
+                        "multi": false
+            },
+            {
+                        "id": 54,
+                        "question": "Which UI policy actions apply to catalog variables? (Select 3)",
+                        "options": [
+                                    "Mandatory",
+                                    "Masked",
+                                    "Visible",
+                                    "Read only"
+                        ],
+                        "answer": [
+                                    0,
+                                    2,
+                                    3
+                        ],
+                        "explanation": "Catalog UI Policies control variable behavior: Mandatory (must fill), Visible (show/hide), and Read-only (disable editing). Masked is not a UI policy action (it's a field type behavior).",
+                        "multi": true
+            },
+            {
+                        "id": 55,
+                        "question": "What do you call an existing base system table?",
+                        "options": [
+                                    "Parent table",
+                                    "Source table",
+                                    "Extended table",
+                                    "Base table",
+                                    "Core table",
+                                    "Related table"
+                        ],
+                        "answer": [
+                                    4
+                        ],
+                        "explanation": "Core tables are pre-built tables in ServiceNow (Examples: Incident, Problem, Task). They are the opposite of custom tables (which have a u_ prefix).",
+                        "multi": false
+            },
+            {
+                        "id": 56,
+                        "question": "Where do you add a field in Form Designer?",
+                        "options": [
+                                    "Form Settings",
+                                    "Field Formatter",
+                                    "Form Views",
+                                    "Field Navigator"
+                        ],
+                        "answer": [
+                                    3
+                        ],
+                        "explanation": "The Field Navigator in Form Designer shows available fields and lets you add fields to a form or create new fields. It's the main area for form customization.",
+                        "multi": false
+            },
+            {
+                        "id": 57,
+                        "question": "What is used to send SMS in Flow Designer?",
+                        "options": [
+                                    "Action",
+                                    "Subflow",
+                                    "Flow",
+                                    "Trigger"
+                        ],
+                        "answer": [
+                                    0
+                        ],
+                        "explanation": "In Flow Designer, SMS is sent using a Send SMS Action. A Flow starts with a Trigger and performs tasks via Actions.",
+                        "multi": false
+            },
+            {
+                        "id": 58,
+                        "question": "Which component helps find modules by keyword?",
+                        "options": [
+                                    "Favorites",
+                                    "Filter",
+                                    "Help Sidebar",
+                                    "Global search",
+                                    "Database view"
+                        ],
+                        "answer": [
+                                    1
+                        ],
+                        "explanation": "The Navigator Filter, located in the left navigation, searches Applications and Modules natively. This is faster than a global search for navigation purposes.",
+                        "multi": false
+            },
+            {
+                        "id": 59,
+                        "question": "How is business duration calculated after task closure?",
+                        "options": [
+                                    "Planned start/end",
+                                    "Created/closed",
+                                    "Planned duration",
+                                    "Actual start/end"
+                        ],
+                        "answer": [
+                                    3
+                        ],
+                        "explanation": "Business duration is calculated using actual execution time (Actual start and Actual end), not planned values. This ensures accurate and real performance tracking.",
+                        "multi": false
+            },
+            {
+                        "id": 60,
+                        "question": "How do you verify CMDB after upgrades with customizations?",
+                        "options": [
+                                    "Override tests via scripting",
+                                    "Copy & configure quick start tests",
+                                    "Use OOTB tests",
+                                    "Customize OOTB tests",
+                                    "Use CMDB Health"
+                        ],
+                        "answer": [
+                                    1
+                        ],
+                        "explanation": "For a customized CMDB, you should copy and configure quick start tests to validate the specific customizations and scenarios related to your environment.",
+                        "multi": false
+            }
+]
+    }
 };
 
 
