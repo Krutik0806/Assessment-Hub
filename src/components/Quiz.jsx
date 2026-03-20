@@ -12,6 +12,7 @@ export default function Quiz({ testData, mode, onFinish, onQuit, user, submittin
     const [userAnswers, setUserAnswers] = useState(Array(totalQ).fill(null));
     const [lockedIn, setLockedIn] = useState(Array(totalQ).fill(false));
     const [correctArr, setCorrectArr] = useState(Array(totalQ).fill(null));
+    const [showConfirmSubmit, setShowConfirmSubmit] = useState(false);
 
     // Timer configuration based on admin settings
     const durationSeconds = testData?.duration_minutes ? testData.duration_minutes * 60 : 60 * 60;
@@ -300,7 +301,18 @@ export default function Quiz({ testData, mode, onFinish, onQuit, user, submittin
                         <ArrowLeft size={16} /> Previous
                     </button>
 
-                    <button className="primary-btn" onClick={() => currentIndex === totalQ - 1 ? finishTest() : navigate(1)} disabled={submitting && currentIndex === totalQ - 1}>
+                    <button 
+                        className="primary-btn" 
+                        style={currentIndex === totalQ - 1 ? { background: 'var(--danger)', borderColor: 'var(--danger)', color: 'white' } : {}}
+                        onClick={() => {
+                            if (currentIndex === totalQ - 1) {
+                                setShowConfirmSubmit(true);
+                            } else {
+                                navigate(1);
+                            }
+                        }} 
+                        disabled={submitting && currentIndex === totalQ - 1}
+                    >
                         {currentIndex === totalQ - 1 ? (submitting ? 'Submitting...' : 'Finish Test') : 'Next'} <ArrowRight size={16} />
                     </button>
                 </div>
@@ -376,6 +388,48 @@ export default function Quiz({ testData, mode, onFinish, onQuit, user, submittin
                     </div>
                 </div>
             </aside>
+
+            {/* Custom Confirmation Modal */}
+            <AnimatePresence>
+                {showConfirmSubmit && (
+                    <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        style={{
+                            position: 'absolute',
+                            top: 0, left: 0, right: 0, bottom: 0,
+                            background: 'rgba(0, 0, 0, 0.7)',
+                            backdropFilter: 'blur(4px)',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            zIndex: 1000
+                        }}
+                    >
+                        <motion.div
+                            initial={{ scale: 0.9, opacity: 0 }}
+                            animate={{ scale: 1, opacity: 1 }}
+                            exit={{ scale: 0.9, opacity: 0 }}
+                            className="glass-panel"
+                            style={{ padding: '32px', textAlign: 'center', maxWidth: '400px', border: '1px solid var(--border-light)' }}
+                        >
+                            <h3 style={{ fontSize: '1.4rem', marginBottom: '16px', color: 'var(--text-primary)' }}>Finish Test?</h3>
+                            <p style={{ color: 'var(--text-secondary)', marginBottom: '32px' }}>
+                                Are you sure you want to submit your answers? You won't be able to change them later.
+                            </p>
+                            <div style={{ display: 'flex', gap: '16px', justifyContent: 'center' }}>
+                                <button className="ghost-btn" onClick={() => setShowConfirmSubmit(false)}>
+                                    Cancel
+                                </button>
+                                <button className="primary-btn" style={{ background: 'var(--danger)', borderColor: 'var(--danger)' }} onClick={() => { setShowConfirmSubmit(false); finishTest(); }}>
+                                    Yes, Submit
+                                </button>
+                            </div>
+                        </motion.div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
         </div>
     );
 }
