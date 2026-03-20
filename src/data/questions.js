@@ -5564,6 +5564,1000 @@ export const TESTS = {
             }
         ]
     }
+,
+    8: {
+        name: "Practice Test 8",
+        total: 60,
+        questions: [
+            {
+                        "id": 1,
+                        "question": "What are the possible data source file formats for an import set? (Select 4)",
+                        "options": [
+                                    "XLSX",
+                                    "XML",
+                                    "JSON",
+                                    "TXT",
+                                    "CSV"
+                        ],
+                        "answer": [
+                                    0,
+                                    1,
+                                    2,
+                                    4
+                        ],
+                        "explanation": "An import set can pull data from local source files in XML, CSV, XLS, XLSX, and JSON formats. It can also connect via network servers, LDAP, or JDBC. TXT (text) is not a supported file format for a data source.",
+                        "multi": true
+            },
+            {
+                        "id": 2,
+                        "question": "What role can manage all aspects of the Service Catalog application and the scripting functions?",
+                        "options": [
+                                    "Administrators (admin)",
+                                    "Catalogue editors (catalog_editor)",
+                                    "Catalogue managers (catalog_manager)",
+                                    "Catalogue administrators (catalog_admin)"
+                        ],
+                        "answer": [
+                                    0
+                        ],
+                        "explanation": "While catalog_admin can manage most catalog aspects (items, categories, etc.), they cannot manage scripting functions or business rules. Only the admin role has permissions to manage technical scripting and advanced functions within the Service Catalog.",
+                        "multi": false
+            },
+            {
+                        "id": 3,
+                        "question": "What role is required to create and edit Access Controls?",
+                        "options": [
+                                    "admin",
+                                    "elevated_admin",
+                                    "elevated_security",
+                                    "security",
+                                    "security_admin"
+                        ],
+                        "answer": [
+                                    4
+                        ],
+                        "explanation": "The security_admin role is an elevated privilege role required to create and edit Access Control Lists (ACLs). Even the default admin user must manually use the Elevate Roles feature in the user menu to activate this role for the duration of their session.",
+                        "multi": false
+            },
+            {
+                        "id": 4,
+                        "question": "Where in the Flow Designer can you find information about the actions you add to a flow?",
+                        "options": [
+                                    "Virtual Agent Help",
+                                    "Flow Assistant",
+                                    "Help Panel",
+                                    "Connect Support"
+                        ],
+                        "answer": [
+                                    2
+                        ],
+                        "explanation": "The Help Panel in Flow Designer provides on-demand information for building flows and using flow logic. When you add an action, the panel displays help topics specific to that action, including its inputs and outputs.",
+                        "multi": false
+            },
+            {
+                        "id": 5,
+                        "question": "What options are available for users when setting their notification preferences in Next Experience? (Select 3)",
+                        "options": [
+                                    "Create, edit, or delete system notifications for a particular channel",
+                                    "Create custom notifications by subscribing to system notifications and applying desired conditions",
+                                    "Create, edit, or delete notification channels for instant messages, email, SMS, and voice",
+                                    "Set global notification preferences for all active users in the system",
+                                    "Enable or disable a particular channel for receiving notifications"
+                        ],
+                        "answer": [
+                                    1,
+                                    2,
+                                    4
+                        ],
+                        "explanation": "Users can personalize their experience by creating custom notifications via subscriptions, managing their own channels (like adding a personal email or SMS number), and toggling specific channels on or off. Admins are the only ones who can manage system notifications or set global preferences.",
+                        "multi": true
+            },
+            {
+                        "id": 6,
+                        "question": "Which option in the Email Client Template allows you to include attachments from emails while replying to or forwarding emails?",
+                        "options": [
+                                    "Include attachment from email",
+                                    "Email Attachment Conditions",
+                                    "Attachment Send Action",
+                                    "'Attachment is true' condition",
+                                    "glide.email.inbound.image_sys_attachment.filter.action system property"
+                        ],
+                        "answer": [
+                                    0
+                        ],
+                        "explanation": "Within an Email Client Template, selecting the 'Include attachment from email' option enables the system to carry over attachments when a user replies or forwards a message within a configurable workspace.",
+                        "multi": false
+            },
+            {
+                        "id": 7,
+                        "question": "When do onSubmit Client Scripts execute their script logic? (Select 3)",
+                        "options": [
+                                    "When a user clicks the Lookup button on a reference field",
+                                    "When a user clicks the Submit button",
+                                    "When a user clicks the Update button",
+                                    "When a user clicks the Delete button",
+                                    "When a user clicks the Save menu item in the Additional Actions menu"
+                        ],
+                        "answer": [
+                                    1,
+                                    2,
+                                    4
+                        ],
+                        "explanation": "onSubmit() scripts run whenever a form is being saved to the database. This includes clicking Submit (for new records), Update (for existing records), or selecting Save from the context menu. They do not run for deletions or simple reference lookups.",
+                        "multi": true
+            },
+            {
+                        "id": 8,
+                        "question": "What is the minimum required component in each flow in Flow Designer? (Select 2)",
+                        "options": [
+                                    "Action",
+                                    "Flow Logic",
+                                    "Trigger",
+                                    "Subflow"
+                        ],
+                        "answer": [
+                                    0,
+                                    2
+                        ],
+                        "explanation": "Every flow requires at least one Trigger (to define when the flow starts) and at least one Action (to define what the flow does, such as updating a record or requesting an approval).",
+                        "multi": true
+            },
+            {
+                        "id": 9,
+                        "question": "Who can create additional ad-hoc tasks for a requested item?",
+                        "options": [
+                                    "Any of the fulfillers",
+                                    "Fulfillers with permissions",
+                                    "The requester",
+                                    "Any of the approvers"
+                        ],
+                        "answer": [
+                                    1
+                        ],
+                        "explanation": "A process user (fulfiller) with the appropriate permissions can add an ad-hoc SCTASK to a RITM (Requested Item) if additional work is needed. This must be done while the RITM is still active.",
+                        "multi": false
+            },
+            {
+                        "id": 10,
+                        "question": "What is the primary way to interact with the applications and information in a ServiceNow instance?",
+                        "options": [
+                                    "Application Programming Interface (API)",
+                                    "Next Experience Unified Navigation",
+                                    "Service Portal",
+                                    "Workspace",
+                                    "ServiceNow Mobile Apps"
+                        ],
+                        "answer": [
+                                    1
+                        ],
+                        "explanation": "Next Experience Unified Navigation (the header and menus across the top) is the primary framework for interacting with the platform. It unifies apps, provides global search, notifications, and access to all menus in a single pane.",
+                        "multi": false
+            },
+            {
+                        "id": 11,
+                        "question": "Each time a knowledge article is viewed, a record is added to which table?",
+                        "options": [
+                                    "Knowledge [kb_knowledge]",
+                                    "Knowledge Search Log [ts_query_kb]",
+                                    "Knowledge Feedback [kb_feedback]",
+                                    "Knowledge Use [kb_use]"
+                        ],
+                        "answer": [
+                                    3
+                        ],
+                        "explanation": "The kb_use table tracks article views and attachments to tasks. This data helps administrators identify which articles are most effective and allows for table cleanup jobs to manage performance by deleting older view records.",
+                        "multi": false
+            },
+            {
+                        "id": 12,
+                        "question": "What are the three key attributes of every field? (Select 3)",
+                        "options": [
+                                    "Value",
+                                    "Location",
+                                    "Field Name",
+                                    "ID",
+                                    "Field Label"
+                        ],
+                        "answer": [
+                                    0,
+                                    2,
+                                    4
+                        ],
+                        "explanation": "Every field in ServiceNow is defined by its Label (what the user sees), its Name (the backend database name, e.g., short_description), and its Value (the actual data stored in that specific record).",
+                        "multi": true
+            },
+            {
+                        "id": 13,
+                        "question": "Which of the following should you do before importing data into ServiceNow? (Select 3)",
+                        "options": [
+                                    "Decide what to do with incomplete or erroneous data.",
+                                    "Determine which source data maps to which target fields.",
+                                    "Delete all the existing target table records to avoid conflicts.",
+                                    "Understand the data you plan to import."
+                        ],
+                        "answer": [
+                                    0,
+                                    1,
+                                    3
+                        ],
+                        "explanation": "Preparation is key for a clean import. You must understand your source data, decide how to handle errors (skip or fix), and plan your mapping. Deleting existing records is not a standard requirement and could lead to data loss.",
+                        "multi": true
+            },
+            {
+                        "id": 14,
+                        "question": "What are the different ways to render a catalogue item in Virtual Agent? (Select 4)",
+                        "options": [
+                                    "Using a pop-up",
+                                    "Using a card",
+                                    "Using an iframe",
+                                    "Using an inline",
+                                    "Using a window",
+                                    "Using a conversation"
+                        ],
+                        "answer": [
+                                    0,
+                                    3,
+                                    4,
+                                    5
+                        ],
+                        "explanation": "Virtual Agent topics can be designed to render items in different ways depending on the complexity of the form: Conversation (answering questions one-by-one), Inline (filling the form directly in the chat), Pop-up, or a separate Window linking to the Portal.",
+                        "multi": true
+            },
+            {
+                        "id": 15,
+                        "question": "Which ServiceNow Security Center feature provides step-by-step guidance to assist in creating and maintaining your Instance Security Maturity level?",
+                        "options": [
+                                    "Customer Actions",
+                                    "Best Practices",
+                                    "Metrics",
+                                    "Hardening"
+                        ],
+                        "answer": [
+                                    1
+                        ],
+                        "explanation": "The Best Practices feature is the starting point for security configuration. It provides a structured, step-by-step guide to help organizations improve their security posture and track maturity over time.",
+                        "multi": false
+            },
+            {
+                        "id": 16,
+                        "question": "What can be added as human-readable keywords to help with SEO? (Select 2)",
+                        "options": [
+                                    "Page ID",
+                                    "Dynamic page variables",
+                                    "Static content",
+                                    "Page parameters",
+                                    "Sys ID"
+                        ],
+                        "answer": [
+                                    1,
+                                    2
+                        ],
+                        "explanation": "To improve Search Engine Optimization (SEO), portal URLs can be customized with keywords. These can be Static (hardcoded words) or Dynamic (variables that pull data from the record, such as an article title).",
+                        "multi": true
+            },
+            {
+                        "id": 17,
+                        "question": "Which of the following is a way to add an application to a ServiceNow instance for development? (Select 2)",
+                        "options": [
+                                    "Use Studio to import an application from source control.",
+                                    "Use the Create Application module to create an application.",
+                                    "Use Application Cross-Scope Access to load an application.",
+                                    "Use the Guided App Creator to create an application.",
+                                    "Use the ServiceNow Store to load an application."
+                        ],
+                        "answer": [
+                                    0,
+                                    3
+                        ],
+                        "explanation": "Development starts by either creating a new app via Guided App Creator or by importing an existing project into Studio from a Git repository (Source Control). Applications from the Store are for installation, not development.",
+                        "multi": true
+            },
+            {
+                        "id": 18,
+                        "question": "How is the redacted data presented when an inbound email is received and processed?",
+                        "options": [
+                                    "Randomised and recoverable by admins",
+                                    "Replaced and restricted",
+                                    "Masked and unrecoverable",
+                                    "Edited and available"
+                        ],
+                        "answer": [
+                                    2
+                        ],
+                        "explanation": "When the 'Sensitive Data Redaction' plugin is active, PII (like credit card numbers) is masked in the sys_email table. Once redacted, this data cannot be recovered by any user, including administrators.",
+                        "multi": false
+            },
+            {
+                        "id": 19,
+                        "question": "At what levels can User Criteria be used in Knowledge Management to control who can read and contribute? (Select 3)",
+                        "options": [
+                                    "Knowledge Article",
+                                    "Knowledge Block",
+                                    "Knowledge Category",
+                                    "Knowledge Base"
+                        ],
+                        "answer": [
+                                    0,
+                                    1,
+                                    3
+                        ],
+                        "explanation": "User Criteria provides granular security. It can be applied at the highest level (Knowledge Base), to specific Articles, or even to Knowledge Blocks (reusable content sections within articles). It is not applied at the Category level.",
+                        "multi": true
+            },
+            {
+                        "id": 20,
+                        "question": "Which of the following are automatically captured in an update set? (Select 3)",
+                        "options": [
+                                    "Schedules",
+                                    "Views",
+                                    "Roles",
+                                    "Fields",
+                                    "Tasks"
+                        ],
+                        "answer": [
+                                    1,
+                                    2,
+                                    3
+                        ],
+                        "explanation": "Update sets capture configuration (process records), not data. This includes table fields, user roles, and form views. It does not capture data records like Tasks, or specific data-heavy configurations like Schedules and Users.",
+                        "multi": true
+            },
+            {
+                        "id": 21,
+                        "question": "The VIP value for a user is set to true on the [sys_user] table. The user is listed as the Caller of an incident. Which of the following statements are true in a baseline platform configuration? (Select 2)",
+                        "options": [
+                                    "The priority field calculation is adjusted to increase Priority by 1.",
+                                    "The user's name is shown in red in the Caller field.",
+                                    "The SLA workflow conditions for 'VIP' trigger additional notifications to the manager of the Assignment group.",
+                                    "A 'VIP' decoration is displayed next to the Caller field."
+                        ],
+                        "answer": [
+                                    1,
+                                    3
+                        ],
+                        "explanation": "In ServiceNow, designating a user as a VIP is a visual cue for agents. When a VIP is selected as a Caller, their name automatically turns red, and a specific 'VIP' icon (decoration) appears next to the field in both the list and form views. Importantly, VIP status does not affect the Priority calculation or SLA workflows by default; any such changes would require custom configuration.",
+                        "multi": true
+            },
+            {
+                        "id": 22,
+                        "question": "Which of the following definitions corresponds to Service Catalogue?",
+                        "options": [
+                                    "A collection of one or more ordered items.",
+                                    "A customised interface used to build and submit an order.",
+                                    "Products placed in the shopping cart.",
+                                    "It contains a collection of orderable products and services."
+                        ],
+                        "answer": [
+                                    3
+                        ],
+                        "explanation": "Service Catalogue: The central repository or collection of products and services available to users. Service Portal: The customized interface used to submit orders. Service Catalogue Request: The actual collection of one or more ordered items (the REQ). Requested Items (RITM): These represent the specific products placed in the shopping cart.",
+                        "multi": false
+            },
+            {
+                        "id": 23,
+                        "question": "What ServiceNow product allows you to create request-fulfilment applications without writing code?",
+                        "options": [
+                                    "Creator Studio",
+                                    "Guided Application Creator",
+                                    "ServiceNow Studio",
+                                    "App Engine Studio"
+                        ],
+                        "answer": [
+                                    0
+                        ],
+                        "explanation": "Creator Studio is specifically designed for business process experts to build request-based apps using simple templates without any coding barriers. While App Engine Studio is also low-code, it is used for building more complex custom apps from scratch. ServiceNow Studio is an Integrated Development Environment (IDE) meant for professional developers.",
+                        "multi": false
+            },
+            {
+                        "id": 24,
+                        "question": "Which of the following describes creating a field on a table with Form Designer?",
+                        "options": [
+                                    "Click the New Field button in the form section and configure the field.",
+                                    "From the Field Types tab, drag the field type onto the form and configure the field.",
+                                    "From the Fields tab, drag the Fields type onto the form and configure the field.",
+                                    "From the Fields tab, drag the field onto the form and configure the field.",
+                                    "Double-click 'Insert a new row...' in the form to enter details for the new field."
+                        ],
+                        "answer": [
+                                    1
+                        ],
+                        "explanation": "In the Form Designer, the Field Types tab contains all the types of fields you can create (String, Integer, Choice, etc.). Dragging one of these onto the form layout creates a brand new field in the underlying table. The Fields tab, by contrast, is used to add existing fields that are already on the table but not currently on the form.",
+                        "multi": false
+            },
+            {
+                        "id": 25,
+                        "question": "Which of the following is a key difference between Reporting and Performance Analytics?",
+                        "options": [
+                                    "Performance Analytics can show snapshots of data taken over time; Reports can only show the current snapshot of data.",
+                                    "Reports can be run on a scheduled basis; Performance Analytics cannot.",
+                                    "Performance Analytics data can be published to dashboards; Reports cannot.",
+                                    "Performance Analytics is a replacement for the legacy ServiceNow Reporting functionality.",
+                                    "Performance Analytics answers the question of 'Where are we today?'; Reports answer 'Where do we want to be?'.",
+                                    "Reports can generate accurate historical trends; Performance Analytics is limited in time.",
+                                    "Performance Analytics can show trends; Reports cannot."
+                        ],
+                        "answer": [
+                                    0
+                        ],
+                        "explanation": "Reporting gives you a 'real-time' look at the data as it exists right now. Performance Analytics (PA) captures data at regular intervals (snapshots) to track how data changes over time. This allows PA to provide deep historical trend analysis and forecasting, answering 'What is happening over time?', whereas Reporting answers 'Where are we today?'.",
+                        "multi": false
+            },
+            {
+                        "id": 26,
+                        "question": "A fulfiller has completed all tasks for one of the items in a request, and the tasks are set to Closed. What happens in the workflow?",
+                        "options": [
+                                    "The requester is notified that the request is Complete.",
+                                    "The requested item moves to the next phase of fulfilment.",
+                                    "The requested item is automatically set to Closed Complete.",
+                                    "The request is automatically set to Closed Complete."
+                        ],
+                        "answer": [
+                                    2
+                        ],
+                        "explanation": "There is a hierarchy in request fulfillment: Request (REQ) > Requested Item (RITM) > Catalog Task (SCTASK). When all the child tasks (SCTASKs) for a specific item are marked as Closed Complete, the workflow automatically transitions the parent Requested Item (RITM) to Closed Complete. Note that the top-level Request (REQ) does not close until all RITMs under it are finished.",
+                        "multi": false
+            },
+            {
+                        "id": 27,
+                        "question": "Which of the following core tables is both a base and a parent table?",
+                        "options": [
+                                    "Configuration Item [cmdb_ci]",
+                                    "Knowledge Base [kb_knowledge_base]",
+                                    "Visual Task Board [vtb_board]",
+                                    "Incident [incident]",
+                                    "Task [task]"
+                        ],
+                        "answer": [
+                                    4
+                        ],
+                        "explanation": "A base table is a table that is at the very top of an inheritance chain (it doesn't extend anything else). A parent table is one that provides its fields to child tables. Task is a base table because it extends nothing, and it is a parent table because it is extended by incident, problem, change_request, and more. cmdb_ci is a parent table but is itself an extension of the Base Configuration Item table.",
+                        "multi": false
+            },
+            {
+                        "id": 28,
+                        "question": "What happens if you select Publish when creating knowledge articles manually or by import?",
+                        "options": [
+                                    "It triggers the publish workflow assigned to the knowledge base.",
+                                    "The articles are automatically moved to a Published state.",
+                                    "The articles are sent for review.",
+                                    "The articles are sent for approval."
+                        ],
+                        "answer": [
+                                    0
+                        ],
+                        "explanation": "Selecting 'Publish' does not mean the article goes live immediately. Instead, it kicks off the workflow defined for that specific Knowledge Base. If the workflow is set to 'Instant Publish', it goes live. If it is set to 'Approval Publish', it enters a review state.",
+                        "multi": false
+            },
+            {
+                        "id": 29,
+                        "question": "How can you access the Form Builder in ServiceNow? (Select 4)",
+                        "options": [
+                                    "From Form Designer",
+                                    "From UI Builder",
+                                    "From Table Builder",
+                                    "From Related Links",
+                                    "From the forms on the Now Platform",
+                                    "From Catalog Builder"
+                        ],
+                        "answer": [
+                                    1,
+                                    2,
+                                    3,
+                                    4
+                        ],
+                        "explanation": "Form Builder can be accessed through multiple entry points: Now Platform (Right-click the form header > Configure > Form Builder), Related Links (Found at the bottom of a table record), Table Builder (Under the 'Forms' tab), and UI Builder (By selecting a form component and clicking the 'Edit Form' button).",
+                        "multi": true
+            },
+            {
+                        "id": 30,
+                        "question": "Which of the following can be used to create configuration items (CIs) in the CMDB? (Select 3)",
+                        "options": [
+                                    "Creation via the change management process",
+                                    "Creation via service catalogue fulfilment processes",
+                                    "Creation via the incident management process",
+                                    "Creation triggered by asset management"
+                        ],
+                        "answer": [
+                                    0,
+                                    1,
+                                    3
+                        ],
+                        "explanation": "CIs can be created through various lifecycle processes like Change Management (implementing new hardware), Service Catalogue (requesting a new laptop), and Asset Management (receiving stock). While Incident Management can reference a CI to report a fault, it is not a standard method for creating new records.",
+                        "multi": true
+            },
+            {
+                        "id": 31,
+                        "question": "What are the three sections of an Access Control (ACL) record that must evaluate to true to grant access to a resource? (Select 3)",
+                        "options": [
+                                    "Script",
+                                    "Condition",
+                                    "Requires Role",
+                                    "Advanced",
+                                    "Condition Script"
+                        ],
+                        "answer": [
+                                    0,
+                                    1,
+                                    2
+                        ],
+                        "explanation": "For an ACL to grant access, it performs a triple-check. All three must be true: Requires Role (user must have at least one listed role), Condition (filters must be met), and Script (if 'Advanced' is checked, script must evaluate to true). 'Condition Script' is a distractor.",
+                        "multi": true
+            },
+            {
+                        "id": 32,
+                        "question": "Who has access to create, edit or delete sorting criteria in Visual Task Boards (VTBs)?",
+                        "options": [
+                                    "All board members",
+                                    "The owner of the board",
+                                    "Users with vtb_admin role",
+                                    "Primary and additional assignees of the board cards"
+                        ],
+                        "answer": [
+                                    1
+                        ],
+                        "explanation": "While many users can view or be members of a VTB, the Owner (the person who created the board) has exclusive rights to manage the sorting criteria. Other members see these criteria as 'read-only.'",
+                        "multi": false
+            },
+            {
+                        "id": 33,
+                        "question": "Who can contribute if no User Criteria are specified for 'Can Contribute' in a Knowledge Base?",
+                        "options": [
+                                    "No one",
+                                    "Knowledge Base Managers",
+                                    "User Criteria Admins",
+                                    "All users"
+                        ],
+                        "answer": [
+                                    1
+                        ],
+                        "explanation": "By default, if the 'Can Contribute' list is empty, the system relies on ownership and management roles. Knowledge Administrators, the Owner of the knowledge base, and Knowledge Managers maintain the ability to create and modify articles regardless of User Criteria settings.",
+                        "multi": false
+            },
+            {
+                        "id": 34,
+                        "question": "Which of the following indicates the type of relationship for bi-directionally related tables, where the related records are visible from both tables in a related list?",
+                        "options": [
+                                    "One to Many",
+                                    "Many to Many",
+                                    "Database View",
+                                    "Referenced",
+                                    "Parent/Child",
+                                    "MetricBase"
+                        ],
+                        "answer": [
+                                    1
+                        ],
+                        "explanation": "A Many-to-Many (M2M) relationship allows multiple records in Table A to relate to multiple records in Table B via the [sys_m2m] table. Because it is bi-directional, you can see the related records as a 'Related List' on forms for both tables.",
+                        "multi": false
+            },
+            {
+                        "id": 35,
+                        "question": "How can one user temporarily become another user for testing purposes?",
+                        "options": [
+                                    "Open User Administration > Users, select a user, and click the Impersonate User related link.",
+                                    "Open User Administration > Impersonate User and select a user to impersonate.",
+                                    "Open the User menu and select the Elevate Roles menu item. Select a user to impersonate.",
+                                    "Open the User menu and select the Impersonate User menu item. Select a user to impersonate."
+                        ],
+                        "answer": [
+                                    3
+                        ],
+                        "explanation": "The Impersonate User feature is located in the User Menu (top right corner of the banner). This allows administrators to see exactly what a specific user sees\u2014including their specific menus and permissions\u2014without needing their password.",
+                        "multi": false
+            },
+            {
+                        "id": 36,
+                        "question": "Which portal allows you to discover catalogue items and record producers based on their topics and taxonomy?",
+                        "options": [
+                                    "Service Workspace Portal",
+                                    "Knowledge Portal",
+                                    "Service Portal",
+                                    "Employee Center"
+                        ],
+                        "answer": [
+                                    3
+                        ],
+                        "explanation": "The Employee Center uses Unified Taxonomy (topics and sub-topics) to organize content, making it easier for employees to find what they need based on the subject matter rather than which department owns the item.",
+                        "multi": false
+            },
+            {
+                        "id": 37,
+                        "question": "What value does the Condition field in a Business Rule return if the field is blank?",
+                        "options": [
+                                    "TRUE",
+                                    "FALSE",
+                                    "undefined",
+                                    "NULL",
+                                    "\"\""
+                        ],
+                        "answer": [
+                                    0
+                        ],
+                        "explanation": "In ServiceNow logic, a blank condition is considered a 'pass'. If you leave the Condition field empty on a Business Rule, the system treats it as TRUE, meaning the action will execute every time the triggering event occurs.",
+                        "multi": false
+            },
+            {
+                        "id": 38,
+                        "question": "Which of the following statements are true about Dashboards? (Select 2)",
+                        "options": [
+                                    "All users can view all dashboards.",
+                                    "Applications are allowed to have only one Dashboard.",
+                                    "Dashboards can contain widgets and tabs.",
+                                    "Dashboards are configured using a drag and drop canvas.",
+                                    "Dashboards can have a maximum of four widgets."
+                        ],
+                        "answer": [
+                                    2,
+                                    3
+                        ],
+                        "explanation": "Dashboards use a drag-and-drop interface for layout and can be organized into multiple tabs, each containing various widgets. Access is restricted by roles or specific sharing settings (not open to all users).",
+                        "multi": true
+            },
+            {
+                        "id": 39,
+                        "question": "Which of the following business needs can be addressed by Flow Designer? (Select 3)",
+                        "options": [
+                                    "To orchestrate business processes across services with little technical user knowledge.",
+                                    "To reduce technical debt, such as reducing scripting to simplify upgrades and deployments.",
+                                    "To enhance processes using a ServiceNow Instance that is running Jakarta or prior.",
+                                    "To redevelop existing logic already built using the ServiceNow workflow editor.",
+                                    "To integrate with 3rd party systems."
+                        ],
+                        "answer": [
+                                    0,
+                                    1,
+                                    4
+                        ],
+                        "explanation": "Flow Designer is designed to be low-code and is powerful enough to integrate with external systems via IntegrationHub. It is not compatible with very old versions like Jakarta, and redefining old workflows without changes is usually not recommended.",
+                        "multi": true
+            },
+            {
+                        "id": 40,
+                        "question": "Which of the following are the notification preferences that users can manage? (Select 4)",
+                        "options": [
+                                    "Disable receipt of specific notifications.",
+                                    "Apply a schedule to a notification.",
+                                    "Enable/disable notifications.",
+                                    "Include/exclude attachments in notifications.",
+                                    "Add a new channel (email address, mobile device for push notifications, SMS, voice)."
+                        ],
+                        "answer": [
+                                    0,
+                                    1,
+                                    2,
+                                    4
+                        ],
+                        "explanation": "Users can subscribe/unsubscribe to specific notifications, set schedules, toggle notifications on/off globally, and add new channels. However, the system-level decision of whether to include attachments is controlled by admins, not the end-user.",
+                        "multi": true
+            },
+            {
+                        "id": 41,
+                        "question": "What do you use to control access to features and capabilities in ServiceNow applications and modules?",
+                        "options": [
+                                    "Company",
+                                    "Group",
+                                    "Role",
+                                    "Organisation",
+                                    "Department"
+                        ],
+                        "answer": [
+                                    2
+                        ],
+                        "explanation": "Roles are the primary mechanism for controlling access. You assign roles to applications and modules; then, any user or group assigned that role is granted access. Roles can also contain other roles (inheritance), allowing for a hierarchical security structure. While you often assign roles to Groups for easier management, the Role itself is what the system checks to authorize access.",
+                        "multi": false
+            },
+            {
+                        "id": 42,
+                        "question": "Which of the following is true about the CMDB Data Manager? (Select 3)",
+                        "options": [
+                                    "It is a policy-driven framework for managing CI life cycle operations.",
+                                    "It is a wizard-like tool that provides a comprehensive solution for managing CIs.",
+                                    "It can create policies that govern CI life cycle stages such as retirement and deletion.",
+                                    "It is a framework that supports multiple configuration strategies."
+                        ],
+                        "answer": [
+                                    0,
+                                    1,
+                                    2
+                        ],
+                        "explanation": "The CMDB Data Manager helps maintain a healthy CMDB by automating the CI lifecycle. It uses a wizard-like interface to create policies that handle tasks like archiving, retiring, or deleting CIs in bulk. This ensures that the CMDB remains efficient and follows Common Service Data Model (CSDM) standards.",
+                        "multi": true
+            },
+            {
+                        "id": 43,
+                        "question": "What are the three reasons for using ServiceNow Mobile apps? (Select 3)",
+                        "options": [
+                                    "No authentication is required to access the data",
+                                    "Push notifications for instant access to critical information",
+                                    "A global search to find people, services, items, and articles",
+                                    "Allows multiple logins to an instance",
+                                    "Ability to submit, view, and update requests, issues, and tasks"
+                        ],
+                        "answer": [
+                                    1,
+                                    2,
+                                    4
+                        ],
+                        "explanation": "ServiceNow mobile apps (like Now Mobile and Agent) are designed for productivity on the go. They provide Push Notifications so you don't miss urgent updates, Global Search to find information quickly, and the full ability to manage the lifecycle of tasks directly from a mobile device. Authentication is always required to ensure data security.",
+                        "multi": true
+            },
+            {
+                        "id": 44,
+                        "question": "What minimum role is required to subscribe to or unsubscribe from a Configuration Item (CI)?",
+                        "options": [
+                                    "cmdb_read",
+                                    "itil_admin",
+                                    "itil",
+                                    "ecmdb_admin"
+                        ],
+                        "answer": [
+                                    0
+                        ],
+                        "explanation": "To subscribe to a CI (to receive notifications about its changes), a user only needs the cmdb_read role. While more powerful roles like itil or itil_admin also include this permission, cmdb_read is the absolute minimum required to perform this specific action.",
+                        "multi": false
+            },
+            {
+                        "id": 45,
+                        "question": "Where can fulfillers navigate to find catalogue tasks assigned to them and their groups to fulfil requests? (Select 2)",
+                        "options": [
+                                    "All > Service Desk > My Groups Work",
+                                    "All > Service Catalog > My Work",
+                                    "All > Service Catalog > My Groups Work",
+                                    "All > Service Desk > My Work"
+                        ],
+                        "answer": [
+                                    0,
+                                    3
+                        ],
+                        "explanation": "The Service Desk application provides a centralized location for users to manage their daily tasks. 'My Work' contains tasks assigned specifically to the individual user. 'My Groups Work' contains tasks assigned to a group the user belongs to, but not yet assigned to an individual.",
+                        "multi": true
+            },
+            {
+                        "id": 46,
+                        "question": "Which field data type adds a report to a form?",
+                        "options": [
+                                    "Percent Complete",
+                                    "Link",
+                                    "PDF",
+                                    "Chart",
+                                    "Pivot"
+                        ],
+                        "answer": [
+                                    3
+                        ],
+                        "explanation": "To embed a visual report directly onto a record form (like showing a trend line on a Change Request), you use the Chart data type. This allows you to display Bar, Pie, or Time Series charts. Note that some report types, like List or Pivot, are not supported for display within a form field.",
+                        "multi": false
+            },
+            {
+                        "id": 47,
+                        "question": "What application enables you to understand user web and mobile experiences by visualising your metrics and interactions through an interactive dashboard?",
+                        "options": [
+                                    "Performance Analytics",
+                                    "User Experience Analytics",
+                                    "Predictive Intelligence",
+                                    "Self-Service Analytics"
+                        ],
+                        "answer": [
+                                    1
+                        ],
+                        "explanation": "User Experience Analytics provides deep insights into how users interact with the Service Portal and mobile apps. It tracks metrics like active users, session lengths, and click patterns (e.g., when a user views a specific article), allowing owners to optimize the user interface based on actual behavior.",
+                        "multi": false
+            },
+            {
+                        "id": 48,
+                        "question": "What are the three different request methods in the Service Catalogue? (Select 3)",
+                        "options": [
+                                    "Submit",
+                                    "Order",
+                                    "Save",
+                                    "Wish List",
+                                    "Request"
+                        ],
+                        "answer": [
+                                    0,
+                                    1,
+                                    4
+                        ],
+                        "explanation": "These methods define how the final step of a catalog purchase looks: Order (shows confirmation box, allows delivery info updates), Request (shows confirmation but hides delivery info), Submit (most streamlined; hides both confirmation box and delivery info).",
+                        "multi": true
+            },
+            {
+                        "id": 49,
+                        "question": "What is the purpose of Embedded Help on the ServiceNow platform? (Select 4)",
+                        "options": [
+                                    "Provide help if the user's preferred language is English",
+                                    "Coach users on using a custom application",
+                                    "Provide specific written or video-based instructions for a custom application",
+                                    "Display content based on query parameter values",
+                                    "Display content based on user role"
+                        ],
+                        "answer": [
+                                    1,
+                                    2,
+                                    3,
+                                    4
+                        ],
+                        "explanation": "Embedded Help provides context-sensitive assistance. It can be tailored based on the User's Role or Query Parameters. Organizations use it to provide videos or written coaching specifically for their unique custom applications. Notably, it supports multiple languages\u2014it is not restricted to English.",
+                        "multi": true
+            },
+            {
+                        "id": 50,
+                        "question": "Which of the following is the shared responsibility of the customer, ServiceNow, and colocation provider, according to the Shared Responsibility Model?",
+                        "options": [
+                                    "Privacy compliance",
+                                    "Data encryption",
+                                    "Regulatory and legal compliance",
+                                    "Penetration testing"
+                        ],
+                        "answer": [
+                                    2
+                        ],
+                        "explanation": "In the Shared Responsibility Model, security and compliance are split. While the customer owns their data and ServiceNow owns the cloud software, Regulatory and legal compliance is a shared burden. All parties must meet their respective legal requirements to ensure the entire ecosystem remains compliant.",
+                        "multi": false
+            },
+            {
+                        "id": 51,
+                        "question": "Under which tab within the email notification configuration can you identify if a record insert or update triggers a notification?",
+                        "options": [
+                                    "When to send",
+                                    "What it will contain",
+                                    "What Digest will contain",
+                                    "Who will receive"
+                        ],
+                        "answer": [
+                                    0
+                        ],
+                        "explanation": "The Notification form is divided into four main functional areas. To define the trigger\u2014whether it\u2019s a record being inserted, updated, or a specific event fired\u2014you must use the 'When to send' tab. 'Who will receive' defines the recipients, and 'What it will contain' defines the subject and body.",
+                        "multi": false
+            },
+            {
+                        "id": 52,
+                        "question": "How is it possible for a non-administrator to develop and deploy applications on the Now Platform?",
+                        "options": [
+                                    "Use delegated development and deployment application.",
+                                    "It is not possible to develop or deploy applications in ServiceNow.",
+                                    "Ask the administrators to do it since only administrators have this level of access.",
+                                    "It is not necessary for a non-administrator to develop or deploy applications."
+                        ],
+                        "answer": [
+                                    0
+                        ],
+                        "explanation": "Delegated Development allows System Administrators to grant specific development permissions to non-admin users at the application level. This means a user can be given the power to create tables, scripts, or forms for a specific app without having full system-wide administrative access (the admin role).",
+                        "multi": false
+            },
+            {
+                        "id": 53,
+                        "question": "Which of the following are possible outcomes when coalescing detects a match between a record in the staging table and a record in the target table? (Select 2)",
+                        "options": [
+                                    "Overwrite the record in the target table with the source data.",
+                                    "Halt the import and ask the user what to do.",
+                                    "Create duplicate records.",
+                                    "Keep the record already in the target table.",
+                                    "Stop the import and delete the previously imported records."
+                        ],
+                        "answer": [
+                                    0,
+                                    3
+                        ],
+                        "explanation": "Coalescing is the process of matching import data to existing records to prevent duplicates. When a match is found, the system can either update (overwrite) the existing record with the new data, or it can be configured to ignore the incoming data and keep the existing record as is.",
+                        "multi": true
+            },
+            {
+                        "id": 54,
+                        "question": "Which field on a Configuration Item (CI) record is recommended for routing Incidents to the appropriate group to resolve CI-related incidents quickly?",
+                        "options": [
+                                    "Managed By Group",
+                                    "Assignment Group",
+                                    "Approval Group",
+                                    "Support Group",
+                                    "Change Group"
+                        ],
+                        "answer": [
+                                    3
+                        ],
+                        "explanation": "While a CI can have many groups associated with it, the Support Group is specifically intended for the team responsible for troubleshooting and fixing issues related to that CI. When an Incident is created for a CI, the system can automatically route it to this group.",
+                        "multi": false
+            },
+            {
+                        "id": 55,
+                        "question": "Which of the following operations is a record-type access control list that restricts report access based on a role?",
+                        "options": [
+                                    "report_view",
+                                    "report_admin",
+                                    "report_access",
+                                    "report_on"
+                        ],
+                        "answer": [
+                                    0
+                        ],
+                        "explanation": "The report_view ACL is a special type of Access Control that specifically restricts who can see data within a report. Even if a user can see a table in a list view, a report_view ACL can prevent them from seeing that same data when it is visualized in a pie chart or bar graph unless they have the required role.",
+                        "multi": false
+            },
+            {
+                        "id": 56,
+                        "question": "Which of the following is an example of a CI Class switch?",
+                        "options": [
+                                    "A Server record that was upgraded from the Server [cmdb_ci_server] class to the Windows Server [cmdb_ci_win_server] class.",
+                                    "A CI from the Windows Server [cmdb_ci_win_server] class is switched off.",
+                                    "A CI is reclassified from the Linux Server [cmdb_ci_linux_server] class to the Windows Server [cmdb_ci_win_server] class.",
+                                    "A CI is moved from the Windows Server [cmdb_ci_win_server] class to the Server [cmdb_ci_server] class."
+                        ],
+                        "answer": [
+                                    2
+                        ],
+                        "explanation": "Reclassification falls into three categories: Switch (Moving a CI between two classes that are on the same level, e.g., Linux Server to Windows Server), Upgrade (Moving a CI from a parent class to a more specific child class), and Downgrade (Moving a CI from a child class back to a more general parent class).",
+                        "multi": false
+            },
+            {
+                        "id": 57,
+                        "question": "Which of the following are the data visualisation formats in ServiceNow? (Select 3)",
+                        "options": [
+                                    "Form Charts",
+                                    "Reports",
+                                    "Databases",
+                                    "Dashboards",
+                                    "Tables"
+                        ],
+                        "answer": [
+                                    0,
+                                    1,
+                                    3
+                        ],
+                        "explanation": "Visualizations transform raw data into actionable info. The platform supports: Reports (Standalone visualizations of data), Dashboards (Collections of reports and widgets), Form Charts (Reports embedded directly onto a record form), and On-demand charts.",
+                        "multi": true
+            },
+            {
+                        "id": 58,
+                        "question": "What represents a standard and shared set of service-related definitions across the products and platform that will provide prescriptive guidance on service modelling within the CMDB?",
+                        "options": [
+                                    "Configuration Management System (CMS)",
+                                    "Configuration Item (CI)",
+                                    "Configuration Management Database (CMDB)",
+                                    "Common Services Data Model (CSDM)"
+                        ],
+                        "answer": [
+                                    3
+                        ],
+                        "explanation": "The CSDM is not a piece of software, but a framework/blueprint. It provides a standard set of definitions and relationships for how you should model your services and CIs. Following CSDM ensures that your data works correctly with all ServiceNow products.",
+                        "multi": false
+            },
+            {
+                        "id": 59,
+                        "question": "What does a column in the list interface correspond to in a ServiceNow instance?",
+                        "options": [
+                                    "A table",
+                                    "A reference",
+                                    "A record",
+                                    "An attribute",
+                                    "A field",
+                                    "An index"
+                        ],
+                        "answer": [
+                                    4
+                        ],
+                        "explanation": "Using the spreadsheet analogy for the ServiceNow database structure: Table = The entire sheet. Record (Row) = An individual row in the sheet. Field (Column) = A specific column/category of data.",
+                        "multi": false
+            },
+            {
+                        "id": 60,
+                        "question": "What are the components of the Now Platform Core UI interface? (Select 3)",
+                        "options": [
+                                    "Content frame",
+                                    "Workspace",
+                                    "Sidebar",
+                                    "Application navigator",
+                                    "Banner frame"
+                        ],
+                        "answer": [
+                                    0,
+                                    3,
+                                    4
+                        ],
+                        "explanation": "The Core UI (UI16) consists of three main areas: Banner Frame (The top bar containing the logo, user menu, and global search), Application Navigator (The left-side pane used to find modules and applications), and Content Frame (The main central area where lists, forms, and homepages are displayed).",
+                        "multi": true
+            }
+]
+    }
 };
 
 
