@@ -79,7 +79,7 @@ class Command(BaseCommand):
         with open(js_path, 'r', encoding='utf-8') as f:
             js_text = f.read()
 
-        pkg, _ = Package.objects.get_or_create(name='PU SN', defaults={'description': 'ServiceNow CSA Practice Tests', 'is_active': True})
+        pkg, _ = Package.objects.get_or_create(name='CAD', defaults={'description': 'ServiceNow CAD Practice Tests', 'is_active': True})
 
         test_map = [(i, f'test{i}', f'Practice Test {i}') for i in range(1, 11)]
 
