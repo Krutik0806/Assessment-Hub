@@ -3,10 +3,10 @@ Gemini PDF → Test extractor.
 
 Usage: PUT this file at  quiz/pdf_extractor.py
 """
-import json, re, io, pathlib
+import json, re, io, pathlib, os
 import google.generativeai as genai
 
-GEMINI_API_KEY = "AIzaSyArRgW-RNrOJ0AFxIh_j_fqOXXfvEbkIAk"
+GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY", "AIzaSyCzIVhXWwuHCbmFBF6OwVGAdi9NfEqCd0Y")
 
 SYSTEM_PROMPT = """
 You are an expert exam paper parser.
