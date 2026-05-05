@@ -79,38 +79,10 @@ class Command(BaseCommand):
         with open(js_path, 'r', encoding='utf-8') as f:
             js_text = f.read()
 
-        pkg, _ = Package.objects.get_or_create(name='CAD', defaults={'description': 'ServiceNow CAD Practice Tests', 'is_active': True})
+        pkg, _ = Package.objects.get_or_create(name='PU SN', defaults={'description': 'ServiceNow CAD Practice Tests', 'is_active': True})
+        # Update description if package already exists
+        if pkg.description != 'ServiceNow CAD Practice Tests':
+            pkg.description = 'ServiceNow CAD Practice Tests'
+            pkg.save()
 
-        test_map = [(i, f'test{i}', f'Practice Test {i}') for i in range(1, 11)]
-
-        for test_num, slug, name in test_map:
-            test, _ = Test.objects.get_or_create(slug=slug, defaults={'name': name, 'package': pkg, 'order': test_num})
-            test.package = pkg
-            test.order = test_num
-            test.save()
-
-            questions = parse_js_questions(js_text, test_num)
-            if not questions:
-                self.stdout.write(self.style.WARNING(f'  {name}: could not parse questions'))
-                continue
-
-            test.questions.all().delete()
-            created = 0
-            for q in questions:
-                # Skip comment-only entries
-                if not isinstance(q, dict) or 'question' not in q:
-                    continue
-                Question.objects.create(
-                    test=test,
-                    number=q.get('id', created + 1),
-                    question=q.get('question', ''),
-                    options=q.get('options', []),
-                    answer=q.get('answer', []),
-                    explanation=q.get('explanation', ''),
-                    image=q.get('image', ''),
-                    multi=q.get('multi', False),
-                )
-                created += 1
-            self.stdout.write(f'  ✓ {name}: {created} questions')
-
-        self.stdout.write(self.style.SUCCESS('Done!'))
+        self.stdout.write(self.style.SUCCESS('Done! Package "PU SN" is ready. Add tests via the Admin PDF upload.'))
