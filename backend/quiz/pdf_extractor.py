@@ -96,17 +96,17 @@ def extract_with_groq(chunks: list) -> list:
         response = client.chat.completions.create(
             model="llama-3.3-70b-versatile",
             messages=[{"role": "user", "content": prompt}],
-            response_format={"type": "json_object"},
+            # No response_format — let model return plain JSON array as instructed in prompt
             timeout=60,
         )
         raw = response.choices[0].message.content
-        # Groq json_object mode wraps array in an object — unwrap if needed
-        data = json.loads(raw)
+        # parse_json_response strips fences AND parses JSON — returns list or dict
+        data = parse_json_response(raw)
         if isinstance(data, dict):
-            # Find the first list value in the response dict
+            # Unwrap if model returned {"questions": [...]}
             questions = next((v for v in data.values() if isinstance(v, list)), [])
         else:
-            questions = data
+            questions = data  # Already a list
         all_questions.extend(validate_questions(questions))
 
     return all_questions
@@ -115,10 +115,10 @@ def extract_with_groq(chunks: list) -> list:
 # ── Gemini (fallback) ──────────────────────────────────────────────────────────
 
 def extract_with_gemini(chunks: list) -> list:
-    """Use Gemini 1.5-flash as fallback if Groq fails."""
+    """Use Gemini 2.0-flash as fallback if Groq fails."""
     import google.generativeai as genai
     genai.configure(api_key=GEMINI_API_KEY)
-    model = genai.GenerativeModel("gemini-1.5-flash")
+    model = genai.GenerativeModel("gemini-2.0-flash")
     all_questions = []
 
     for i, chunk in enumerate(chunks):
@@ -140,7 +140,7 @@ def extract_with_gemini_binary(pdf_bytes: bytes) -> list:
     """Upload PDF directly to Gemini for scanned/image-based PDFs."""
     import google.generativeai as genai, tempfile
     genai.configure(api_key=GEMINI_API_KEY)
-    model = genai.GenerativeModel("gemini-1.5-flash")
+    model = genai.GenerativeModel("gemini-2.0-flash")
 
     with tempfile.NamedTemporaryFile(suffix=".pdf", delete=False) as tmp:
         tmp.write(pdf_bytes)
