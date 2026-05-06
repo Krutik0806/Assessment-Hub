@@ -8,27 +8,36 @@ import sys
 import threading
 import time
 import requests
-from subprocess import Popen
+from subprocess import Popen, run
 
 # Configuration
 RENDER_URL = os.environ.get("RENDER_EXTERNAL_URL", "https://assessment-hub-backend.onrender.com")
 PORT = os.environ.get("PORT", "8080")
 
 
+def cleanup_db():
+    """Run cleanup_packages to remove stale packages (e.g. CAD folder)."""
+    print("Running DB cleanup...")
+    result = run(["python", "manage.py", "cleanup_packages"], capture_output=True, text=True)
+    print(result.stdout)
+    if result.returncode != 0:
+        print(f"Cleanup warning: {result.stderr}")
+
+
 def ping_server():
     """Background thread to ping the server every 3 minutes."""
-    print("🔄 Keep-alive service started")
+    print("Keep-alive service started")
     time.sleep(60)  # Wait 1 minute before starting
     
     while True:
         try:
             response = requests.get(f"{RENDER_URL}/api/health/", timeout=10)
             if response.status_code == 200:
-                print("✅ Keep-alive ping successful")
+                print("Keep-alive ping successful")
             else:
-                print(f"⚠️ Keep-alive ping returned status: {response.status_code}")
+                print(f"Keep-alive ping returned status: {response.status_code}")
         except Exception as e:
-            print(f"❌ Keep-alive ping failed: {e}")
+            print(f"Keep-alive ping failed: {e}")
         
         # Sleep for 3 minutes (180 seconds)
         time.sleep(180)
@@ -36,8 +45,11 @@ def ping_server():
 
 def start_django():
     """Start Django with Gunicorn."""
-    print(f"🚀 Starting Django on port {PORT}")
-    
+    print(f"Starting Django on port {PORT}")
+
+    # Clean up stale packages before starting
+    cleanup_db()
+
     # Start ping service in background thread
     ping_thread = threading.Thread(target=ping_server, daemon=True)
     ping_thread.start()
