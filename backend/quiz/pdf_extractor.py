@@ -1,43 +1,102 @@
 """
-Gemini PDF → Test extractor.
+PDF → Test extractor.
 
-Primary:  Groq (llama-3.3-70b) — extremely fast, free tier
-Fallback: Gemini 1.5-flash     — if Groq fails or is rate-limited
-
-Usage: PUT this file at  quiz/pdf_extractor.py
+Priority order:
+  1. Table parser (pdfplumber) — for PDFs with structured Q|A|B|C|D|Answer table
+  2. Groq AI (llama-3.3-70b)  — for free-form / narrative PDFs
+  3. Gemini 2.0-flash          — fallback if Groq fails
+  4. Gemini binary upload      — for scanned/image PDFs (no text layer)
 """
 import json, re, io, os
 
 GROQ_API_KEY   = os.environ.get("GROQ_API_KEY",   "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")
 GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY", "AIzaSyCzIVhXWwuHCbmFBF6OwVGAdi9NfEqCd0Y")
 
-# Max characters to send per chunk (keeps each request fast)
 MAX_CHUNK_CHARS = 20_000
 
+# Letter → 0-based index map
+LETTER_INDEX = {l: i for i, l in enumerate("ABCDEFGHIJ")}
+
 SYSTEM_PROMPT = (
-    "You are an exam paper parser. Extract ALL questions from the text and return a JSON array ONLY "
+    "You are an exam paper parser. Extract ALL questions and return a JSON array ONLY "
     "(no markdown fences, no explanation, no extra text).\n\n"
-    "Each item must have exactly these fields:\n"
+    "CRITICAL RULES:\n"
+    "1. Each answer option is ONE item in the list — NEVER split a single option into multiple items.\n"
+    "   Example: 'Save and Merge' is ONE option, not two separate options.\n"
+    "2. Strip only the leading letter prefix (A. B. C. D. or A) B) C) D)) from each option text.\n"
+    "   Keep the full option text intact after stripping the prefix.\n"
+    "3. 'answer' must be a list of 0-based indexes: A=0, B=1, C=2, D=3, E=4.\n"
+    "   Example: if the correct answer is C, answer=[2]. If B and D, answer=[1,3].\n"
+    "4. Do NOT guess or invent answers. Only use what is explicitly stated in the PDF.\n\n"
+    "Each item must have exactly:\n"
     '  "question"    : string\n'
-    '  "options"     : list of strings (strip letter prefixes A. B. etc.)\n'
+    '  "options"     : list of strings (one string per answer choice)\n'
     '  "answer"      : list of 0-based indexes of correct option(s)\n'
     '  "explanation" : brief string — generate one if missing\n'
-    '  "multi"       : boolean (true if multiple correct answers)\n\n'
-    "Return ONLY a valid JSON array."
+    '  "multi"       : boolean (true only if multiple correct answers)\n\n'
+    'Example: [{"question":"What is 2+2?","options":["3","4","5","6"],"answer":[1],"explanation":"2+2=4","multi":false}]\n\n'
+    "Return ONLY a valid JSON array, nothing else."
 )
 
 
-# ── Text extraction ────────────────────────────────────────────────────────────
+# ── Helpers ─────────────────────────────────────────────────────────────────────
 
-def pdf_bytes_to_text(pdf_bytes: bytes) -> str:
-    """Extract plain text from PDF bytes using PyPDF2."""
-    try:
-        import PyPDF2
-        reader = PyPDF2.PdfReader(io.BytesIO(pdf_bytes))
-        pages = [page.extract_text() for page in reader.pages if page.extract_text()]
-        return "\n\n".join(pages)
-    except Exception as e:
-        raise ValueError(f"Failed to read PDF: {e}")
+def validate_questions(questions: list) -> list:
+    """Normalise and validate question dicts."""
+    validated = []
+    for q in questions:
+        if not isinstance(q, dict) or not q.get("question"):
+            continue
+        validated.append({
+            "question":    str(q.get("question", "")).strip(),
+            "options":     [str(o).strip() for o in q.get("options", [])],
+            "answer":      [int(a) for a in q.get("answer", [0])],
+            "explanation": str(q.get("explanation", "")).strip(),
+            "multi":       bool(q.get("multi", len(q.get("answer", [])) > 1)),
+        })
+    return validated
+
+
+def parse_json_response(raw: str):
+    """Strip markdown fences and parse JSON — returns list or dict."""
+    raw = raw.strip()
+    raw = re.sub(r"^```(?:json)?", "", raw).strip()
+    raw = re.sub(r"```$", "", raw).strip()
+    return json.loads(raw)
+
+
+def letters_to_indexes(answer_str: str) -> list:
+    """
+    Convert answer letter string to 0-based index list.
+    e.g. 'B'      → [1]
+         'A,B,C'  → [0,1,2]
+         'B,C,D'  → [1,2,3]
+    """
+    indexes = []
+    for part in re.split(r"[,\s]+", answer_str.strip().upper()):
+        part = part.strip()
+        if part in LETTER_INDEX:
+            indexes.append(LETTER_INDEX[part])
+    return indexes if indexes else [0]
+
+
+def _join_cell(text: str) -> str:
+    """
+    Smart join of newlines inside a PDF table cell.
+    Rule: if the accumulated text so far has NO spaces (it's a single identifier
+    token like a camelCase method name), join the next line directly (no space).
+    Otherwise it's a wrapped sentence — join with a space.
+    """
+    parts = [p.strip() for p in text.split('\n') if p.strip()]
+    result = ''
+    for part in parts:
+        if not result:
+            result = part
+        elif ' ' not in result and result[-1].islower() and part[0].islower():
+            result = result + part   # split camelCase word — join without space
+        else:
+            result = result + ' ' + part   # wrapped sentence — join with space
+    return result.strip()
 
 
 def chunk_text(text: str, max_chars: int = MAX_CHUNK_CHARS) -> list:
@@ -59,34 +118,231 @@ def chunk_text(text: str, max_chars: int = MAX_CHUNK_CHARS) -> list:
     return [c for c in chunks if c]
 
 
-def validate_questions(questions: list) -> list:
-    """Normalise and validate question dicts."""
-    validated = []
-    for q in questions:
-        if not isinstance(q, dict) or "question" not in q:
-            continue
-        validated.append({
-            "question":    str(q.get("question", "")),
-            "options":     [str(o) for o in q.get("options", [])],
-            "answer":      [int(a) for a in q.get("answer", [0])],
-            "explanation": str(q.get("explanation", "")),
-            "multi":       bool(q.get("multi", len(q.get("answer", [])) > 1)),
-        })
-    return validated
+# ── Method 1: Table Parser (pdfplumber) ─────────────────────────────────────────
+
+def _detect_col_structure(header: list):
+    """
+    Given a header row, return (q_col, option_cols, answer_col) or None.
+    Handles both 'A/B/C/D' and 'Opt A/Opt B/Opt C/Opt D' column naming.
+    """
+    h = [str(c).strip().upper().replace("\n", " ") if c else "" for c in header]
+
+    # Question column: prefer exact "QUESTION", else first cell containing it (not "NO"/"NUM")
+    q_col = None
+    for i, cell in enumerate(h):
+        if cell == "QUESTION":
+            q_col = i
+            break
+    if q_col is None:
+        for i, cell in enumerate(h):
+            if "QUESTION" in cell and "NO" not in cell and "NUM" not in cell:
+                q_col = i
+                break
+    if q_col is None:
+        return None
+
+    # Option columns: match "A","B" OR "OPT A","OPT B" OR "OPTION A"
+    option_cols = {}
+    for letter in "ABCDEF":
+        for i, cell in enumerate(h):
+            if cell == letter or cell in (f"OPT {letter}", f"OPT{letter}", f"OPTION {letter}", f"OPTION{letter}"):
+                option_cols[letter] = i
+                break
+
+    # Answer column
+    answer_col = None
+    for i, cell in enumerate(h):
+        if cell in ("ANS", "KEY", "ANSWER") or "ANSWER" in cell or "CORRECT" in cell:
+            answer_col = i
+            break
+
+    if len(option_cols) < 2 or answer_col is None:
+        return None
+
+    return q_col, option_cols, answer_col
 
 
-def parse_json_response(raw: str) -> list:
-    """Strip markdown fences and parse JSON."""
-    raw = raw.strip()
-    raw = re.sub(r"^```(?:json)?", "", raw).strip()
-    raw = re.sub(r"```$", "", raw).strip()
-    return json.loads(raw)
+def _is_valid_header(row: list) -> bool:
+    """Returns True if this row looks like a table header (not a data row)."""
+    if not row:
+        return False
+    h = [str(c).strip().upper().replace("\n", " ") if c else "" for c in row]
+    has_question = any("QUESTION" in c for c in h)
+    has_options  = (
+        sum(1 for c in h if c in ("A", "B", "C", "D")) >= 2 or
+        sum(1 for c in h if re.match(r"OPT\s*[A-F]|OPTION\s*[A-F]", c)) >= 2
+    )
+    return has_question and has_options
 
 
-# ── Groq (primary) ─────────────────────────────────────────────────────────────
+def extract_with_table(pdf_bytes: bytes) -> list:
+    """
+    Parse PDFs that use a structured Q/A/B/C/D table.
+    Handles:
+      - 'Question | A | B | C | D | Answer' format (demo PDF)
+      - 'Question no | Question | Opt A | Opt B | ... | Ans' format (SSNF PDF)
+      - Pages that don't repeat the header (carries structure from page 1)
+    Returns [] if no valid table is found → triggers AI fallback.
+    """
+    try:
+        import pdfplumber
+    except ImportError:
+        return []
+
+    all_questions = []
+    # Column structure discovered from the first valid header row
+    col_structure = None   # (q_col, option_cols, answer_col)
+
+    with pdfplumber.open(io.BytesIO(pdf_bytes)) as pdf:
+        for page in pdf.pages:
+            tables = page.extract_tables()
+            for table in tables:
+                if not table:
+                    continue
+
+                # Determine start row: find header if present, else use saved structure
+                data_start = 0
+                for idx, row in enumerate(table):
+                    if _is_valid_header(row):
+                        structure = _detect_col_structure(row)
+                        if structure:
+                            col_structure = structure
+                            data_start = idx + 1
+                            break
+
+                if col_structure is None:
+                    continue   # Haven't found a valid table yet
+
+                q_col, option_cols, answer_col = col_structure
+
+                for row in table[data_start:]:
+                    if not row or len(row) <= q_col or not row[q_col]:
+                        continue
+
+                    question_text = _join_cell(str(row[q_col]))
+                    # Skip rows that are just headers or empty
+                    if not question_text or question_text.upper() in ("QUESTION", "Q"):
+                        continue
+
+                    # Build options in order A, B, C, D, E, F — skip dash placeholders
+                    options = []
+                    for letter in sorted(option_cols.keys()):
+                        col = option_cols[letter]
+                        val = _join_cell(row[col]) if col < len(row) and row[col] else ""
+                        if val and val != "-":   # '-' means no option exists
+                            options.append(val)
+
+                    if not options:
+                        continue
+
+                    raw_answer = str(row[answer_col]).replace("\n", " ").strip() if answer_col < len(row) and row[answer_col] else ""
+                    answer_indexes = letters_to_indexes(raw_answer)
+
+                    # Clamp indexes to valid range
+                    answer_indexes = [a for a in answer_indexes if a < len(options)]
+                    if not answer_indexes:
+                        answer_indexes = [0]
+
+                    is_multi = len(answer_indexes) > 1
+
+                    # Append "(Select N)" hint to multi-select questions if not already there
+                    q_display = question_text
+                    if is_multi and "select" not in question_text.lower():
+                        q_display = f"{question_text} (Select {len(answer_indexes)})"
+
+                    # Auto-generate explanation from correct answer text
+                    correct_parts = []
+                    for idx in answer_indexes:
+                        if idx < len(options):
+                            letter = chr(65 + idx)
+                            correct_parts.append(f"{letter}) {options[idx]}")
+                    explanation = "Correct answer: " + ", ".join(correct_parts) if correct_parts else ""
+
+                    all_questions.append({
+                        "question":    q_display,
+                        "options":     options,
+                        "answer":      answer_indexes,
+                        "explanation": explanation,
+                        "multi":       is_multi,
+                    })
+
+
+    # Generate real explanations via Groq in a single batch call
+    if all_questions:
+        try:
+            _batch_generate_explanations(all_questions)
+        except Exception as e:
+            import logging
+            logging.warning(f"Explanation generation skipped: {e}")
+            # Keep the fallback "Correct answer: ..." explanations already set
+
+    return all_questions
+
+
+def _batch_generate_explanations(questions: list) -> None:
+    """
+    Calls Groq once with all Q+A pairs and fills in proper explanations in-place.
+    Each explanation explains WHY the correct answer is right (1-2 sentences).
+    """
+    from groq import Groq
+    client = Groq(api_key=GROQ_API_KEY)
+
+    # Build a compact prompt listing all questions with their correct answers
+    lines = ["For each question below, write a 1-2 sentence explanation of WHY the correct answer is right.",
+             "Return a JSON array of strings — one explanation per question, in the same order.",
+             "Return ONLY the JSON array, no other text.\n"]
+
+    for i, q in enumerate(questions, 1):
+        correct_opts = ", ".join(
+            f"{chr(65+idx)}) {q['options'][idx]}"
+            for idx in q["answer"] if idx < len(q["options"])
+        )
+        lines.append(f"{i}. Q: {q['question']}")
+        lines.append(f"   Correct: {correct_opts}\n")
+
+    prompt = "\n".join(lines)
+
+    # Split into batches of 30 to avoid token limits
+    BATCH = 30
+    all_explanations = []
+    q_list = questions[:]
+
+    for start in range(0, len(q_list), BATCH):
+        batch = q_list[start:start + BATCH]
+        batch_lines = [
+            "For each question below, write ONE short sentence explaining what the correct answer does or means.",
+            "Style: direct and factual, like: 'The oldValue method retrieves the old value of a field in an onCellEdit script.'",
+            "No intro like 'The correct answer is...'. Just the explanation sentence.",
+            "Return a JSON array of strings — one per question in order. ONLY the JSON array.\n"
+        ]
+        for i, q in enumerate(batch, start + 1):
+            correct_opts = ", ".join(
+                f"{chr(65+idx)}) {q['options'][idx]}"
+                for idx in q["answer"] if idx < len(q["options"])
+            )
+            batch_lines.append(f"{i}. Q: {q['question']}")
+            batch_lines.append(f"   Correct: {correct_opts}\n")
+
+        response = client.chat.completions.create(
+            model="llama-3.3-70b-versatile",
+            messages=[{"role": "user", "content": "\n".join(batch_lines)}],
+            timeout=60,
+        )
+        raw = response.choices[0].message.content
+        parsed = parse_json_response(raw)
+        if isinstance(parsed, list):
+            all_explanations.extend(parsed)
+
+    # Fill explanations back in-place
+    for i, q in enumerate(questions):
+        if i < len(all_explanations) and all_explanations[i]:
+            q["explanation"] = str(all_explanations[i]).strip()
+
+
+# ── Method 2: Groq AI ───────────────────────────────────────────────────────────
 
 def extract_with_groq(chunks: list) -> list:
-    """Use Groq (llama-3.3-70b) to extract questions — fast and free."""
+    """Use Groq (llama-3.3-70b) to extract questions from free-form text."""
     from groq import Groq
     client = Groq(api_key=GROQ_API_KEY)
     all_questions = []
@@ -96,23 +352,20 @@ def extract_with_groq(chunks: list) -> list:
         response = client.chat.completions.create(
             model="llama-3.3-70b-versatile",
             messages=[{"role": "user", "content": prompt}],
-            # No response_format — let model return plain JSON array as instructed in prompt
             timeout=60,
         )
         raw = response.choices[0].message.content
-        # parse_json_response strips fences AND parses JSON — returns list or dict
         data = parse_json_response(raw)
         if isinstance(data, dict):
-            # Unwrap if model returned {"questions": [...]}
             questions = next((v for v in data.values() if isinstance(v, list)), [])
         else:
-            questions = data  # Already a list
+            questions = data
         all_questions.extend(validate_questions(questions))
 
     return all_questions
 
 
-# ── Gemini (fallback) ──────────────────────────────────────────────────────────
+# ── Method 3: Gemini fallback ───────────────────────────────────────────────────
 
 def extract_with_gemini(chunks: list) -> list:
     """Use Gemini 2.0-flash as fallback if Groq fails."""
@@ -134,7 +387,7 @@ def extract_with_gemini(chunks: list) -> list:
     return all_questions
 
 
-# ── Binary PDF fallback (scanned/image PDFs) ───────────────────────────────────
+# ── Method 4: Gemini binary (scanned PDFs) ──────────────────────────────────────
 
 def extract_with_gemini_binary(pdf_bytes: bytes) -> list:
     """Upload PDF directly to Gemini for scanned/image-based PDFs."""
@@ -157,21 +410,37 @@ def extract_with_gemini_binary(pdf_bytes: bytes) -> list:
         os.unlink(tmp_path)
 
 
-# ── Main entry point ───────────────────────────────────────────────────────────
+# ── Main entry point ─────────────────────────────────────────────────────────────
 
 def extract_questions_with_gemini(pdf_bytes: bytes, test_name: str = "") -> list:
     """
     Extract questions from PDF bytes.
 
     Flow:
-      1. Extract text via PyPDF2
-      2a. Try Groq (llama-3.3-70b) — fastest
-      2b. Fall back to Gemini 1.5-flash if Groq fails
-      3.  If no text (scanned PDF), upload binary to Gemini
+      1. Try pdfplumber table parser  — perfect for Q|A|B|C|D|Answer table PDFs
+      2. Try Groq (llama-3.3-70b)    — for free-form/narrative PDFs
+      3. Fall back to Gemini          — if Groq fails
+      4. Gemini binary upload         — for scanned/image PDFs (no text layer)
     """
-    # Step 1: text extraction
+    import logging
+    logger = logging.getLogger(__name__)
+
+    # Step 1: Try table parser first (fast, accurate, no AI needed)
     try:
-        pdf_text = pdf_bytes_to_text(pdf_bytes)
+        table_questions = extract_with_table(pdf_bytes)
+        if table_questions:
+            logger.info(f"Table parser: extracted {len(table_questions)} questions")
+            return table_questions
+        logger.info("Table parser: no table found, falling back to AI")
+    except Exception as e:
+        logger.warning(f"Table parser failed: {e}")
+
+    # Step 2: Check if PDF has extractable text
+    try:
+        import PyPDF2
+        reader = PyPDF2.PdfReader(io.BytesIO(pdf_bytes))
+        pages = [page.extract_text() for page in reader.pages if page.extract_text()]
+        pdf_text = "\n\n".join(pages)
         has_text = len(pdf_text.strip()) >= 100
     except Exception:
         pdf_text = None
@@ -180,15 +449,14 @@ def extract_questions_with_gemini(pdf_bytes: bytes, test_name: str = "") -> list
     if has_text:
         chunks = chunk_text(pdf_text)
 
-        # Step 2a: Try Groq first
+        # Step 2a: Groq
         try:
             return extract_with_groq(chunks)
         except Exception as groq_err:
-            import logging
-            logging.warning(f"Groq failed, falling back to Gemini: {groq_err}")
+            logger.warning(f"Groq failed, falling back to Gemini: {groq_err}")
 
-        # Step 2b: Gemini fallback
+        # Step 2b: Gemini text fallback
         return extract_with_gemini(chunks)
 
-    # Step 3: scanned/image PDF — binary upload to Gemini
+    # Step 3: Scanned/image PDF
     return extract_with_gemini_binary(pdf_bytes)

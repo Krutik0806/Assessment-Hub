@@ -892,7 +892,7 @@ def admin_create_test_from_pdf(request):
     if not questions:
         return Response({'error': 'No questions could be extracted from the PDF.'}, status=400)
 
-    # Create the test
+    # Assign to package — use provided package_id or default to "PU SN"
     package_id = request.POST.get('package_id')
     package = None
     if package_id:
@@ -900,6 +900,12 @@ def admin_create_test_from_pdf(request):
             package = Package.objects.get(id=package_id)
         except Package.DoesNotExist:
             pass
+    if not package:
+        # Default: auto-assign to "PU SN" package (create if missing)
+        package, _ = Package.objects.get_or_create(
+            name='PU SN',
+            defaults={'description': 'ServiceNow CAD Practice Tests', 'is_active': True}
+        )
 
     # Auto-generate a slug
     import re as _re
