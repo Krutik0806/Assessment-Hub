@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { GraduationCap, PlayCircle, Lock, ChevronDown, Package, Shield, Clock, Trophy, X, User, Hash, Mail } from 'lucide-react';
+import { GraduationCap, PlayCircle, Lock, ChevronDown, Package, Shield, Clock, Trophy, X, User, Hash, Mail, Folder, Monitor } from 'lucide-react';
 
 const API_BASE = import.meta.env.VITE_API_BASE_URL || 'http://127.0.0.1:8000/api';
 
@@ -104,7 +104,7 @@ export default function Home({ onStartTest, onViewLeaderboard, onReviewTest, loa
                                     onClick={() => setOpenPkg(p => ({ ...p, [pkg.id]: !p[pkg.id] }))}
                                     className="glass-panel"
                                     style={{ padding: '18px 24px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '14px', borderLeft: '3px solid #8b5cf6', userSelect: 'none' }}>
-                                    <div style={{ fontSize: '1.8rem' }}>📁</div>
+                                    <div style={{ background: 'rgba(139,92,246,0.12)', padding: '10px', borderRadius: '10px' }}><Folder size={20} color="#8b5cf6" /></div>
                                     <div style={{ flex: 1 }}>
                                         <div style={{ fontWeight: '800', fontSize: '1.1rem' }}>{pkg.name}</div>
                                         <div style={{ color: 'var(--text-secondary)', fontSize: '0.85rem', marginTop: '2px' }}>
@@ -147,7 +147,7 @@ export default function Home({ onStartTest, onViewLeaderboard, onReviewTest, loa
                                                             <div style={{ position: 'relative', zIndex: 1, fontWeight: '700', marginBottom: '4px', fontSize: '0.95rem' }}>{test.name}</div>
                                                             <div style={{ position: 'relative', zIndex: 1 }}>
                                                                 {test.is_locked
-                                                                    ? <div style={{ color: '#f87171', fontSize: '12px', marginTop: '12px' }}>🔒 Locked</div>
+                                                                    ? <div style={{ color: '#f87171', fontSize: '12px', marginTop: '12px', display: 'flex', alignItems: 'center', gap: '4px' }}><Lock size={12} /> Locked</div>
                                                                     : (
                                                                         <div style={{ display: 'flex', gap: '10px', marginTop: '20px' }}>
                                                                             <motion.button whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}
@@ -180,8 +180,10 @@ export default function Home({ onStartTest, onViewLeaderboard, onReviewTest, loa
                             <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '18px' }}>
                                 <Shield size={20} color="#ef4444" />
                                 <h2 style={{ fontSize: '0.85rem', fontWeight: '700', color: 'var(--text-secondary)', letterSpacing: '0.06em', textTransform: 'uppercase' }}>Proctored Exams</h2>
-                                <span style={{ background: 'rgba(239,68,68,0.12)', color: '#f87171', padding: '2px 10px', borderRadius: '100px', fontSize: '11px', fontWeight: '700' }}>
-                                    🔴 LIVE
+                                <span style={{ background: 'rgba(239,68,68,0.12)', color: '#f87171', padding: '2px 10px', borderRadius: '100px', fontSize: '11px', fontWeight: '700', display: 'flex', alignItems: 'center', gap: '5px' }}>
+                                    <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#f87171', display: 'inline-block', animation: 'pulse 1.5s ease-in-out infinite' }} />
+                                    LIVE
+                                    <style>{`@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }`}</style>
                                 </span>
                             </div>
                             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(450px, 1fr))', gap: '24px' }}>
@@ -201,19 +203,19 @@ export default function Home({ onStartTest, onViewLeaderboard, onReviewTest, loa
                                             <div style={{ position: 'absolute', top: '-40px', right: '-40px', width: '150px', height: '150px', background: '#ef4444', filter: 'blur(70px)', opacity: 0.25, zIndex: 0, borderRadius: '50%' }} />
 
                                             <div style={{ position: 'relative', zIndex: 1, display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '14px' }}>
-                                                <span style={{ fontSize: '1.8rem' }}>🎓</span>
+                                                <div style={{ background: 'rgba(239,68,68,0.12)', padding: '10px', borderRadius: '10px' }}><GraduationCap size={24} color="#ef4444" /></div>
                                                 <div>
                                                     <div style={{ fontWeight: '800', fontSize: '1.05rem' }}>{test.name}</div>
                                                     <div style={{ color: 'var(--text-secondary)', fontSize: '12px' }}>{test.total} questions</div>
                                                 </div>
                                             </div>
                                             <div style={{ display: 'flex', gap: '8px', fontSize: '11px', color: '#f87171', marginBottom: '16px', flexWrap: 'wrap' }}>
-                                                <span>🖥️ Fullscreen required</span>
-                                                <span>⏱️ {test.duration_minutes || 60} mins</span>
-                                                {startTime && <span style={{ color: isEarly ? '#f59e0b' : '#4ade80' }}>🕒 Starts: {startTime.toLocaleString([], { dateStyle: 'short', timeStyle: 'short' })}</span>}
+                                                <span><Monitor size={11} style={{ marginRight: '3px', verticalAlign: '-1px' }} />Fullscreen required</span>
+                                                <span><Clock size={11} style={{ marginRight: '3px', verticalAlign: '-1px' }} />{test.duration_minutes || 60} mins</span>
+                                                {startTime && <span style={{ color: isEarly ? '#f59e0b' : '#4ade80' }}><Clock size={11} style={{ marginRight: '3px', verticalAlign: '-1px' }} />Starts: {startTime.toLocaleString([], { dateStyle: 'short', timeStyle: 'short' })}</span>}
                                             </div>
                                             {test.is_locked
-                                                ? <div style={{ color: '#f87171', fontSize: '13px', fontWeight: '600' }}>🔒 Locked by admin</div>
+                                                ? <div style={{ color: '#f87171', fontSize: '13px', fontWeight: '600', display: 'flex', alignItems: 'center', gap: '5px' }}><Lock size={13} /> Locked by admin</div>
                                                 : (
                                                     <div style={{ padding: '24px' }}>
                                                         {test.has_attempted ? (

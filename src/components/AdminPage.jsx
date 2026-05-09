@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ShieldCheck, Lock, Unlock, Eye, EyeOff, ArrowLeft, RefreshCw, UserX, UserCheck, Shield, UploadCloud, FileText, CheckCircle, Trash2, Download, Clock } from 'lucide-react';
+import { ShieldCheck, Lock, Unlock, Eye, EyeOff, ArrowLeft, RefreshCw, UserX, UserCheck, Shield, UploadCloud, FileText, CheckCircle, Trash2, Download, Clock, Bell, AlertTriangle, Users, Target, BookOpen, CalendarClock, BarChart2 } from 'lucide-react';
 
 const API_BASE = import.meta.env.VITE_API_BASE_URL || 'http://127.0.0.1:8000/api';
 const apiFetch = (path, opts = {}) => {
@@ -196,10 +196,10 @@ export default function AdminPage({ user, onBack }) {
     };
 
     const tabs = [
-        { id: 'overview', label: '📊 Overview' },
-        { id: 'tests', label: '📋 Tests' },
-        { id: 'ai_import', label: '✨ AI PDF Import' },
-        { id: 'users', label: '👥 Users' }
+        { id: 'overview', label: 'Overview' },
+        { id: 'tests', label: 'Tests' },
+        { id: 'ai_import', label: 'AI PDF Import' },
+        { id: 'users', label: 'Users' }
     ];
 
     return (
@@ -242,14 +242,14 @@ export default function AdminPage({ user, onBack }) {
                         <motion.div key="ov" initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}>
                             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(200px,1fr))', gap: '16px', marginBottom: '32px' }}>
                                 {[
-                                    { icon: '👥', label: 'Total Users', value: dash?.total_users || 0, color: '#8b5cf6' },
-                                    { icon: '📝', label: 'Total Attempts', value: dash?.total_attempts || 0, color: '#06b6d4' },
-                                    { icon: '🎯', label: 'Avg Score', value: `${dash?.avg_score || 0}%`, color: '#10b981' },
-                                    { icon: '🔒', label: 'Locked Tests', value: dash?.tests?.filter(t => t.is_locked).length || 0, color: '#f59e0b' },
-                                    { icon: '🚫', label: 'Banned Students', value: dash?.banned_users || 0, color: '#ef4444' },
+                                    { icon: <Users size={22} />, label: 'Total Users', value: dash?.total_users || 0, color: '#8b5cf6' },
+                                    { icon: <FileText size={22} />, label: 'Total Attempts', value: dash?.total_attempts || 0, color: '#06b6d4' },
+                                    { icon: <Target size={22} />, label: 'Avg Score', value: `${dash?.avg_score || 0}%`, color: '#10b981' },
+                                    { icon: <Lock size={22} />, label: 'Locked Tests', value: dash?.tests?.filter(t => t.is_locked).length || 0, color: '#f59e0b' },
+                                    { icon: <ShieldCheck size={22} />, label: 'Banned Students', value: dash?.banned_users || 0, color: '#ef4444' },
                                 ].map(({ icon, label, value, color }) => (
                                     <motion.div key={label} whileHover={{ y: -2 }} className="glass-panel" style={{ padding: '18px', textAlign: 'center', borderTop: `2px solid ${color}` }}>
-                                        <div style={{ fontSize: '1.6rem', marginBottom: '4px' }}>{icon}</div>
+                                        <div style={{ color, marginBottom: '4px', display: 'flex', justifyContent: 'center' }}>{icon}</div>
                                         <div style={{ fontSize: '1.9rem', fontWeight: '900', color }}>{value}</div>
                                         <div style={{ color: 'var(--text-secondary)', fontSize: '0.75rem', marginTop: '2px' }}>{label}</div>
                                     </motion.div>
@@ -260,12 +260,12 @@ export default function AdminPage({ user, onBack }) {
                                     <div style={{ flex: 1 }}>
                                         <div style={{ fontWeight: '700', display: 'flex', gap: '7px', alignItems: 'center', flexWrap: 'wrap' }}>
                                             {t.name}
-                                            {t.is_exam_test && <Pill color="#ef4444">🎓 EXAM</Pill>}
-                                            {t.is_locked && <Pill color="#f87171">🔒</Pill>}
+                                            {t.is_exam_test && <Pill color="#ef4444">EXAM</Pill>}
+                                            {t.is_locked && <Pill color="#f87171">LOCKED</Pill>}
                                             {!t.is_active && <Pill color="#9ca3af">Hidden</Pill>}
                                         </div>
                                         <div style={{ color: 'var(--text-secondary)', fontSize: '0.78rem', marginTop: '3px', display: 'flex', gap: '12px' }}>
-                                            <span>📖 {t.total_questions} Qs</span><span>📊 {t.attempt_count} attempts</span><span>🎯 {t.avg_score}%</span>
+                                            <span>{t.total_questions} Qs</span><span>{t.attempt_count} attempts</span><span>{t.avg_score}% avg</span>
                                         </div>
                                     </div>
                                     <div style={{ width: '100px' }}>
@@ -285,7 +285,7 @@ export default function AdminPage({ user, onBack }) {
                             {'Notification' in window && Notification.permission === 'default' && (
                                 <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }}
                                     style={{ marginBottom: '20px', padding: '16px', background: 'rgba(147,51,234,0.1)', border: '1px solid rgba(147,51,234,0.3)', borderRadius: '12px', display: 'flex', alignItems: 'center', gap: '12px' }}>
-                                    <div style={{ fontSize: '1.5rem' }}>🔔</div>
+                                    <Bell size={20} color="#c084fc" />
                                     <div style={{ flex: 1 }}>
                                         <div style={{ color: '#c084fc', fontWeight: '600', fontSize: '0.9rem', marginBottom: '4px' }}>
                                             Enable Desktop Notifications
@@ -334,11 +334,9 @@ export default function AdminPage({ user, onBack }) {
                                         </div>
                                     </div>
 
-                                    {pdfError && (
-                                        <div style={{ background: 'rgba(239,68,68,0.1)', border: '1px solid rgba(239,68,68,0.2)', color: '#f87171', padding: '12px', borderRadius: '8px', fontSize: '14px', whiteSpace: 'pre-wrap' }}>
-                                            ⚠️ {pdfError}
+                                        <div style={{ background: 'rgba(239,68,68,0.1)', border: '1px solid rgba(239,68,68,0.2)', color: '#f87171', padding: '12px', borderRadius: '8px', fontSize: '14px', whiteSpace: 'pre-wrap', display: 'flex', alignItems: 'flex-start', gap: '8px' }}>
+                                            <AlertTriangle size={16} style={{ flexShrink: 0, marginTop: '1px' }} /> {pdfError}
                                         </div>
-                                    )}
 
                                     <button type="submit" disabled={pdfUploading || !pdfFile || !pdfName.trim()}
                                         className="primary-btn" style={{ padding: '14px', fontSize: '16px', justifyContent: 'center', opacity: (pdfUploading || !pdfFile || !pdfName.trim()) ? 0.6 : 1 }}>
@@ -363,7 +361,7 @@ export default function AdminPage({ user, onBack }) {
                                         {pdfResult.summary && (
                                             <div style={{ background: 'rgba(0,0,0,0.2)', padding: '16px', borderRadius: '10px', marginBottom: '16px' }}>
                                                 <div style={{ color: '#a7f3d0', fontSize: '0.95rem', fontWeight: '600', marginBottom: '12px' }}>
-                                                    📊 Extraction Summary
+                                                    Extraction Summary
                                                 </div>
                                                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', gap: '12px', fontSize: '0.85rem' }}>
                                                     <div>
@@ -384,9 +382,9 @@ export default function AdminPage({ user, onBack }) {
                                                     </div>
                                                 </div>
                                                 <div style={{ marginTop: '12px', paddingTop: '12px', borderTop: '1px solid rgba(167,243,208,0.2)', color: '#d1fae5', fontSize: '0.8rem' }}>
-                                                    📄 PDF: <strong>{pdfResult.summary.pdf_filename}</strong><br />
-                                                    📦 Package: <strong>{pdfResult.summary.package}</strong><br />
-                                                    🔗 Test Slug: <strong>{pdfResult.summary.test_slug}</strong>
+                                                    PDF: <strong>{pdfResult.summary.pdf_filename}</strong><br />
+                                                    Package: <strong>{pdfResult.summary.package}</strong><br />
+                                                    Slug: <strong>{pdfResult.summary.test_slug}</strong>
                                                 </div>
                                             </div>
                                         )}
@@ -394,7 +392,7 @@ export default function AdminPage({ user, onBack }) {
                                         {/* Success Message */}
                                         <div style={{ padding: '12px', background: 'rgba(74,222,128,0.15)', borderRadius: '8px', border: '1px solid rgba(74,222,128,0.3)' }}>
                                             <div style={{ fontSize: '0.9rem', color: '#d1fae5', textAlign: 'center' }}>
-                                                ✨ <strong>{pdfResult.test.name}</strong> is now available in the Tests tab!
+                                                <strong>{pdfResult.test.name}</strong> is now available in the Tests tab!
                                             </div>
                                         </div>
 
@@ -427,19 +425,19 @@ export default function AdminPage({ user, onBack }) {
                                 {dash?.tests?.map((t, i) => (
                                     <motion.div key={t.id} layout className="glass-panel"
                                         style={{ padding: '24px 28px', display: 'flex', alignItems: 'center', gap: '18px', flexWrap: 'wrap', opacity: t.is_active ? 1 : 0.55, borderLeft: `3px solid ${t.is_exam_test ? '#ef4444' : t.is_locked ? '#f87171' : '#8b5cf6'}`, marginBottom: '4px' }}>
-                                        <div style={{ fontSize: '1.8rem' }}>📋</div>
+                                        <div style={{ background: 'rgba(139,92,246,0.1)', padding: '10px', borderRadius: '10px', flexShrink: 0 }}><FileText size={18} color="#a78bfa" /></div>
                                         <div style={{ flex: 1, minWidth: '150px' }}>
                                             <div style={{ fontWeight: '700', display: 'flex', alignItems: 'center', gap: '7px', flexWrap: 'wrap' }}>
                                                 {t.name}
-                                                {t.is_exam_test && <Pill color="#ef4444">🎓 EXAM</Pill>}
-                                                {t.is_locked && <Pill color="#f87171">🔒 LOCKED</Pill>}
+                                                {t.is_exam_test && <Pill color="#ef4444">EXAM</Pill>}
+                                                {t.is_locked && <Pill color="#f87171">LOCKED</Pill>}
                                                 {!t.is_active && <Pill color="#9ca3af">HIDDEN</Pill>}
                                             </div>
                                             <div style={{ color: 'var(--text-secondary)', fontSize: '0.77rem', marginTop: '3px', display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
-                                                <span>📖 {t.total_questions} Qs</span>
-                                                <span>⏱️ {t.duration_minutes || 60} mins</span>
-                                                {t.scheduled_start_time && <span>📅 {new Date(t.scheduled_start_time).toLocaleString()}</span>}
-                                                <span>📊 {t.attempt_count} attempts</span>
+                                                <span><BookOpen size={11} style={{ marginRight: '3px', verticalAlign: '-1px' }} />{t.total_questions} Qs</span>
+                                                <span><Clock size={11} style={{ marginRight: '3px', verticalAlign: '-1px' }} />{t.duration_minutes || 60} mins</span>
+                                                {t.scheduled_start_time && <span><CalendarClock size={11} style={{ marginRight: '3px', verticalAlign: '-1px' }} />{new Date(t.scheduled_start_time).toLocaleString()}</span>}
+                                                <span><BarChart2 size={11} style={{ marginRight: '3px', verticalAlign: '-1px' }} />{t.attempt_count} attempts</span>
                                             </div>
                                         </div>
                                         <div style={{ display: 'flex', gap: '7px', flexWrap: 'wrap' }}>
@@ -514,9 +512,11 @@ export default function AdminPage({ user, onBack }) {
                             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '14px', flexWrap: 'wrap', gap: '8px' }}>
                                 <p style={{ color: 'var(--text-secondary)', fontSize: '0.85rem' }}>{users.length} registered students</p>
                                 <div style={{ display: 'flex', gap: '10px', fontSize: '12px', color: 'var(--text-secondary)' }}>
-                                    <span>✅ {users.filter(u => u.is_active).length} active</span>
-                                    <span>🚫 {users.filter(u => !u.is_active).length} disabled</span>
-                                    <span>⛔ {users.filter(u => u.active_bans?.length > 0).length} exam-banned</span>
+                                    <span>{users.filter(u => u.is_active).length} active</span>
+                                    <span>·</span>
+                                    <span>{users.filter(u => !u.is_active).length} disabled</span>
+                                    <span>·</span>
+                                    <span>{users.filter(u => u.active_bans?.length > 0).length} exam-banned</span>
                                 </div>
                             </div>
                             <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
@@ -531,19 +531,19 @@ export default function AdminPage({ user, onBack }) {
                                             <div style={{ flex: 1, minWidth: '140px' }}>
                                                 <div style={{ fontWeight: '700', fontSize: '0.9rem', display: 'flex', alignItems: 'center', gap: '6px', flexWrap: 'wrap' }}>
                                                     {u.username}
-                                                    {isAdmin && <Pill color="#a78bfa">👑 Admin</Pill>}
+                                                    {isAdmin && <Pill color="#a78bfa">Admin</Pill>}
                                                     {!u.is_active && <Pill color="#f87171">Disabled</Pill>}
                                                 </div>
                                                 <div style={{ color: 'var(--text-secondary)', fontSize: '0.75rem', marginTop: '2px', display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
                                                     <span>{u.email || '—'}</span>
-                                                    <span>📝 {u.attempt_count} attempts</span>
+                                                    <span>{u.attempt_count} attempts</span>
                                                     {u.last_attempt && <span>Last: {new Date(u.last_attempt).toLocaleDateString()}</span>}
                                                 </div>
                                                 {(u.active_bans || []).length > 0 && (
                                                     <div style={{ marginTop: '6px', display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
                                                         {u.active_bans.map(ban => (
                                                             <span key={ban.test_id} style={{ background: 'rgba(239,68,68,0.1)', color: '#f87171', padding: '2px 8px', borderRadius: '8px', fontSize: '11px', fontWeight: '600' }}>
-                                                                ⛔ Banned: {ban.test_name}
+                                                                Banned: {ban.test_name}
                                                             </span>
                                                         ))}
                                                     </div>
@@ -552,7 +552,7 @@ export default function AdminPage({ user, onBack }) {
                                             <div style={{ display: 'flex', gap: '7px', flexWrap: 'wrap' }}>
                                                 {(u.active_bans || []).map(ban => (
                                                     <Btn key={ban.test_id} onClick={() => unbanUser(u.id, ban.test_id)} disabled={busy === `unban-${u.id}-${ban.test_id}`} color="#4ade80" bg="rgba(34,197,94,0.1)">
-                                                        ✅ Unban {ban.test_name}
+                                                        <UserCheck size={12} /> Unban {ban.test_name}
                                                     </Btn>
                                                 ))}
                                                 {!isAdmin && (

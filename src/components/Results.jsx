@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Home as HomeIcon, CheckCircle2, XCircle, RotateCcw, ListChecks } from 'lucide-react';
+import { Home as HomeIcon, CheckCircle2, XCircle, RotateCcw, ListChecks, Award, BookOpen } from 'lucide-react';
 
 export default function Results({ results, onHome }) {
     const { correct, wrong, skipped, total, userAnswers, testData, isPractice } = results;
@@ -13,7 +13,7 @@ export default function Results({ results, onHome }) {
         return (
             <div style={{ maxWidth: '900px', margin: '40px auto', padding: '0 24px', width: '100%' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '32px' }}>
-                    <h2 style={{ fontSize: '2rem' }}>📋 Answers Review</h2>
+                    <h2 style={{ fontSize: '2rem', display: 'flex', alignItems: 'center', gap: '10px' }}><ListChecks size={24} /> Answers Review</h2>
                     <button className="ghost-btn" onClick={() => setShowReview(false)}>
                         <RotateCcw size={18} /> Back to Score
                     </button>
@@ -54,7 +54,7 @@ export default function Results({ results, onHome }) {
                                 }}
                             >
                                 <div style={{ fontWeight: '600', color: 'var(--text-secondary)', marginBottom: '8px' }}>
-                                    Question {i + 1} {isSkipped ? '(Skipped)' : (isCorrect ? '✅' : '❌')}
+                                    Question {i + 1} {isSkipped ? '(Skipped)' : (isCorrect ? '(Correct)' : '(Incorrect)')}
                                 </div>
                                 <h3 style={{ fontSize: '1.2rem', marginBottom: '16px', lineHeight: '1.5' }}>{q.question}</h3>
 
@@ -75,7 +75,7 @@ export default function Results({ results, onHome }) {
                                 </div>
 
                                 <div style={{ background: 'rgba(255,255,255,0.03)', padding: '16px', borderRadius: '12px' }}>
-                                    <div style={{ fontWeight: 'bold', marginBottom: '8px', color: 'var(--text-secondary)' }}>💡 Explanation</div>
+                                    <div style={{ fontWeight: 'bold', marginBottom: '8px', color: 'var(--text-secondary)' }}>Explanation</div>
                                     <p style={{ fontSize: '0.95rem', lineHeight: '1.6' }}>{q.explanation}</p>
                                 </div>
                             </motion.div>
@@ -98,9 +98,9 @@ export default function Results({ results, onHome }) {
                     initial={{ scale: 0 }}
                     animate={{ scale: 1 }}
                     transition={{ type: 'spring', delay: 0.2 }}
-                    style={{ fontSize: '64px', marginBottom: '16px' }}
+                    style={{ color: passed ? '#a78bfa' : '#06b6d4', marginBottom: '16px', display: 'flex', justifyContent: 'center' }}
                 >
-                    {passed ? '🎉' : '📚'}
+                    {passed ? <Award size={64} /> : <BookOpen size={64} />}
                 </motion.div>
 
                 <h1 style={{ fontSize: '2.5rem', marginBottom: '8px' }}>{passed ? 'Great Job!' : 'Keep Practicing!'}</h1>

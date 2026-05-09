@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { LayoutDashboard } from 'lucide-react';
 import Home from './components/Home';
 import Quiz from './components/Quiz';
 import Results from './components/Results';
@@ -170,7 +171,7 @@ export default function App() {
       {view !== 'quiz' || !isExamTest ? (
         <nav className="navbar">
           <div className="nav-brand" onClick={user ? goHome : undefined} style={{ cursor: user ? 'pointer' : 'default' }}>
-            <div className="nav-logo">🎯</div>
+            <div className="nav-logo" style={{ width: '32px', height: '32px', borderRadius: '8px', background: 'linear-gradient(135deg, #8b5cf6, #06b6d4)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><LayoutDashboard size={16} color="white" /></div>
             <div>
               <div className="nav-title">Assessment Platform</div>
               <div className="nav-subtitle">Question Bank</div>
@@ -180,10 +181,10 @@ export default function App() {
             <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
               {user.is_admin && view !== 'admin' && (
                 <button onClick={() => setView('admin')} style={{ padding: '7px 14px', borderRadius: '10px', border: '1px solid rgba(139,92,246,0.4)', background: 'rgba(139,92,246,0.1)', color: '#a78bfa', cursor: 'pointer', fontWeight: '600', fontSize: '13px', display: 'flex', alignItems: 'center', gap: '5px' }}>
-                  🛡️ Admin
+                  Admin
                 </button>
               )}
-              <span style={{ color: 'var(--text-secondary)', fontSize: '0.85rem' }}>👋 {user.username}</span>
+              <span style={{ color: 'var(--text-secondary)', fontSize: '0.85rem' }}>{user.username}</span>
               <button className="ghost-btn" onClick={handleLogout} style={{ padding: '7px 14px', fontSize: '13px' }}>Logout</button>
             </div>
           )}
@@ -392,7 +393,7 @@ export default function App() {
           alignItems: 'center',
           gap: '6px'
         }}>
-          <span>Made with ❤️ by</span>
+          <span>Made by</span>
           <span style={{ fontWeight: '700', color: 'rgba(139,92,246,0.6)' }}>Krutik Chamtha</span>
         </div>
       )}
