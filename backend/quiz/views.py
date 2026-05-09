@@ -189,7 +189,7 @@ def login(request):
     
     # Hardcoded admin and faculty accounts
     special_accounts = {
-        'chamthakrutik4@gmail.com': {'password': 'admin123', 'name': 'Krutik Chamtha', 'is_admin': True},
+        'chamthakrutik4@gmail.com': {'password': 'ClashOfClans@TH12', 'name': 'Krutik Chamtha', 'is_admin': True},
         'kruti.sutaria25509@paruluniversity.ac.in': {'password': '25509', 'name': 'Kruti Sutaria', 'is_admin': False},
         'shweta.yagnik39983@paruluniversity.ac.in': {'password': '39983', 'name': 'Shweta Yagnik', 'is_admin': False},
         'mahipal.khoja35948@paruluniversity.ac.in': {'password': '35948', 'name': 'Mahipal Khoja', 'is_admin': False},

@@ -29,7 +29,7 @@ class Command(BaseCommand):
         # 3. Create Django admin superuser (for /admin/ login)
         from django.contrib.auth.models import User
         admin_username = "admin"
-        admin_password = "admin123"  # Change this password after first login!
+        admin_password = "ClashOfClans@TH12"
         
         try:
             admin_user = User.objects.get(username=admin_username)
