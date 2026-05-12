@@ -5,7 +5,43 @@ import { CheckCircle2, XCircle, ArrowRight, ArrowLeft, Info, HelpCircle } from '
 
 export default function Quiz({ testData, mode, onFinish, onQuit, user, submitting = false }) {
     const isPractice = mode === 'practice';
-    const questions = testData?.questions || [];
+
+    const [shuffledData] = useState(() => {
+        if (!testData?.questions) return { ...testData, questions: [] };
+        if (isPractice) return testData;
+        
+        const newQuestions = testData.questions.map(q => {
+            if (!q.options || !Array.isArray(q.answer)) return q;
+            
+            let optionsWithIndex = q.options.map((opt, idx) => ({ opt, originalIndex: idx }));
+            
+            for (let i = optionsWithIndex.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [optionsWithIndex[i], optionsWithIndex[j]] = [optionsWithIndex[j], optionsWithIndex[i]];
+            }
+            
+            const newAnswer = [];
+            q.answer.forEach(origIdx => {
+                const newIdx = optionsWithIndex.findIndex(item => item.originalIndex === origIdx);
+                if (newIdx !== -1) newAnswer.push(newIdx);
+            });
+            
+            return {
+                ...q,
+                options: optionsWithIndex.map(item => item.opt),
+                answer: newAnswer
+            };
+        });
+        
+        for (let i = newQuestions.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [newQuestions[i], newQuestions[j]] = [newQuestions[j], newQuestions[i]];
+        }
+        
+        return { ...testData, questions: newQuestions };
+    });
+
+    const questions = shuffledData.questions;
     const totalQ = questions.length;
 
     const [currentIndex, setCurrentIndex] = useState(0);
@@ -15,7 +51,7 @@ export default function Quiz({ testData, mode, onFinish, onQuit, user, submittin
     const [showConfirmSubmit, setShowConfirmSubmit] = useState(false);
 
     // Timer configuration based on admin settings
-    const durationSeconds = testData?.duration_minutes ? testData.duration_minutes * 60 : 60 * 60;
+    const durationSeconds = shuffledData.duration_minutes ? shuffledData.duration_minutes * 60 : 60 * 60;
     const [timeLeft, setTimeLeft] = useState(durationSeconds);
 
     useEffect(() => {
@@ -103,7 +139,7 @@ export default function Quiz({ testData, mode, onFinish, onQuit, user, submittin
         }
 
         const time_taken = durationSeconds - timeLeft;
-        onFinish({ correct, wrong, skipped, total: totalQ, userAnswers, testData, isPractice, time_taken });
+        onFinish({ correct, wrong, skipped, total: totalQ, userAnswers, testData: shuffledData, isPractice, time_taken });
     };
 
     const handleOptionClick = (optIdx) => {
