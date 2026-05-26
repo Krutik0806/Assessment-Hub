@@ -875,6 +875,16 @@ def admin_create_test_from_pdf(request):
     if not pdf_file.name.lower().endswith('.pdf'):
         return Response({'error': 'Only PDF files are accepted.'}, status=400)
 
+    # Reject oversized PDFs before loading into RAM (Render free-tier has 512 MB limit)
+    MAX_PDF_BYTES = 20 * 1024 * 1024  # 20 MB
+    if pdf_file.size and pdf_file.size > MAX_PDF_BYTES:
+        size_mb = pdf_file.size / (1024 * 1024)
+        return Response(
+            {'error': f'PDF is {size_mb:.1f} MB — maximum allowed size is 20 MB. '
+                      'Please split it into smaller parts before uploading.'},
+            status=413
+        )
+
     pdf_bytes = pdf_file.read()
 
     # Track extraction time

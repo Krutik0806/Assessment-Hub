@@ -26,7 +26,7 @@ export default function Results({ results, onHome }) {
                             console.warn(`Question ${i + 1} has incomplete data:`, q);
                             return null;
                         }
-                        
+
                         const letters = ['A', 'B', 'C', 'D', 'E', 'F'];
                         const sel = userAnswers[i] || [];
 

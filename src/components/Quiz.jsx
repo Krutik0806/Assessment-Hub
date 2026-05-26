@@ -241,9 +241,9 @@ export default function Quiz({ testData, mode, onFinish, onQuit, user, submittin
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
                     <div style={{ color: 'var(--accent-base)', fontWeight: '600' }}>Question {currentIndex + 1} of {totalQ}</div>
                     <div style={{ display: 'flex', gap: '8px' }}>
-                        {q.multi && q.answer && (
+                        {q.multi && (
                             <span style={{ fontSize: '12px', background: 'rgba(167, 139, 250, 0.2)', padding: '4px 10px', borderRadius: '100px', color: 'var(--accent-base)' }}>
-                                Select {q.answer.length}
+                                Select {q.correct_count || (q.answer ? q.answer.length : 2)}
                             </span>
                         )}
                     </div>

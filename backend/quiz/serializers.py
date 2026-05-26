@@ -66,16 +66,26 @@ class PackageSerializer(serializers.ModelSerializer):
 
 
 class QuestionSerializer(serializers.ModelSerializer):
+    correct_count = serializers.SerializerMethodField()
+
     class Meta:
         model = Question
-        fields = ['id', 'number', 'question', 'options', 'answer', 'explanation', 'image', 'multi']
+        fields = ['id', 'number', 'question', 'options', 'answer', 'explanation', 'image', 'multi', 'correct_count']
+
+    def get_correct_count(self, obj):
+        return len(obj.answer) if isinstance(obj.answer, list) else 1
 
 
 class ExamQuestionSerializer(serializers.ModelSerializer):
     """Serializer for exam questions - excludes answers and explanations to prevent cheating via inspect"""
+    correct_count = serializers.SerializerMethodField()
+
     class Meta:
         model = Question
-        fields = ['id', 'number', 'question', 'options', 'image', 'multi']
+        fields = ['id', 'number', 'question', 'options', 'image', 'multi', 'correct_count']
+
+    def get_correct_count(self, obj):
+        return len(obj.answer) if isinstance(obj.answer, list) else 1
 
 
 # ── Attempts ──────────────────────────────────────────────────────────────────

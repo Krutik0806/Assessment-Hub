@@ -7,12 +7,13 @@ Priority order:
   3. Gemini 2.0-flash          — fallback if Groq fails
   4. Gemini binary upload      — for scanned/image PDFs (no text layer)
 """
-import json, re, io, os
+import json, re, io, os, gc
 
 GROQ_API_KEY   = os.environ.get("GROQ_API_KEY",   "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")
 GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY", "AIzaSyCzIVhXWwuHCbmFBF6OwVGAdi9NfEqCd0Y")
 
 MAX_CHUNK_CHARS = 20_000
+MAX_PDF_MB      = 20  # Hard limit to protect Render free-tier 512 MB RAM
 
 # Letter → 0-based index map
 LETTER_INDEX = {l: i for i, l in enumerate("ABCDEFGHIJ")}
@@ -47,12 +48,40 @@ def validate_questions(questions: list) -> list:
     for q in questions:
         if not isinstance(q, dict) or not q.get("question"):
             continue
+        
+        # Parse and sanitize answer list
+        raw_ans = q.get("answer", [0])
+        if not isinstance(raw_ans, list):
+            raw_ans = [raw_ans]
+        ans_list = []
+        for a in raw_ans:
+            try:
+                ans_list.append(int(a))
+            except (ValueError, TypeError):
+                pass
+        if not ans_list:
+            ans_list = [0]
+            
+        options = [str(o).strip() for o in q.get("options", [])]
+        
+        # Clamp indexes to valid range
+        ans_list = [a for a in ans_list if a < len(options)]
+        if not ans_list:
+            ans_list = [0]
+            
+        is_multi = bool(q.get("multi")) or len(ans_list) > 1
+        
+        # Append "(Select N)" hint to multi-select questions if not already there
+        question_text = str(q.get("question", "")).strip()
+        if is_multi and len(ans_list) > 1 and "select" not in question_text.lower():
+            question_text = f"{question_text} (Select {len(ans_list)})"
+            
         validated.append({
-            "question":    str(q.get("question", "")).strip(),
-            "options":     [str(o).strip() for o in q.get("options", [])],
-            "answer":      [int(a) for a in q.get("answer", [0])],
+            "question":    question_text,
+            "options":     options,
+            "answer":      ans_list,
             "explanation": str(q.get("explanation", "")).strip(),
-            "multi":       bool(q.get("multi", len(q.get("answer", [])) > 1)),
+            "multi":       is_multi,
         })
     return validated
 
@@ -182,6 +211,7 @@ def extract_with_table(pdf_bytes: bytes) -> list:
       - 'Question | A | B | C | D | Answer' format (demo PDF)
       - 'Question no | Question | Opt A | Opt B | ... | Ans' format (SSNF PDF)
       - Pages that don't repeat the header (carries structure from page 1)
+    Memory-safe: processes one page at a time and closes each page after use.
     Returns [] if no valid table is found → triggers AI fallback.
     """
     try:
@@ -194,8 +224,15 @@ def extract_with_table(pdf_bytes: bytes) -> list:
     col_structure = None   # (q_col, option_cols, answer_col)
 
     with pdfplumber.open(io.BytesIO(pdf_bytes)) as pdf:
-        for page in pdf.pages:
-            tables = page.extract_tables()
+        page_count = len(pdf.pages)
+        for page_idx in range(page_count):
+            # Access page by index and release after processing
+            page = pdf.pages[page_idx]
+            try:
+                tables = page.extract_tables()
+            except Exception:
+                tables = []
+
             for table in tables:
                 if not table:
                     continue
@@ -266,6 +303,9 @@ def extract_with_table(pdf_bytes: bytes) -> list:
                         "multi":       is_multi,
                     })
 
+            # Explicitly release the page object and collected tables to free RAM
+            del page, tables
+            gc.collect()
 
     # Generate real explanations via Groq in a single batch call
     if all_questions:
@@ -365,6 +405,23 @@ def extract_with_groq(chunks: list) -> list:
     return all_questions
 
 
+# ── Gemini quota/rate-limit helper ──────────────────────────────────────────────
+
+def _is_quota_error(exc: Exception) -> bool:
+    """
+    Returns True if the exception is a Gemini 429 / ResourceExhausted / quota error.
+    Works for both the old google-generativeai SDK and the newer google-genai SDK.
+    """
+    msg = str(exc).lower()
+    return (
+        "429" in msg
+        or "quota" in msg
+        or "resource_exhausted" in msg
+        or "resourceexhausted" in msg
+        or "rate" in msg and "limit" in msg
+    )
+
+
 # ── Method 3: Gemini fallback ───────────────────────────────────────────────────
 
 def extract_with_gemini(chunks: list) -> list:
@@ -376,11 +433,20 @@ def extract_with_gemini(chunks: list) -> list:
 
     for i, chunk in enumerate(chunks):
         prompt = f"{SYSTEM_PROMPT}\n\nPDF Content (part {i+1}/{len(chunks)}):\n\n{chunk}"
-        response = model.generate_content(
-            prompt,
-            generation_config={"response_mime_type": "application/json"},
-            request_options={"timeout": 90},
-        )
+        try:
+            response = model.generate_content(
+                prompt,
+                generation_config={"response_mime_type": "application/json"},
+                request_options={"timeout": 90},
+            )
+        except Exception as e:
+            if _is_quota_error(e):
+                raise ValueError(
+                    "Gemini API daily quota exhausted. "
+                    "Please try again tomorrow, or use a text-based (non-scanned) PDF "
+                    "so Groq can process it instead."
+                ) from e
+            raise
         questions = parse_json_response(response.text)
         all_questions.extend(validate_questions(questions))
 
@@ -399,12 +465,24 @@ def extract_with_gemini_binary(pdf_bytes: bytes) -> list:
         tmp.write(pdf_bytes)
         tmp_path = tmp.name
     try:
-        uploaded = genai.upload_file(tmp_path, mime_type="application/pdf")
-        response = model.generate_content(
-            [SYSTEM_PROMPT, uploaded],
-            generation_config={"response_mime_type": "application/json"},
-            request_options={"timeout": 90},
-        )
+        try:
+            uploaded = genai.upload_file(tmp_path, mime_type="application/pdf")
+            response = model.generate_content(
+                [SYSTEM_PROMPT, uploaded],
+                generation_config={"response_mime_type": "application/json"},
+                request_options={"timeout": 90},
+            )
+        except Exception as e:
+            if _is_quota_error(e):
+                raise ValueError(
+                    "This PDF appears to be scanned/image-based (no selectable text). "
+                    "Processing it requires Gemini Vision, but the free-tier daily quota is exhausted.\n"
+                    "Options:\n"
+                    "  1. Try again tomorrow (quota resets daily).\n"
+                    "  2. Use a text-based PDF instead (e.g. export from Word/PowerPoint).\n"
+                    "  3. Use an OCR tool (e.g. Adobe Acrobat, Smallpdf) to convert the scanned PDF to text first."
+                ) from e
+            raise
         return validate_questions(parse_json_response(response.text))
     finally:
         os.unlink(tmp_path)
@@ -417,13 +495,22 @@ def extract_questions_with_gemini(pdf_bytes: bytes, test_name: str = "") -> list
     Extract questions from PDF bytes.
 
     Flow:
-      1. Try pdfplumber table parser  — perfect for Q|A|B|C|D|Answer table PDFs
-      2. Try Groq (llama-3.3-70b)    — for free-form/narrative PDFs
-      3. Fall back to Gemini          — if Groq fails
-      4. Gemini binary upload         — for scanned/image PDFs (no text layer)
+      1. File-size guard              — reject PDFs > MAX_PDF_MB to protect server RAM
+      2. Try pdfplumber table parser  — perfect for Q|A|B|C|D|Answer table PDFs
+      3. Try Groq (llama-3.3-70b)    — for free-form/narrative PDFs
+      4. Fall back to Gemini          — if Groq fails
+      5. Gemini binary upload         — for scanned/image PDFs (no text layer)
     """
     import logging
     logger = logging.getLogger(__name__)
+
+    # Step 0: Reject oversized PDFs before any parsing (protects 512 MB Render RAM)
+    pdf_mb = len(pdf_bytes) / (1024 * 1024)
+    if pdf_mb > MAX_PDF_MB:
+        raise ValueError(
+            f"PDF is {pdf_mb:.1f} MB — exceeds the {MAX_PDF_MB} MB limit. "
+            "Please split the PDF into smaller parts before uploading."
+        )
 
     # Step 1: Try table parser first (fast, accurate, no AI needed)
     try:
@@ -434,29 +521,43 @@ def extract_questions_with_gemini(pdf_bytes: bytes, test_name: str = "") -> list
         logger.info("Table parser: no table found, falling back to AI")
     except Exception as e:
         logger.warning(f"Table parser failed: {e}")
+    finally:
+        gc.collect()   # free pdfplumber memory before next stage
 
-    # Step 2: Check if PDF has extractable text
+    # Step 2: Check if PDF has extractable text — process page-by-page to save RAM
+    pdf_text = None
+    has_text = False
     try:
         import PyPDF2
         reader = PyPDF2.PdfReader(io.BytesIO(pdf_bytes))
-        pages = [page.extract_text() for page in reader.pages if page.extract_text()]
-        pdf_text = "\n\n".join(pages)
+        text_parts = []
+        for page in reader.pages:
+            page_text = page.extract_text()
+            if page_text:
+                text_parts.append(page_text)
+            del page_text   # release immediately
+        pdf_text = "\n\n".join(text_parts)
+        del text_parts
         has_text = len(pdf_text.strip()) >= 100
+        del reader
+        gc.collect()
     except Exception:
         pdf_text = None
         has_text = False
 
     if has_text:
         chunks = chunk_text(pdf_text)
+        del pdf_text   # free full text — only need chunks now
+        gc.collect()
 
-        # Step 2a: Groq
+        # Step 3a: Groq
         try:
             return extract_with_groq(chunks)
         except Exception as groq_err:
             logger.warning(f"Groq failed, falling back to Gemini: {groq_err}")
 
-        # Step 2b: Gemini text fallback
+        # Step 3b: Gemini text fallback
         return extract_with_gemini(chunks)
 
-    # Step 3: Scanned/image PDF
+    # Step 4: Scanned/image PDF
     return extract_with_gemini_binary(pdf_bytes)
