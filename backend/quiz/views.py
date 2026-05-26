@@ -823,6 +823,194 @@ def admin_move_test_to_package(request, test_id):
     return Response({'success': True, 'test_id': test.id, 'package_id': test.package_id})
 
 
+# ── Text-Based Question Import ────────────────────────────────────────────────
+
+import re as _re_text
+
+def _parse_text_questions(text):
+    """
+    Parse questions from structured text format:
+      Question N
+      Question: <text>
+      All Options:
+      A) <option>
+      B) <option>
+      ...
+      Correct Ans: A, C, and D
+      Explanation: <text>
+    Returns a list of question dicts ready for DB insertion.
+    """
+    # Split into blocks by "Question N" header
+    raw_blocks = _re_text.split(r'\n*Question\s+\d+\s*\n', text, flags=_re_text.IGNORECASE)
+    blocks = [b.strip() for b in raw_blocks if b.strip()]
+
+    letter_to_idx = {'A': 0, 'B': 1, 'C': 2, 'D': 3, 'E': 4}
+    questions = []
+
+    for block in blocks:
+        # 1. Question text
+        q_match = _re_text.search(
+            r'Question:\s*(.+?)(?=\n\s*All Options:|\nCorrect Ans:|\nExplanation:|$)',
+            block, _re_text.DOTALL | _re_text.IGNORECASE
+        )
+        if not q_match:
+            continue
+        question_text = q_match.group(1).strip()
+
+        # 2. Options (A) through E))
+        opts_match = _re_text.search(
+            r'All Options:\s*\n(.+?)(?=\nCorrect Ans:|\nExplanation:|$)',
+            block, _re_text.DOTALL | _re_text.IGNORECASE
+        )
+        options = []
+        if opts_match:
+            opt_lines = _re_text.findall(r'[A-Ea-e]\)\s*(.+)', opts_match.group(1))
+            options = [o.strip() for o in opt_lines]
+
+        if not options:
+            continue
+
+        # 3. Correct answers
+        ans_match = _re_text.search(r'Correct Ans[s]?:\s*(.+?)(?:\n|$)', block, _re_text.IGNORECASE)
+        answer_indices = []
+        if ans_match:
+            letters = _re_text.findall(r'\b([A-Ea-e])\b', ans_match.group(1))
+            answer_indices = [letter_to_idx[l.upper()] for l in letters if l.upper() in letter_to_idx]
+
+        if not answer_indices:
+            continue
+
+        # 4. Explanation (optional)
+        exp_match = _re_text.search(r'Explanation:\s*(.+?)$', block, _re_text.DOTALL | _re_text.IGNORECASE)
+        explanation = exp_match.group(1).strip() if exp_match else ''
+
+        questions.append({
+            'question': question_text,
+            'options': options,
+            'answer': answer_indices,
+            'multi': len(answer_indices) > 1,
+            'explanation': explanation,
+        })
+
+    return questions
+
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def admin_preview_text_import(request):
+    """Parse text and return question list for preview — no DB writes."""
+    if not is_admin_user(request.user):
+        return Response({'error': 'Admin access required.'}, status=403)
+    text = request.data.get('text', '').strip()
+    if not text:
+        return Response({'error': 'Text is required.'}, status=400)
+
+    questions = _parse_text_questions(text)
+    if not questions:
+        return Response({'error': 'No questions could be parsed. Check the format and try again.'}, status=400)
+
+    preview = []
+    for i, q in enumerate(questions, 1):
+        letter_map = ['A', 'B', 'C', 'D', 'E']
+        correct_letters = [letter_map[idx] for idx in q['answer'] if idx < len(letter_map)]
+        preview.append({
+            'number': i,
+            'question': q['question'],
+            'options': q['options'],
+            'correct_letters': correct_letters,
+            'multi': q['multi'],
+            'explanation': q['explanation'],
+        })
+
+    return Response({'count': len(preview), 'questions': preview})
+
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def admin_import_from_text(request):
+    """Parse text and save questions into an existing or new test."""
+    if not is_admin_user(request.user):
+        return Response({'error': 'Admin access required.'}, status=403)
+
+    text = request.data.get('text', '').strip()
+    test_id = request.data.get('test_id')
+    test_name = request.data.get('test_name', '').strip()
+    package_id = request.data.get('package_id')
+
+    if not text:
+        return Response({'error': 'Text is required.'}, status=400)
+
+    questions = _parse_text_questions(text)
+    if not questions:
+        return Response({'error': 'No questions could be parsed. Check the format.'}, status=400)
+
+    # Resolve target test
+    if test_id:
+        try:
+            test = Test.objects.get(id=int(test_id))
+        except (Test.DoesNotExist, ValueError):
+            return Response({'error': 'Test not found.'}, status=404)
+    elif test_name:
+        # Create a new test
+        package = None
+        if package_id:
+            try:
+                package = Package.objects.get(id=int(package_id))
+            except (Package.DoesNotExist, ValueError):
+                pass
+        if not package:
+            package, _ = Package.objects.get_or_create(
+                name='PU SN',
+                defaults={'description': 'ServiceNow CAD Practice Tests', 'is_active': True}
+            )
+
+        from django.db.models import Max as _Max
+        base_slug = _re_text.sub(r'[^a-z0-9]+', '-', test_name.lower()).strip('-')[:20]
+        slug = base_slug
+        counter = 1
+        while Test.objects.filter(slug=slug).exists():
+            slug = f"{base_slug[:16]}-{counter}"
+            counter += 1
+        max_order = Test.objects.aggregate(m=_Max('order'))['m'] or 0
+        test = Test.objects.create(
+            name=test_name, slug=slug, package=package,
+            order=max_order + 1, is_active=True, is_locked=False
+        )
+    else:
+        return Response({'error': 'Provide test_id (existing) or test_name (new test).'}, status=400)
+
+    # Append questions after the last existing question
+    last_q = test.questions.order_by('-number').first()
+    start_number = (last_q.number + 1) if last_q else 1
+
+    created = []
+    for i, q in enumerate(questions):
+        qq = Question.objects.create(
+            test=test,
+            number=start_number + i,
+            question=q['question'],
+            options=q['options'],
+            answer=q['answer'],
+            explanation=q['explanation'],
+            multi=q['multi'],
+        )
+        letter_map = ['A', 'B', 'C', 'D', 'E']
+        created.append({
+            'number': qq.number,
+            'question': qq.question[:80] + ('…' if len(qq.question) > 80 else ''),
+            'correct': [letter_map[idx] for idx in q['answer'] if idx < len(letter_map)],
+            'multi': q['multi'],
+        })
+
+    return Response({
+        'success': True,
+        'message': f'✅ {len(created)} question(s) added to "{test.name}"',
+        'test': {'id': test.id, 'name': test.name, 'slug': test.slug, 'total': test.questions.count()},
+        'created_count': len(created),
+        'questions': created,
+    }, status=201)
+
+
 from django.http import HttpResponse
 
 @api_view(['GET'])

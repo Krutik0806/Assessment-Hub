@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ShieldCheck, Lock, Unlock, Eye, EyeOff, ArrowLeft, RefreshCw, UserX, UserCheck, Shield, UploadCloud, FileText, CheckCircle, Trash2, Download, Clock, Bell, AlertTriangle, Users, Target, BookOpen, CalendarClock, BarChart2, Folder, FolderPlus, FolderOpen, MoveRight, Edit2 } from 'lucide-react';
+import { ShieldCheck, Lock, Unlock, Eye, EyeOff, ArrowLeft, RefreshCw, UserX, UserCheck, Shield, UploadCloud, FileText, CheckCircle, Trash2, Download, Clock, Bell, AlertTriangle, Users, Target, BookOpen, CalendarClock, BarChart2, Folder, FolderPlus, FolderOpen, MoveRight, Edit2, X, ChevronDown } from 'lucide-react';
 
 const API_BASE = import.meta.env.VITE_API_BASE_URL || 'http://127.0.0.1:8000/api';
 const apiFetch = (path, opts = {}) => {
@@ -255,11 +255,63 @@ export default function AdminPage({ user, onBack }) {
         setPkgBusy(null);
     };
 
+    // ── Text Import State ──────────────────────────────────────────────────────
+    const [txtText, setTxtText] = useState('');
+    const [txtPreview, setTxtPreview] = useState(null);   // { count, questions }
+    const [txtPreviewErr, setTxtPreviewErr] = useState(null);
+    const [txtPreviewing, setTxtPreviewing] = useState(false);
+    const [txtDestMode, setTxtDestMode] = useState('existing'); // 'existing' | 'new'
+    const [txtTestId, setTxtTestId] = useState('');
+    const [txtNewName, setTxtNewName] = useState('');
+    const [txtNewPkgId, setTxtNewPkgId] = useState('');
+    const [txtImporting, setTxtImporting] = useState(false);
+    const [txtResult, setTxtResult] = useState(null);
+    const [txtImportErr, setTxtImportErr] = useState(null);
+    const [txtExpandedQ, setTxtExpandedQ] = useState(null); // expanded preview question index
+
+    const handleTxtPreview = async () => {
+        if (!txtText.trim()) return;
+        setTxtPreviewing(true);
+        setTxtPreviewErr(null);
+        setTxtPreview(null);
+        try {
+            const r = await apiFetch('/admin-panel/preview-text-import/', { method: 'POST', body: JSON.stringify({ text: txtText }) });
+            if (r.error) throw new Error(r.error);
+            setTxtPreview(r);
+        } catch (e) { setTxtPreviewErr(e.message); }
+        setTxtPreviewing(false);
+    };
+
+    const handleTxtImport = async () => {
+        setTxtImporting(true);
+        setTxtImportErr(null);
+        setTxtResult(null);
+        const body = { text: txtText };
+        if (txtDestMode === 'existing') {
+            if (!txtTestId) { setTxtImportErr('Please select a test.'); setTxtImporting(false); return; }
+            body.test_id = txtTestId;
+        } else {
+            if (!txtNewName.trim()) { setTxtImportErr('Please enter a test name.'); setTxtImporting(false); return; }
+            body.test_name = txtNewName.trim();
+            if (txtNewPkgId) body.package_id = txtNewPkgId;
+        }
+        try {
+            const r = await apiFetch('/admin-panel/import-from-text/', { method: 'POST', body: JSON.stringify(body) });
+            if (r.error) throw new Error(r.error);
+            setTxtResult(r);
+            // reset
+            setTxtText(''); setTxtPreview(null); setTxtTestId(''); setTxtNewName(''); setTxtNewPkgId('');
+            loadAll();
+        } catch (e) { setTxtImportErr(e.message); }
+        setTxtImporting(false);
+    };
+
     const tabs = [
         { id: 'overview', label: 'Overview' },
         { id: 'tests', label: 'Tests' },
         { id: 'folders', label: '📁 Folders' },
         { id: 'ai_import', label: 'AI PDF Import' },
+        { id: 'text_import', label: '📝 Text Import' },
         { id: 'users', label: 'Users' }
     ];
 
@@ -675,6 +727,209 @@ export default function AdminPage({ user, onBack }) {
                                         )}
                                     </motion.div>
                                 ))}
+                            </div>
+                        </motion.div>
+                    )}
+
+                    {/* ── Text Import ── */}
+                    {tab === 'text_import' && (
+                        <motion.div key="txt" initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}>
+
+                            {/* Success banner */}
+                            <AnimatePresence>
+                                {txtResult && (
+                                    <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}
+                                        style={{ marginBottom: '20px', padding: '20px 24px', background: 'rgba(34,197,94,0.1)', border: '1px solid rgba(34,197,94,0.25)', borderRadius: '14px', display: 'flex', alignItems: 'center', gap: '14px', flexWrap: 'wrap' }}>
+                                        <CheckCircle size={22} color="#4ade80" />
+                                        <div style={{ flex: 1 }}>
+                                            <div style={{ color: '#4ade80', fontWeight: '700', fontSize: '1rem' }}>{txtResult.message}</div>
+                                            <div style={{ color: '#a7f3d0', fontSize: '0.82rem', marginTop: '2px' }}>Test now has <strong>{txtResult.test.total}</strong> total questions.</div>
+                                        </div>
+                                        <button onClick={() => { setTxtResult(null); setTab('tests'); }}
+                                            style={{ padding: '8px 14px', background: 'rgba(74,222,128,0.15)', border: '1px solid #4ade80', borderRadius: '8px', color: '#4ade80', cursor: 'pointer', fontSize: '0.82rem', fontWeight: '600' }}>
+                                            View in Tests Tab
+                                        </button>
+                                        <button onClick={() => setTxtResult(null)}
+                                            style={{ background: 'none', border: 'none', color: 'var(--text-secondary)', cursor: 'pointer', padding: '4px' }}>
+                                            <X size={16} />
+                                        </button>
+                                    </motion.div>
+                                )}
+                            </AnimatePresence>
+
+                            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '24px' }}>
+
+                                {/* ── Left: Paste + Preview ── */}
+                                <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                                    <div className="glass-panel" style={{ padding: '24px', borderTop: '2px solid #8b5cf6' }}>
+                                        <h3 style={{ fontSize: '1rem', fontWeight: '700', marginBottom: '6px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                            ✏️ Paste Questions
+                                        </h3>
+                                        <p style={{ color: 'var(--text-secondary)', fontSize: '0.8rem', marginBottom: '14px', lineHeight: '1.5' }}>
+                                            Paste text in the format below. Questions are separated by <code style={{ background: 'rgba(255,255,255,0.08)', padding: '1px 5px', borderRadius: '4px' }}>Question N</code> headers.
+                                        </p>
+
+                                        {/* Format hint */}
+                                        <div style={{ background: 'rgba(139,92,246,0.06)', border: '1px solid rgba(139,92,246,0.2)', borderRadius: '10px', padding: '12px 14px', fontSize: '11px', fontFamily: 'monospace', color: '#c4b5fd', marginBottom: '14px', lineHeight: '1.7', whiteSpace: 'pre' }}>{`Question 1
+Question: Your question text here?
+
+All Options:
+A) First option
+B) Second option
+C) Third option
+
+Correct Ans: A, C
+Explanation: Optional explanation.`}</div>
+
+                                        <textarea
+                                            value={txtText}
+                                            onChange={e => { setTxtText(e.target.value); setTxtPreview(null); setTxtPreviewErr(null); setTxtResult(null); }}
+                                            placeholder="Paste your questions here..."
+                                            rows={18}
+                                            style={{ width: '100%', padding: '14px', borderRadius: '10px', background: 'rgba(0,0,0,0.25)', border: '1px solid rgba(255,255,255,0.1)', color: 'white', fontSize: '13px', fontFamily: 'monospace', resize: 'vertical', outline: 'none', lineHeight: '1.6' }}
+                                        />
+
+                                        {txtPreviewErr && (
+                                            <div style={{ marginTop: '10px', padding: '10px 14px', background: 'rgba(239,68,68,0.1)', border: '1px solid rgba(239,68,68,0.25)', borderRadius: '8px', color: '#f87171', fontSize: '13px', display: 'flex', gap: '8px', alignItems: 'flex-start' }}>
+                                                <AlertTriangle size={14} style={{ flexShrink: 0, marginTop: '1px' }} /> {txtPreviewErr}
+                                            </div>
+                                        )}
+
+                                        <motion.button whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}
+                                            onClick={handleTxtPreview} disabled={!txtText.trim() || txtPreviewing}
+                                            style={{ marginTop: '14px', width: '100%', padding: '13px', borderRadius: '10px', border: 'none', background: 'linear-gradient(135deg,#8b5cf6,#6d28d9)', color: 'white', fontWeight: '700', fontSize: '15px', cursor: (!txtText.trim() || txtPreviewing) ? 'not-allowed' : 'pointer', opacity: (!txtText.trim() || txtPreviewing) ? 0.6 : 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
+                                            {txtPreviewing ? <><RefreshCw size={16} className="spin" /> Parsing...</> : <>👁️ Preview Parsed Questions</>}
+                                        </motion.button>
+                                    </div>
+                                </div>
+
+                                {/* ── Right: Preview Results + Destination ── */}
+                                <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+
+                                    {/* Preview panel */}
+                                    {txtPreview ? (
+                                        <div className="glass-panel" style={{ padding: '20px', borderTop: '2px solid #10b981' }}>
+                                            <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '14px' }}>
+                                                <CheckCircle size={18} color="#10b981" />
+                                                <span style={{ fontWeight: '700', fontSize: '0.95rem', color: '#4ade80' }}>{txtPreview.count} question{txtPreview.count !== 1 ? 's' : ''} parsed successfully</span>
+                                            </div>
+
+                                            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', maxHeight: '340px', overflowY: 'auto', paddingRight: '4px' }}>
+                                                {txtPreview.questions.map((q, idx) => (
+                                                    <div key={idx}
+                                                        onClick={() => setTxtExpandedQ(txtExpandedQ === idx ? null : idx)}
+                                                        style={{ background: 'rgba(255,255,255,0.04)', borderRadius: '10px', padding: '12px 14px', cursor: 'pointer', border: '1px solid rgba(255,255,255,0.07)', transition: 'border-color 0.2s' }}>
+                                                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '8px' }}>
+                                                            <div style={{ flex: 1 }}>
+                                                                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
+                                                                    <span style={{ background: 'rgba(139,92,246,0.15)', color: '#a78bfa', padding: '2px 8px', borderRadius: '6px', fontSize: '11px', fontWeight: '700' }}>Q{q.number}</span>
+                                                                    {q.multi && <span style={{ background: 'rgba(245,158,11,0.15)', color: '#fbbf24', padding: '2px 7px', borderRadius: '6px', fontSize: '10px', fontWeight: '700' }}>MSQ</span>}
+                                                                    <span style={{ background: 'rgba(16,185,129,0.15)', color: '#34d399', padding: '2px 7px', borderRadius: '6px', fontSize: '10px', fontWeight: '700' }}>✓ {q.correct_letters.join(', ')}</span>
+                                                                </div>
+                                                                <div style={{ fontSize: '13px', fontWeight: '600', lineHeight: '1.4', color: 'var(--text-primary)' }}>
+                                                                    {q.question.length > 90 && txtExpandedQ !== idx ? q.question.slice(0, 90) + '…' : q.question}
+                                                                </div>
+                                                            </div>
+                                                            <ChevronDown size={14} color="var(--text-secondary)" style={{ flexShrink: 0, transform: txtExpandedQ === idx ? 'rotate(180deg)' : 'none', transition: 'transform 0.2s', marginTop: '2px' }} />
+                                                        </div>
+
+                                                        {txtExpandedQ === idx && (
+                                                            <div style={{ marginTop: '10px', paddingTop: '10px', borderTop: '1px solid rgba(255,255,255,0.06)' }}>
+                                                                <div style={{ display: 'flex', flexDirection: 'column', gap: '4px', marginBottom: '8px' }}>
+                                                                    {q.options.map((opt, oi) => {
+                                                                        const letter = ['A','B','C','D','E'][oi];
+                                                                        const isCorrect = q.correct_letters.includes(letter);
+                                                                        return (
+                                                                            <div key={oi} style={{ display: 'flex', gap: '8px', alignItems: 'flex-start', padding: '6px 8px', borderRadius: '6px', background: isCorrect ? 'rgba(16,185,129,0.12)' : 'transparent', border: isCorrect ? '1px solid rgba(16,185,129,0.25)' : '1px solid transparent' }}>
+                                                                                <span style={{ fontWeight: '700', color: isCorrect ? '#4ade80' : '#a78bfa', fontSize: '12px', flexShrink: 0 }}>{letter})</span>
+                                                                                <span style={{ fontSize: '12px', color: isCorrect ? '#d1fae5' : 'var(--text-secondary)', lineHeight: '1.4' }}>{opt}</span>
+                                                                            </div>
+                                                                        );
+                                                                    })}
+                                                                </div>
+                                                                {q.explanation && (
+                                                                    <div style={{ fontSize: '11px', color: 'var(--text-secondary)', fontStyle: 'italic', padding: '6px 8px', background: 'rgba(255,255,255,0.03)', borderRadius: '6px', lineHeight: '1.5' }}>
+                                                                        💡 {q.explanation.slice(0, 200)}{q.explanation.length > 200 ? '…' : ''}
+                                                                    </div>
+                                                                )}
+                                                            </div>
+                                                        )}
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        </div>
+                                    ) : (
+                                        <div className="glass-panel" style={{ padding: '32px', textAlign: 'center', opacity: 0.5, borderStyle: 'dashed', flex: 0 }}>
+                                            <div style={{ fontSize: '2rem', marginBottom: '8px' }}>👁️</div>
+                                            <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem' }}>Preview will appear here after parsing</p>
+                                        </div>
+                                    )}
+
+                                    {/* Destination selector — only shown after preview */}
+                                    {txtPreview && (
+                                        <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}
+                                            className="glass-panel" style={{ padding: '22px', borderTop: '2px solid #f59e0b' }}>
+                                            <h3 style={{ fontSize: '0.95rem', fontWeight: '700', marginBottom: '16px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                                <MoveRight size={16} color="#f59e0b" /> Where to add these questions?
+                                            </h3>
+
+                                            {/* Radio */}
+                                            <div style={{ display: 'flex', gap: '10px', marginBottom: '16px' }}>
+                                                {[['existing', '➕ Add to existing test'], ['new', '🆕 Create new test']].map(([val, label]) => (
+                                                    <button key={val} onClick={() => setTxtDestMode(val)}
+                                                        style={{ flex: 1, padding: '10px', borderRadius: '10px', border: txtDestMode === val ? '2px solid #f59e0b' : '1px solid rgba(255,255,255,0.1)', background: txtDestMode === val ? 'rgba(245,158,11,0.12)' : 'rgba(255,255,255,0.03)', color: txtDestMode === val ? '#fbbf24' : 'var(--text-secondary)', fontWeight: txtDestMode === val ? '700' : '500', fontSize: '13px', cursor: 'pointer', transition: 'all 0.2s' }}>
+                                                        {label}
+                                                    </button>
+                                                ))}
+                                            </div>
+
+                                            {txtDestMode === 'existing' ? (
+                                                <div>
+                                                    <label style={{ display: 'block', fontSize: '12px', color: 'var(--text-secondary)', marginBottom: '7px' }}>Select test to add to</label>
+                                                    <select value={txtTestId} onChange={e => setTxtTestId(e.target.value)}
+                                                        style={{ width: '100%', padding: '11px 14px', borderRadius: '10px', background: 'rgba(0,0,0,0.3)', border: '1px solid rgba(255,255,255,0.12)', color: 'white', fontSize: '14px', colorScheme: 'dark', cursor: 'pointer' }}>
+                                                        <option value="" style={{ background: '#1a1a2e' }}>— Select a test —</option>
+                                                        {(dash?.tests || []).map(t => (
+                                                            <option key={t.id} value={t.id} style={{ background: '#1a1a2e' }}>
+                                                                {t.name} ({t.total_questions} Qs)
+                                                            </option>
+                                                        ))}
+                                                    </select>
+                                                </div>
+                                            ) : (
+                                                <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                                                    <div>
+                                                        <label style={{ display: 'block', fontSize: '12px', color: 'var(--text-secondary)', marginBottom: '7px' }}>New Test Name *</label>
+                                                        <input value={txtNewName} onChange={e => setTxtNewName(e.target.value)} placeholder="e.g. CSA Module 3 Practice"
+                                                            style={{ width: '100%', padding: '11px 14px', borderRadius: '10px', background: 'rgba(0,0,0,0.3)', border: '1px solid rgba(255,255,255,0.12)', color: 'white', fontSize: '14px' }} />
+                                                    </div>
+                                                    <div>
+                                                        <label style={{ display: 'block', fontSize: '12px', color: 'var(--text-secondary)', marginBottom: '7px' }}>Add to Folder</label>
+                                                        <select value={txtNewPkgId} onChange={e => setTxtNewPkgId(e.target.value)}
+                                                            style={{ width: '100%', padding: '11px 14px', borderRadius: '10px', background: 'rgba(0,0,0,0.3)', border: '1px solid rgba(255,255,255,0.12)', color: 'white', fontSize: '14px', colorScheme: 'dark', cursor: 'pointer' }}>
+                                                            <option value="" style={{ background: '#1a1a2e' }}>— Default (PU SN) —</option>
+                                                            {packages.map(pkg => (
+                                                                <option key={pkg.id} value={pkg.id} style={{ background: '#1a1a2e' }}>{pkg.name}</option>
+                                                            ))}
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                            )}
+
+                                            {txtImportErr && (
+                                                <div style={{ marginTop: '10px', padding: '10px 14px', background: 'rgba(239,68,68,0.1)', border: '1px solid rgba(239,68,68,0.25)', borderRadius: '8px', color: '#f87171', fontSize: '13px', display: 'flex', gap: '8px', alignItems: 'center' }}>
+                                                    <AlertTriangle size={14} /> {txtImportErr}
+                                                </div>
+                                            )}
+
+                                            <motion.button whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}
+                                                onClick={handleTxtImport} disabled={txtImporting}
+                                                style={{ marginTop: '16px', width: '100%', padding: '14px', borderRadius: '10px', border: 'none', background: 'linear-gradient(135deg, #f59e0b, #d97706)', color: 'white', fontWeight: '700', fontSize: '15px', cursor: txtImporting ? 'not-allowed' : 'pointer', opacity: txtImporting ? 0.7 : 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
+                                                {txtImporting ? <><RefreshCw size={16} className="spin" /> Importing...</> : <>✅ Import {txtPreview.count} Question{txtPreview.count !== 1 ? 's' : ''}</>}
+                                            </motion.button>
+                                        </motion.div>
+                                    )}
+                                </div>
                             </div>
                         </motion.div>
                     )}

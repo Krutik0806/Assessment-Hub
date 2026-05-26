@@ -43,6 +43,10 @@ urlpatterns = [
     # AI Test Creation
     path('admin-panel/create-from-pdf/', views.admin_create_test_from_pdf),
 
+    # Text-Based Question Import
+    path('admin-panel/preview-text-import/', views.admin_preview_text_import),
+    path('admin-panel/import-from-text/', views.admin_import_from_text),
+
     # Folder / Package Management
     path('admin-panel/packages/', views.admin_list_packages),
     path('admin-panel/packages/create/', views.admin_create_package),
