@@ -827,6 +827,48 @@ def admin_move_test_to_package(request, test_id):
 
 import re as _re_text
 
+# Known languages that may appear as code-block type labels in the question text
+_CODE_LANGS = {'javascript', 'js', 'python', 'java', 'sql', 'html', 'css', 'xml',
+               'bash', 'shell', 'typescript', 'ts', 'json', 'glide', 'groovy', 'c', 'cpp'}
+
+def _convert_code_blocks(text):
+    """
+    Detect inline code blocks in the format:
+        "JavaScript
+        var x = ...;
+        "
+    or with backticks:
+        ```javascript
+        var x = ...;
+        ```
+    Convert both to triple-backtick markdown fences so the frontend can render them.
+    """
+    # Pattern 1: "LanguageName\n...code...\n" (quoted with language on first line)
+    def quote_replacer(m):
+        inner = m.group(1)
+        lines = inner.split('\n', 1)
+        if not lines:
+            return m.group(0)
+        lang_candidate = lines[0].strip().lower()
+        if lang_candidate in _CODE_LANGS and len(lines) > 1:
+            code = lines[1].rstrip()
+            return f'\n```{lang_candidate}\n{code}\n```'
+        # Not a recognisable language — leave as-is
+        return m.group(0)
+
+    text = _re_text.sub(r'"([A-Za-z][A-Za-z0-9]*\n[\s\S]+?)"', quote_replacer, text)
+
+    # Pattern 2: already backtick-fenced but with capitalised language (normalise)
+    def fence_normaliser(m):
+        lang = m.group(1).strip().lower()
+        code = m.group(2)
+        return f'```{lang}\n{code}```'
+
+    text = _re_text.sub(r'```([A-Za-z][A-Za-z0-9]*)\n([\s\S]+?)```', fence_normaliser, text)
+
+    return text
+
+
 def _parse_text_questions(text):
     """
     Parse questions from structured text format:

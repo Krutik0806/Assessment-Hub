@@ -3,6 +3,90 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { CheckCircle2, XCircle, ArrowRight, ArrowLeft, Info, HelpCircle } from 'lucide-react';
 
+/**
+ * Renders question text that may contain ```lang\ncode\n``` fences.
+ * Plain text segments are rendered normally; code segments get a dark
+ * syntax-highlighted block.
+ */
+function QuestionContent({ text, userSelect }) {
+    if (!text) return null;
+
+    // Split on code fences: ```lang\ncode\n``` or ```\ncode\n```
+    const parts = [];
+    const fenceRe = /```([a-z0-9]*)\n([\s\S]*?)```/g;
+    let lastIdx = 0;
+    let match;
+
+    while ((match = fenceRe.exec(text)) !== null) {
+        // Text before this fence
+        if (match.index > lastIdx) {
+            parts.push({ type: 'text', content: text.slice(lastIdx, match.index) });
+        }
+        parts.push({ type: 'code', lang: match[1] || 'code', content: match[2] });
+        lastIdx = match.index + match[0].length;
+    }
+    // Remaining text after last fence
+    if (lastIdx < text.length) {
+        parts.push({ type: 'text', content: text.slice(lastIdx) });
+    }
+
+    if (parts.length === 0) parts.push({ type: 'text', content: text });
+
+    return (
+        <div style={{ marginBottom: '24px', userSelect }}>
+            {parts.map((part, i) =>
+                part.type === 'code' ? (
+                    <div key={i} style={{
+                        margin: '14px 0',
+                        borderRadius: '12px',
+                        overflow: 'hidden',
+                        border: '1px solid rgba(139,92,246,0.25)',
+                        boxShadow: '0 4px 20px rgba(0,0,0,0.3)',
+                    }}>
+                        {/* Header bar */}
+                        <div style={{
+                            background: 'rgba(139,92,246,0.15)',
+                            padding: '7px 14px',
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '8px',
+                            borderBottom: '1px solid rgba(139,92,246,0.2)',
+                        }}>
+                            <div style={{ display: 'flex', gap: '5px' }}>
+                                <div style={{ width: '10px', height: '10px', borderRadius: '50%', background: '#ef4444' }} />
+                                <div style={{ width: '10px', height: '10px', borderRadius: '50%', background: '#f59e0b' }} />
+                                <div style={{ width: '10px', height: '10px', borderRadius: '50%', background: '#22c55e' }} />
+                            </div>
+                            <span style={{ fontSize: '11px', color: '#a78bfa', fontWeight: '600', letterSpacing: '0.05em', textTransform: 'uppercase' }}>
+                                {part.lang}
+                            </span>
+                        </div>
+                        {/* Code body */}
+                        <pre style={{
+                            margin: 0,
+                            padding: '18px 20px',
+                            background: 'rgba(0,0,0,0.45)',
+                            overflowX: 'auto',
+                            fontSize: '13px',
+                            lineHeight: '1.7',
+                            fontFamily: "'Fira Code', 'Cascadia Code', 'Consolas', monospace",
+                            color: '#e2e8f0',
+                            whiteSpace: 'pre',
+                            userSelect: userSelect,
+                        }}>
+                            <code>{part.content}</code>
+                        </pre>
+                    </div>
+                ) : (
+                    <span key={i} style={{ fontSize: '1.25rem', lineHeight: '1.6', fontWeight: '600', display: 'block', whiteSpace: 'pre-wrap' }}>
+                        {part.content.trim()}
+                    </span>
+                )
+            )}
+        </div>
+    );
+}
+
 export default function Quiz({ testData, mode, onFinish, onQuit, user, submitting = false }) {
     const isPractice = mode === 'practice';
 
@@ -269,7 +353,10 @@ export default function Quiz({ testData, mode, onFinish, onQuit, user, submittin
                         style={!isPractice ? { userSelect: 'none', WebkitUserSelect: 'none' } : {}}
                         onMouseDown={!isPractice ? (e) => { if (e.detail > 1) e.preventDefault(); } : undefined}
                     >
-                        <h2 style={{ fontSize: '1.4rem', lineHeight: '1.5', marginBottom: '24px', userSelect: !isPractice ? 'none' : 'auto' }}>{q.question}</h2>
+                        <QuestionContent
+                            text={q.question}
+                            userSelect={!isPractice ? 'none' : 'auto'}
+                        />
 
                         {q.image && (
                             <img src={'/' + q.image} alt="Ref" style={{ width: '100%', maxHeight: '300px', objectFit: 'contain', borderRadius: '12px', border: '1px solid var(--border-light)', marginBottom: '24px' }} />
