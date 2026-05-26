@@ -737,6 +737,92 @@ def admin_delete_test(request, test_id):
         return Response({'error': 'Not found'}, status=404)
 
 
+# ── Admin Package / Folder Management ────────────────────────────────────────
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def admin_list_packages(request):
+    """List all packages/folders for admin."""
+    if not is_admin_user(request.user):
+        return Response({'error': 'Admin access required.'}, status=403)
+    packages = Package.objects.all().order_by('id')
+    data = [{'id': p.id, 'name': p.name, 'description': p.description, 'is_active': p.is_active, 'test_count': p.tests.count()} for p in packages]
+    return Response(data)
+
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def admin_create_package(request):
+    """Create a new folder/package."""
+    if not is_admin_user(request.user):
+        return Response({'error': 'Admin access required.'}, status=403)
+    name = request.data.get('name', '').strip()
+    description = request.data.get('description', '').strip()
+    if not name:
+        return Response({'error': 'Folder name is required.'}, status=400)
+    if Package.objects.filter(name__iexact=name).exists():
+        return Response({'error': f'A folder named "{name}" already exists.'}, status=400)
+    pkg = Package.objects.create(name=name, description=description, is_active=True)
+    return Response({'id': pkg.id, 'name': pkg.name, 'description': pkg.description, 'is_active': pkg.is_active, 'test_count': 0}, status=201)
+
+
+@api_view(['PATCH'])
+@permission_classes([IsAuthenticated])
+def admin_update_package(request, pkg_id):
+    """Update a folder name/description."""
+    if not is_admin_user(request.user):
+        return Response({'error': 'Admin access required.'}, status=403)
+    try:
+        pkg = Package.objects.get(id=pkg_id)
+    except Package.DoesNotExist:
+        return Response({'error': 'Folder not found.'}, status=404)
+    if 'name' in request.data:
+        pkg.name = request.data['name'].strip()
+    if 'description' in request.data:
+        pkg.description = request.data['description'].strip()
+    if 'is_active' in request.data:
+        pkg.is_active = bool(request.data['is_active'])
+    pkg.save()
+    return Response({'id': pkg.id, 'name': pkg.name, 'description': pkg.description, 'is_active': pkg.is_active, 'test_count': pkg.tests.count()})
+
+
+@api_view(['DELETE'])
+@permission_classes([IsAuthenticated])
+def admin_delete_package(request, pkg_id):
+    """Delete a folder. Tests inside get their package set to null."""
+    if not is_admin_user(request.user):
+        return Response({'error': 'Admin access required.'}, status=403)
+    try:
+        pkg = Package.objects.get(id=pkg_id)
+    except Package.DoesNotExist:
+        return Response({'error': 'Folder not found.'}, status=404)
+    pkg.delete()
+    return Response({'success': True, 'id': pkg_id})
+
+
+@api_view(['PATCH'])
+@permission_classes([IsAuthenticated])
+def admin_move_test_to_package(request, test_id):
+    """Move a test to a different package/folder."""
+    if not is_admin_user(request.user):
+        return Response({'error': 'Admin access required.'}, status=403)
+    try:
+        test = Test.objects.get(id=test_id)
+    except Test.DoesNotExist:
+        return Response({'error': 'Test not found.'}, status=404)
+    pkg_id = request.data.get('package_id')
+    if pkg_id:
+        try:
+            pkg = Package.objects.get(id=pkg_id)
+            test.package = pkg
+        except Package.DoesNotExist:
+            return Response({'error': 'Folder not found.'}, status=404)
+    else:
+        test.package = None
+    test.save()
+    return Response({'success': True, 'test_id': test.id, 'package_id': test.package_id})
+
+
 from django.http import HttpResponse
 
 @api_view(['GET'])

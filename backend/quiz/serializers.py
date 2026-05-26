@@ -61,7 +61,8 @@ class PackageSerializer(serializers.ModelSerializer):
         fields = ['id', 'name', 'description', 'is_active', 'tests']
 
     def get_tests(self, obj):
-        tests = obj.tests.filter(is_active=True, is_exam_test=False).order_by('order')
+        # Include ALL active tests (both practice and exam) so folders show everything
+        tests = obj.tests.filter(is_active=True).order_by('order')
         return TestSerializer(tests, many=True, context=self.context).data
 
 

@@ -43,6 +43,13 @@ urlpatterns = [
     # AI Test Creation
     path('admin-panel/create-from-pdf/', views.admin_create_test_from_pdf),
 
+    # Folder / Package Management
+    path('admin-panel/packages/', views.admin_list_packages),
+    path('admin-panel/packages/create/', views.admin_create_package),
+    path('admin-panel/packages/<int:pkg_id>/update/', views.admin_update_package),
+    path('admin-panel/packages/<int:pkg_id>/delete/', views.admin_delete_package),
+    path('admin-panel/tests/<int:test_id>/move/', views.admin_move_test_to_package),
+
     # Health Check (for Render.com keep-alive)
     path('health/', views.health_check),
 ]

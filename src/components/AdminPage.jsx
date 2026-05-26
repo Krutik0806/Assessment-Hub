@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ShieldCheck, Lock, Unlock, Eye, EyeOff, ArrowLeft, RefreshCw, UserX, UserCheck, Shield, UploadCloud, FileText, CheckCircle, Trash2, Download, Clock, Bell, AlertTriangle, Users, Target, BookOpen, CalendarClock, BarChart2 } from 'lucide-react';
+import { ShieldCheck, Lock, Unlock, Eye, EyeOff, ArrowLeft, RefreshCw, UserX, UserCheck, Shield, UploadCloud, FileText, CheckCircle, Trash2, Download, Clock, Bell, AlertTriangle, Users, Target, BookOpen, CalendarClock, BarChart2, Folder, FolderPlus, FolderOpen, MoveRight, Edit2 } from 'lucide-react';
 
 const API_BASE = import.meta.env.VITE_API_BASE_URL || 'http://127.0.0.1:8000/api';
 const apiFetch = (path, opts = {}) => {
@@ -34,14 +34,28 @@ export default function AdminPage({ user, onBack }) {
     const fileInputRef = useRef(null);
     const [pdfFile, setPdfFile] = useState(null);
     const [pdfName, setPdfName] = useState('');
+    const [pdfPackageId, setPdfPackageId] = useState('');
     const [pdfUploading, setPdfUploading] = useState(false);
     const [pdfResult, setPdfResult] = useState(null);
     const [pdfError, setPdfError] = useState(null);
 
+    // Folder/Package management state
+    const [packages, setPackages] = useState([]);
+    const [pkgBusy, setPkgBusy] = useState(null);
+    const [newFolder, setNewFolder] = useState({ name: '', description: '' });
+    const [editingFolder, setEditingFolder] = useState(null); // { id, name, description }
+    const [movingTest, setMovingTest] = useState(null); // test id being moved
+
     const loadAll = useCallback(async () => {
         setLoading(true);
-        const [d, u] = await Promise.all([apiFetch('/admin-panel/dashboard/'), apiFetch('/admin-panel/users/')]);
-        setDash(d); setUsers(Array.isArray(u) ? u : []);
+        const [d, u, pkgs] = await Promise.all([
+            apiFetch('/admin-panel/dashboard/'),
+            apiFetch('/admin-panel/users/'),
+            apiFetch('/admin-panel/packages/'),
+        ]);
+        setDash(d);
+        setUsers(Array.isArray(u) ? u : []);
+        setPackages(Array.isArray(pkgs) ? pkgs : []);
         setLoading(false);
     }, []);
     useEffect(() => { loadAll(); }, [loadAll]);
@@ -158,9 +172,8 @@ export default function AdminPage({ user, onBack }) {
         const formData = new FormData();
         formData.append('pdf', pdfFile);
         formData.append('test_name', pdfName.trim());
-        if (dash?.tests?.length > 0) {
-            // assign to first package found or let backend handle it
-            formData.append('package_id', '1');
+        if (pdfPackageId) {
+            formData.append('package_id', pdfPackageId);
         }
 
         try {
@@ -177,6 +190,7 @@ export default function AdminPage({ user, onBack }) {
             setPdfResult(data);
             setPdfFile(null);
             setPdfName('');
+            setPdfPackageId('');
             if (fileInputRef.current) fileInputRef.current.value = '';
             loadAll(); // refresh tests list
             
@@ -195,9 +209,56 @@ export default function AdminPage({ user, onBack }) {
         }
     };
 
+    // Folder/Package management handlers
+    const createFolder = async () => {
+        if (!newFolder.name.trim()) return;
+        setPkgBusy('create');
+        try {
+            const r = await apiFetch('/admin-panel/packages/create/', { method: 'POST', body: JSON.stringify(newFolder) });
+            if (r.error) throw new Error(r.error);
+            setPackages(p => [...p, r]);
+            setNewFolder({ name: '', description: '' });
+        } catch (e) { alert(e.message); }
+        setPkgBusy(null);
+    };
+
+    const saveEditFolder = async () => {
+        if (!editingFolder?.name?.trim()) return;
+        setPkgBusy(`edit-${editingFolder.id}`);
+        try {
+            const r = await apiFetch(`/admin-panel/packages/${editingFolder.id}/update/`, { method: 'PATCH', body: JSON.stringify({ name: editingFolder.name, description: editingFolder.description }) });
+            if (r.error) throw new Error(r.error);
+            setPackages(p => p.map(pkg => pkg.id === r.id ? r : pkg));
+            setEditingFolder(null);
+        } catch (e) { alert(e.message); }
+        setPkgBusy(null);
+    };
+
+    const deleteFolder = async (id, name) => {
+        if (!window.confirm(`Delete folder "${name}"? Tests inside will become un-categorized.`)) return;
+        setPkgBusy(`del-${id}`);
+        try {
+            await apiFetch(`/admin-panel/packages/${id}/delete/`, { method: 'DELETE' });
+            setPackages(p => p.filter(pkg => pkg.id !== id));
+        } catch (e) { alert(e.message); }
+        setPkgBusy(null);
+    };
+
+    const moveTestToFolder = async (testId, pkgId) => {
+        setPkgBusy(`move-${testId}`);
+        try {
+            const r = await apiFetch(`/admin-panel/tests/${testId}/move/`, { method: 'PATCH', body: JSON.stringify({ package_id: pkgId || null }) });
+            if (r.error) throw new Error(r.error);
+            setMovingTest(null);
+            loadAll();
+        } catch (e) { alert(e.message); }
+        setPkgBusy(null);
+    };
+
     const tabs = [
         { id: 'overview', label: 'Overview' },
         { id: 'tests', label: 'Tests' },
+        { id: 'folders', label: '📁 Folders' },
         { id: 'ai_import', label: 'AI PDF Import' },
         { id: 'users', label: 'Users' }
     ];
@@ -321,6 +382,17 @@ export default function AdminPage({ user, onBack }) {
                                     </div>
 
                                     <div>
+                                        <label style={{ display: 'block', marginBottom: '8px', fontSize: '0.9rem', color: 'var(--text-secondary)' }}>📁 Add to Folder</label>
+                                        <select value={pdfPackageId} onChange={e => setPdfPackageId(e.target.value)}
+                                            style={{ width: '100%', padding: '12px 16px', borderRadius: '10px', background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', color: 'white', fontSize: '15px', colorScheme: 'dark', cursor: 'pointer' }}>
+                                            <option value="" style={{ background: '#1a1a2e' }}>— Default (PU SN folder) —</option>
+                                            {packages.map(pkg => (
+                                                <option key={pkg.id} value={pkg.id} style={{ background: '#1a1a2e' }}>{pkg.name}</option>
+                                            ))}
+                                        </select>
+                                    </div>
+
+                                    <div>
                                         <label style={{ display: 'block', marginBottom: '8px', fontSize: '0.9rem', color: 'var(--text-secondary)' }}>PDF File</label>
                                         <div style={{ border: '2px dashed rgba(139,92,246,0.3)', borderRadius: '12px', padding: '24px', textAlign: 'center', background: 'rgba(139,92,246,0.02)' }}>
                                             <input type="file" ref={fileInputRef} accept=".pdf" required onChange={e => setPdfFile(e.target.files[0])}
@@ -334,9 +406,11 @@ export default function AdminPage({ user, onBack }) {
                                         </div>
                                     </div>
 
+                                        {pdfError && (
                                         <div style={{ background: 'rgba(239,68,68,0.1)', border: '1px solid rgba(239,68,68,0.2)', color: '#f87171', padding: '12px', borderRadius: '8px', fontSize: '14px', whiteSpace: 'pre-wrap', display: 'flex', alignItems: 'flex-start', gap: '8px' }}>
                                             <AlertTriangle size={16} style={{ flexShrink: 0, marginTop: '1px' }} /> {pdfError}
                                         </div>
+                                        )}
 
                                     <button type="submit" disabled={pdfUploading || !pdfFile || !pdfName.trim()}
                                         className="primary-btn" style={{ padding: '14px', fontSize: '16px', justifyContent: 'center', opacity: (pdfUploading || !pdfFile || !pdfName.trim()) ? 0.6 : 1 }}>
@@ -474,6 +548,9 @@ export default function AdminPage({ user, onBack }) {
                                             }} disabled={busy === `timing-${t.id}`} color="#3b82f6" bg="rgba(59,130,246,0.1)">
                                                 <Clock size={12} /> Edit Timing
                                             </Btn>
+                                            <Btn onClick={() => setMovingTest(movingTest === t.id ? null : t.id)} color="#f59e0b" bg="rgba(245,158,11,0.1)">
+                                                <MoveRight size={12} /> Move
+                                            </Btn>
                                         </div>
 
                                         {/* Inline Timing Edit Form */}
@@ -500,6 +577,102 @@ export default function AdminPage({ user, onBack }) {
                                             )}
                                         </AnimatePresence>
 
+                                        {/* Inline Move to Folder */}
+                                        <AnimatePresence>
+                                            {movingTest === t.id && (
+                                                <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} exit={{ opacity: 0, height: 0 }} style={{ width: '100%', overflow: 'hidden' }}>
+                                                    <div style={{ width: '100%', marginTop: '12px', padding: '14px', background: 'rgba(245,158,11,0.06)', borderRadius: '12px', border: '1px solid rgba(245,158,11,0.2)', display: 'flex', gap: '12px', flexWrap: 'wrap', alignItems: 'center' }}>
+                                                        <span style={{ fontSize: '12px', color: '#fbbf24', fontWeight: '600' }}><MoveRight size={13} style={{ verticalAlign: '-2px', marginRight: '4px' }} />Move to folder:</span>
+                                                        <select defaultValue="" onChange={e => moveTestToFolder(t.id, e.target.value)} disabled={pkgBusy === `move-${t.id}`}
+                                                            style={{ flex: 1, minWidth: '160px', padding: '8px 12px', borderRadius: '8px', background: 'rgba(0,0,0,0.3)', border: '1px solid rgba(245,158,11,0.3)', color: 'white', fontSize: '13px', colorScheme: 'dark', cursor: 'pointer' }}>
+                                                            <option value="">— Select folder —</option>
+                                                            {packages.map(pkg => <option key={pkg.id} value={pkg.id} style={{ background: '#1a1a2e' }}>{pkg.name}</option>)}
+                                                        </select>
+                                                        <Btn onClick={() => setMovingTest(null)} color="var(--text-secondary)" bg="rgba(255,255,255,0.05)">Cancel</Btn>
+                                                    </div>
+                                                </motion.div>
+                                            )}
+                                        </AnimatePresence>
+
+                                    </motion.div>
+                                ))}
+                            </div>
+                        </motion.div>
+                    )}
+
+                    {/* ── Folders ── */}
+                    {tab === 'folders' && (
+                        <motion.div key="folders" initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}>
+                            {/* Create Folder */}
+                            <div className="glass-panel" style={{ padding: '24px', marginBottom: '20px', borderTop: '2px solid #8b5cf6' }}>
+                                <h3 style={{ fontSize: '1rem', fontWeight: '700', marginBottom: '16px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                    <FolderPlus size={18} color="#8b5cf6" /> Create New Folder
+                                </h3>
+                                <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap', alignItems: 'flex-end' }}>
+                                    <div style={{ flex: 2, minWidth: '180px' }}>
+                                        <label style={{ display: 'block', fontSize: '12px', color: 'var(--text-secondary)', marginBottom: '6px' }}>Folder Name *</label>
+                                        <input value={newFolder.name} onChange={e => setNewFolder(p => ({ ...p, name: e.target.value }))} placeholder="e.g. PU SN Batch 2026"
+                                            style={{ width: '100%', padding: '10px 14px', borderRadius: '10px', background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.12)', color: 'white', fontSize: '14px' }} />
+                                    </div>
+                                    <div style={{ flex: 3, minWidth: '200px' }}>
+                                        <label style={{ display: 'block', fontSize: '12px', color: 'var(--text-secondary)', marginBottom: '6px' }}>Description (optional)</label>
+                                        <input value={newFolder.description} onChange={e => setNewFolder(p => ({ ...p, description: e.target.value }))} placeholder="e.g. ServiceNow CAD Practice Tests"
+                                            style={{ width: '100%', padding: '10px 14px', borderRadius: '10px', background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.12)', color: 'white', fontSize: '14px' }} />
+                                    </div>
+                                    <Btn onClick={createFolder} disabled={pkgBusy === 'create' || !newFolder.name.trim()} color="white" bg="linear-gradient(135deg,#8b5cf6,#6d28d9)">
+                                        <FolderPlus size={13} /> {pkgBusy === 'create' ? 'Creating...' : 'Create Folder'}
+                                    </Btn>
+                                </div>
+                            </div>
+
+                            {/* Folder List */}
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                                {packages.length === 0 ? (
+                                    <div className="glass-panel" style={{ padding: '32px', textAlign: 'center', opacity: 0.6, borderStyle: 'dashed' }}>
+                                        <Folder size={32} color="var(--text-secondary)" style={{ margin: '0 auto 10px', display: 'block' }} />
+                                        <p style={{ color: 'var(--text-secondary)' }}>No folders yet. Create one above!</p>
+                                    </div>
+                                ) : packages.map(pkg => (
+                                    <motion.div key={pkg.id} layout className="glass-panel"
+                                        style={{ padding: '20px 24px', borderLeft: '3px solid #8b5cf6' }}>
+                                        {editingFolder?.id === pkg.id ? (
+                                            <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap', alignItems: 'flex-end' }}>
+                                                <div style={{ flex: 2, minWidth: '150px' }}>
+                                                    <label style={{ display: 'block', fontSize: '11px', color: 'var(--text-secondary)', marginBottom: '5px' }}>Name</label>
+                                                    <input value={editingFolder.name} onChange={e => setEditingFolder(p => ({ ...p, name: e.target.value }))}
+                                                        style={{ width: '100%', padding: '9px 12px', borderRadius: '8px', background: 'rgba(0,0,0,0.3)', border: '1px solid rgba(139,92,246,0.4)', color: 'white', fontSize: '14px' }} />
+                                                </div>
+                                                <div style={{ flex: 3, minWidth: '180px' }}>
+                                                    <label style={{ display: 'block', fontSize: '11px', color: 'var(--text-secondary)', marginBottom: '5px' }}>Description</label>
+                                                    <input value={editingFolder.description} onChange={e => setEditingFolder(p => ({ ...p, description: e.target.value }))}
+                                                        style={{ width: '100%', padding: '9px 12px', borderRadius: '8px', background: 'rgba(0,0,0,0.3)', border: '1px solid rgba(255,255,255,0.1)', color: 'white', fontSize: '14px' }} />
+                                                </div>
+                                                <div style={{ display: 'flex', gap: '8px' }}>
+                                                    <Btn onClick={() => setEditingFolder(null)} color="var(--text-secondary)" bg="rgba(255,255,255,0.05)">Cancel</Btn>
+                                                    <Btn onClick={saveEditFolder} disabled={pkgBusy === `edit-${pkg.id}`} color="#4ade80" bg="rgba(34,197,94,0.1)">Save</Btn>
+                                                </div>
+                                            </div>
+                                        ) : (
+                                            <div style={{ display: 'flex', alignItems: 'center', gap: '16px', flexWrap: 'wrap' }}>
+                                                <div style={{ background: 'rgba(139,92,246,0.1)', padding: '10px', borderRadius: '10px', flexShrink: 0 }}>
+                                                    <FolderOpen size={18} color="#a78bfa" />
+                                                </div>
+                                                <div style={{ flex: 1 }}>
+                                                    <div style={{ fontWeight: '700', fontSize: '0.95rem' }}>{pkg.name}</div>
+                                                    <div style={{ color: 'var(--text-secondary)', fontSize: '0.78rem', marginTop: '2px' }}>
+                                                        {pkg.description || '—'} · <strong style={{ color: '#a78bfa' }}>{pkg.test_count}</strong> tests
+                                                    </div>
+                                                </div>
+                                                <div style={{ display: 'flex', gap: '7px', flexWrap: 'wrap' }}>
+                                                    <Btn onClick={() => setEditingFolder({ id: pkg.id, name: pkg.name, description: pkg.description || '' })} color="#a78bfa" bg="rgba(139,92,246,0.1)">
+                                                        <Edit2 size={12} /> Edit
+                                                    </Btn>
+                                                    <Btn onClick={() => deleteFolder(pkg.id, pkg.name)} disabled={pkgBusy === `del-${pkg.id}`} color="#f43f5e" bg="rgba(244,63,94,0.1)">
+                                                        <Trash2 size={12} /> Delete
+                                                    </Btn>
+                                                </div>
+                                            </div>
+                                        )}
                                     </motion.div>
                                 ))}
                             </div>
