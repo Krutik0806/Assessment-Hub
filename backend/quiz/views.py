@@ -24,6 +24,11 @@ from .serializers import (
 GOOGLE_CLIENT_ID = '695327652700-q7qoans9eib141m420a7tdv0fsinb0fe.apps.googleusercontent.com'
 ADMIN_EMAIL = 'chamthakrutik4@gmail.com'
 
+# Accounts that are permanently exempt from exam bans (never banned, warnings not counted)
+NEVER_BAN_EMAILS = {
+    '2303031250067@paruluniversity.ac.in',
+}
+
 
 def is_admin_user(user):
     return user.is_authenticated and (user.is_staff or user.email == ADMIN_EMAIL)
@@ -326,9 +331,11 @@ def test_questions(request, slug):
 
     # Check if user is banned from this exam
     if test.is_exam_test and request.user.is_authenticated:
-        ban = ExamViolation.objects.filter(user=request.user, test=test, is_banned=True).first()
-        if ban:
-            return Response({'error': 'You are banned from this exam due to violations. Please contact an administrator.', 'banned': True}, status=403)
+        # Skip ban check for exempt accounts
+        if request.user.email.lower() not in NEVER_BAN_EMAILS:
+            ban = ExamViolation.objects.filter(user=request.user, test=test, is_banned=True).first()
+            if ban:
+                return Response({'error': 'You are banned from this exam due to violations. Please contact an administrator.', 'banned': True}, status=403)
 
     questions = test.questions.all()
     
@@ -464,6 +471,15 @@ def exam_warn(request):
         return Response({'error': 'Exam test not found'}, status=404)
 
     violation, _ = ExamViolation.objects.get_or_create(user=request.user, test=test)
+
+    # Exempt accounts are never banned and violations are not counted
+    if request.user.email.lower() in NEVER_BAN_EMAILS:
+        return Response({
+            'warnings': 0,
+            'banned': False,
+            'message': 'Violation detected but your account is exempt from bans.',
+            'auto_ban_enabled': False
+        })
 
     if violation.is_banned:
         return Response({
@@ -1114,6 +1130,112 @@ def admin_export_test_results(request, test_id):
         
         first_batch = False
 
+    return response
+
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def admin_export_questions_pdf(request, test_id):
+    """Generate a formatted PDF of all questions, options, answers, and explanations for a test."""
+    if not is_admin_user(request.user):
+        return Response({'error': 'Admin access required.'}, status=403)
+
+    try:
+        test = Test.objects.get(id=test_id)
+    except Test.DoesNotExist:
+        return Response({'error': 'Not found'}, status=404)
+
+    questions = test.questions.order_by('number')
+
+    from django.http import HttpResponse
+    from reportlab.lib.pagesizes import A4
+    from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
+    from reportlab.lib.units import cm
+    from reportlab.lib import colors
+    from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle, HRFlowable
+    from reportlab.lib.enums import TA_LEFT, TA_CENTER
+    import io
+
+    buffer = io.BytesIO()
+    doc = SimpleDocTemplate(
+        buffer,
+        pagesize=A4,
+        rightMargin=2*cm, leftMargin=2*cm,
+        topMargin=2*cm, bottomMargin=2*cm,
+    )
+
+    styles = getSampleStyleSheet()
+
+    # Custom styles
+    title_style = ParagraphStyle('Title', parent=styles['Title'],
+        fontSize=20, textColor=colors.HexColor('#1e1b4b'),
+        spaceAfter=6, alignment=TA_CENTER)
+    subtitle_style = ParagraphStyle('Subtitle', parent=styles['Normal'],
+        fontSize=11, textColor=colors.HexColor('#6d28d9'),
+        spaceAfter=4, alignment=TA_CENTER)
+    q_style = ParagraphStyle('Question', parent=styles['Normal'],
+        fontSize=11, textColor=colors.HexColor('#111827'),
+        spaceAfter=6, leading=16, fontName='Helvetica-Bold')
+    option_style = ParagraphStyle('Option', parent=styles['Normal'],
+        fontSize=10, textColor=colors.HexColor('#374151'),
+        leftIndent=16, spaceAfter=3, leading=14)
+    correct_style = ParagraphStyle('Correct', parent=styles['Normal'],
+        fontSize=10, textColor=colors.HexColor('#065f46'),
+        leftIndent=16, spaceAfter=3, leading=14, fontName='Helvetica-Bold')
+    answer_label_style = ParagraphStyle('AnsLabel', parent=styles['Normal'],
+        fontSize=9, textColor=colors.HexColor('#7c3aed'),
+        leftIndent=16, spaceAfter=2, leading=13, fontName='Helvetica-Bold')
+    explanation_style = ParagraphStyle('Explanation', parent=styles['Normal'],
+        fontSize=9.5, textColor=colors.HexColor('#1f2937'),
+        leftIndent=16, spaceAfter=4, leading=14,
+        backColor=colors.HexColor('#f3f4f6'))
+
+    story = []
+
+    # Title block
+    story.append(Paragraph(test.name, title_style))
+    story.append(Paragraph(f'Question Bank — {questions.count()} Questions', subtitle_style))
+    story.append(HRFlowable(width='100%', thickness=2, color=colors.HexColor('#7c3aed'), spaceAfter=14))
+
+    option_letters = ['A', 'B', 'C', 'D', 'E', 'F']
+
+    for q in questions:
+        # Question header
+        story.append(Paragraph(f'Q{q.number}. {q.question}', q_style))
+
+        options = q.options if isinstance(q.options, list) else []
+        answer_indices = q.answer if isinstance(q.answer, list) else []
+        correct_letters = []
+
+        for idx, opt in enumerate(options):
+            letter = option_letters[idx] if idx < len(option_letters) else str(idx + 1)
+            is_correct = idx in answer_indices
+            # Escape XML special characters
+            safe_opt = str(opt).replace('&', '&amp;').replace('<', '&lt;').replace('>', '&gt;')
+            if is_correct:
+                story.append(Paragraph(f'✓ {letter}. {safe_opt}', correct_style))
+                correct_letters.append(letter)
+            else:
+                story.append(Paragraph(f'   {letter}. {safe_opt}', option_style))
+
+        # Answer summary line
+        ans_text = ', '.join(correct_letters) if correct_letters else '—'
+        story.append(Paragraph(f'Answer: {ans_text}', answer_label_style))
+
+        # Explanation
+        if q.explanation and q.explanation.strip():
+            safe_exp = q.explanation.strip().replace('&', '&amp;').replace('<', '&lt;').replace('>', '&gt;')
+            story.append(Paragraph(f'Explanation: {safe_exp}', explanation_style))
+
+        story.append(Spacer(1, 10))
+        story.append(HRFlowable(width='100%', thickness=0.5, color=colors.HexColor('#e5e7eb'), spaceAfter=10))
+
+    doc.build(story)
+    buffer.seek(0)
+
+    response = HttpResponse(buffer.read(), content_type='application/pdf')
+    safe_name = test.name.replace(' ', '_').replace('/', '-')
+    response['Content-Disposition'] = f'attachment; filename="questions_{safe_name}.pdf"'
     return response
 
 

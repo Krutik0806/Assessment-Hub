@@ -21,6 +21,7 @@ const Btn = ({ onClick, disabled, color, bg, children }) => (
 
 export default function AdminPage({ user, onBack }) {
     const [tab, setTab] = useState('overview');
+    const [testSearch, setTestSearch] = useState('');
     const [dash, setDash] = useState(null);
     const [users, setUsers] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -104,6 +105,29 @@ export default function AdminPage({ user, onBack }) {
             document.body.appendChild(a);
             a.click();
             a.remove();
+        } catch (e) {
+            alert(e.message);
+        }
+        setBusy(null);
+    };
+
+    const exportQuestionsPdf = async (id, name) => {
+        setBusy(`qpdf-${id}`);
+        try {
+            const token = localStorage.getItem('csa_access');
+            const res = await fetch(`${API_BASE}/admin-panel/tests/${id}/export-pdf/`, {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+            if (!res.ok) throw new Error('PDF export failed');
+            const blob = await res.blob();
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `questions_${name.replace(/\s+/g, '_')}.pdf`;
+            document.body.appendChild(a);
+            a.click();
+            a.remove();
+            window.URL.revokeObjectURL(url);
         } catch (e) {
             alert(e.message);
         }
@@ -196,7 +220,7 @@ export default function AdminPage({ user, onBack }) {
             
             // Show browser notification if permission granted
             if ('Notification' in window && Notification.permission === 'granted') {
-                new Notification('✅ PDF Extraction Complete!', {
+                new Notification('PDF Extraction Complete', {
                     body: `Successfully extracted ${data.summary?.total_questions || data.test.total} questions from "${data.test.name}"`,
                     icon: '/favicon.ico',
                     tag: 'pdf-extraction',
@@ -309,9 +333,9 @@ export default function AdminPage({ user, onBack }) {
     const tabs = [
         { id: 'overview', label: 'Overview' },
         { id: 'tests', label: 'Tests' },
-        { id: 'folders', label: '📁 Folders' },
+        { id: 'folders', label: 'Folders' },
         { id: 'ai_import', label: 'AI PDF Import' },
-        { id: 'text_import', label: '📝 Text Import' },
+        { id: 'text_import', label: 'Text Import' },
         { id: 'users', label: 'Users' }
     ];
 
@@ -434,7 +458,7 @@ export default function AdminPage({ user, onBack }) {
                                     </div>
 
                                     <div>
-                                        <label style={{ display: 'block', marginBottom: '8px', fontSize: '0.9rem', color: 'var(--text-secondary)' }}>📁 Add to Folder</label>
+                                        <label style={{ display: 'block', marginBottom: '8px', fontSize: '0.9rem', color: 'var(--text-secondary)', display: 'flex', alignItems: 'center', gap: '6px' }}><Folder size={14} /> Add to Folder</label>
                                         <select value={pdfPackageId} onChange={e => setPdfPackageId(e.target.value)}
                                             style={{ width: '100%', padding: '12px 16px', borderRadius: '10px', background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', color: 'white', fontSize: '15px', colorScheme: 'dark', cursor: 'pointer' }}>
                                             <option value="" style={{ background: '#1a1a2e' }}>— Default (PU SN folder) —</option>
@@ -541,14 +565,31 @@ export default function AdminPage({ user, onBack }) {
                         </motion.div>
                     )}
 
-                    {/* ── Tests ── */}
                     {tab === 'tests' && (
                         <motion.div key="tests" initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}>
-                            <p style={{ color: 'var(--text-secondary)', fontSize: '0.85rem', marginBottom: '16px' }}>
-                                <strong>Lock</strong> blocks students. <strong>Hide</strong> removes it from home. <strong>Exam</strong> enables proctored fullscreen mode.
-                            </p>
+                            {/* Search + hint row */}
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '16px', flexWrap: 'wrap' }}>
+                                <div style={{ position: 'relative', flex: '1', minWidth: '220px', maxWidth: '420px' }}>
+                                    <svg style={{ position: 'absolute', left: '11px', top: '50%', transform: 'translateY(-50%)', opacity: 0.4, pointerEvents: 'none' }} width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                                    <input
+                                        type="text"
+                                        value={testSearch}
+                                        onChange={e => setTestSearch(e.target.value)}
+                                        placeholder="Search tests by name…"
+                                        style={{ width: '100%', padding: '9px 12px 9px 34px', borderRadius: '10px', background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.12)', color: 'white', fontSize: '13px', outline: 'none', boxSizing: 'border-box' }}
+                                    />
+                                    {testSearch && (
+                                        <button onClick={() => setTestSearch('')} style={{ position: 'absolute', right: '9px', top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-secondary)', display: 'flex', alignItems: 'center', padding: 0 }}><X size={14} /></button>
+                                    )}
+                                </div>
+                                <p style={{ color: 'var(--text-secondary)', fontSize: '0.82rem', margin: 0 }}>
+                                    {testSearch
+                                        ? <><strong style={{ color: '#a78bfa' }}>{dash?.tests?.filter(t => t.name.toLowerCase().includes(testSearch.toLowerCase())).length}</strong> match{dash?.tests?.filter(t => t.name.toLowerCase().includes(testSearch.toLowerCase())).length !== 1 ? 'es' : ''} found</>
+                                        : <><strong>Lock</strong> blocks students. <strong>Hide</strong> removes from home. <strong>Exam</strong> enables proctored mode.</>}
+                                </p>
+                            </div>
                             <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-                                {dash?.tests?.map((t, i) => (
+                                {(testSearch ? dash?.tests?.filter(t => t.name.toLowerCase().includes(testSearch.toLowerCase())) : dash?.tests)?.map((t, i) => (
                                     <motion.div key={t.id} layout className="glass-panel"
                                         style={{ padding: '24px 28px', display: 'flex', alignItems: 'center', gap: '18px', flexWrap: 'wrap', opacity: t.is_active ? 1 : 0.55, borderLeft: `3px solid ${t.is_exam_test ? '#ef4444' : t.is_locked ? '#f87171' : '#8b5cf6'}`, marginBottom: '4px' }}>
                                         <div style={{ background: 'rgba(139,92,246,0.1)', padding: '10px', borderRadius: '10px', flexShrink: 0 }}><FileText size={18} color="#a78bfa" /></div>
@@ -582,7 +623,7 @@ export default function AdminPage({ user, onBack }) {
                                                         <ShieldCheck size={12} /> {t.enable_auto_ban ? 'Auto-Ban ON' : 'Auto-Ban OFF'}
                                                     </Btn>
                                                     <Btn onClick={() => togEndTest(t.id)} disabled={busy === `endtest-${t.id}`} color={t.is_ended ? '#ef4444' : '#10b981'} bg={t.is_ended ? 'rgba(239,68,68,0.1)' : 'rgba(16,185,129,0.1)'}>
-                                                        <ShieldCheck size={12} /> {t.is_ended ? 'Test Ended ✓' : 'End Test'}
+                                                        <ShieldCheck size={12} /> {t.is_ended ? 'Test Ended' : 'End Test'}
                                                     </Btn>
                                                     <Btn onClick={() => exportTest(t.id, t.name)} disabled={busy === `exp-${t.id}`} color="#10b981" bg="rgba(16,185,129,0.1)">
                                                         <Download size={12} /> Export CSV
@@ -591,6 +632,9 @@ export default function AdminPage({ user, onBack }) {
                                             )}
                                             <Btn onClick={() => delTest(t.id, t.name)} disabled={busy === `del-${t.id}`} color="#f43f5e" bg="rgba(244,63,94,0.1)">
                                                 <Trash2 size={12} /> Delete
+                                            </Btn>
+                                            <Btn onClick={() => exportQuestionsPdf(t.id, t.name)} disabled={busy === `qpdf-${t.id}`} color="#a78bfa" bg="rgba(167,139,250,0.1)">
+                                                <Download size={12} /> Questions PDF
                                             </Btn>
                                             <Btn onClick={() => {
                                                 const tzOffset = (new Date()).getTimezoneOffset() * 60000;
@@ -798,7 +842,7 @@ Explanation: Optional explanation.`}</div>
                                         <motion.button whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}
                                             onClick={handleTxtPreview} disabled={!txtText.trim() || txtPreviewing}
                                             style={{ marginTop: '14px', width: '100%', padding: '13px', borderRadius: '10px', border: 'none', background: 'linear-gradient(135deg,#8b5cf6,#6d28d9)', color: 'white', fontWeight: '700', fontSize: '15px', cursor: (!txtText.trim() || txtPreviewing) ? 'not-allowed' : 'pointer', opacity: (!txtText.trim() || txtPreviewing) ? 0.6 : 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
-                                            {txtPreviewing ? <><RefreshCw size={16} className="spin" /> Parsing...</> : <>👁️ Preview Parsed Questions</>}
+                                            {txtPreviewing ? <><RefreshCw size={16} className="spin" /> Parsing...</> : <><Eye size={16} /> Preview Parsed Questions</>}
                                         </motion.button>
                                     </div>
                                 </div>
@@ -824,7 +868,7 @@ Explanation: Optional explanation.`}</div>
                                                                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
                                                                     <span style={{ background: 'rgba(139,92,246,0.15)', color: '#a78bfa', padding: '2px 8px', borderRadius: '6px', fontSize: '11px', fontWeight: '700' }}>Q{q.number}</span>
                                                                     {q.multi && <span style={{ background: 'rgba(245,158,11,0.15)', color: '#fbbf24', padding: '2px 7px', borderRadius: '6px', fontSize: '10px', fontWeight: '700' }}>MSQ</span>}
-                                                                    <span style={{ background: 'rgba(16,185,129,0.15)', color: '#34d399', padding: '2px 7px', borderRadius: '6px', fontSize: '10px', fontWeight: '700' }}>✓ {q.correct_letters.join(', ')}</span>
+                                                                    <span style={{ background: 'rgba(16,185,129,0.15)', color: '#34d399', padding: '2px 7px', borderRadius: '6px', fontSize: '10px', fontWeight: '700', display: 'inline-flex', alignItems: 'center', gap: '3px' }}><CheckCircle size={9} /> {q.correct_letters.join(', ')}</span>
                                                                 </div>
                                                                 <div style={{ fontSize: '13px', fontWeight: '600', lineHeight: '1.4', color: 'var(--text-primary)' }}>
                                                                     {q.question.length > 90 && txtExpandedQ !== idx ? q.question.slice(0, 90) + '…' : q.question}
@@ -849,7 +893,7 @@ Explanation: Optional explanation.`}</div>
                                                                 </div>
                                                                 {q.explanation && (
                                                                     <div style={{ fontSize: '11px', color: 'var(--text-secondary)', fontStyle: 'italic', padding: '6px 8px', background: 'rgba(255,255,255,0.03)', borderRadius: '6px', lineHeight: '1.5' }}>
-                                                                        💡 {q.explanation.slice(0, 200)}{q.explanation.length > 200 ? '…' : ''}
+                                                                        <span style={{ color: '#a78bfa', fontWeight: '600', fontStyle: 'normal' }}>Explanation:</span> {q.explanation.slice(0, 200)}{q.explanation.length > 200 ? '…' : ''}
                                                                     </div>
                                                                 )}
                                                             </div>
@@ -860,7 +904,7 @@ Explanation: Optional explanation.`}</div>
                                         </div>
                                     ) : (
                                         <div className="glass-panel" style={{ padding: '32px', textAlign: 'center', opacity: 0.5, borderStyle: 'dashed', flex: 0 }}>
-                                            <div style={{ fontSize: '2rem', marginBottom: '8px' }}>👁️</div>
+                                            <div style={{ marginBottom: '10px', display: 'flex', justifyContent: 'center' }}><FileText size={28} color="var(--text-secondary)" /></div>
                                             <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem' }}>Preview will appear here after parsing</p>
                                         </div>
                                     )}
@@ -875,7 +919,7 @@ Explanation: Optional explanation.`}</div>
 
                                             {/* Radio */}
                                             <div style={{ display: 'flex', gap: '10px', marginBottom: '16px' }}>
-                                                {[['existing', '➕ Add to existing test'], ['new', '🆕 Create new test']].map(([val, label]) => (
+                                                {[['existing', 'Add to existing test'], ['new', 'Create new test']].map(([val, label]) => (
                                                     <button key={val} onClick={() => setTxtDestMode(val)}
                                                         style={{ flex: 1, padding: '10px', borderRadius: '10px', border: txtDestMode === val ? '2px solid #f59e0b' : '1px solid rgba(255,255,255,0.1)', background: txtDestMode === val ? 'rgba(245,158,11,0.12)' : 'rgba(255,255,255,0.03)', color: txtDestMode === val ? '#fbbf24' : 'var(--text-secondary)', fontWeight: txtDestMode === val ? '700' : '500', fontSize: '13px', cursor: 'pointer', transition: 'all 0.2s' }}>
                                                         {label}
@@ -925,7 +969,7 @@ Explanation: Optional explanation.`}</div>
                                             <motion.button whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}
                                                 onClick={handleTxtImport} disabled={txtImporting}
                                                 style={{ marginTop: '16px', width: '100%', padding: '14px', borderRadius: '10px', border: 'none', background: 'linear-gradient(135deg, #f59e0b, #d97706)', color: 'white', fontWeight: '700', fontSize: '15px', cursor: txtImporting ? 'not-allowed' : 'pointer', opacity: txtImporting ? 0.7 : 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
-                                                {txtImporting ? <><RefreshCw size={16} className="spin" /> Importing...</> : <>✅ Import {txtPreview.count} Question{txtPreview.count !== 1 ? 's' : ''}</>}
+                                                {txtImporting ? <><RefreshCw size={16} className="spin" /> Importing...</> : <><CheckCircle size={16} /> Import {txtPreview.count} Question{txtPreview.count !== 1 ? 's' : ''}</>}
                                             </motion.button>
                                         </motion.div>
                                     )}
